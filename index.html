@@ -71,29 +71,31 @@
       text-align: center;
     }
 
-    /* CORREÇÃO CLS: Garante altura mínima para evitar "pulo" no carregamento */
+    /* === CORREÇÃO CLS: HEADER === */
     .header {
       display: flex;
-      justify-content: flex-end;
+      justify-content: flex-end; /* Alinha o botão à direita (no celular) */
       align-items: center;
-      min-height: 24px; /* Fixa altura mínima */
+      height: 28px; /* FIXA a altura para reservar o espaço e eliminar o Layout Shift */
       margin-bottom: 20px;
+      width: 100%; /* Garante que ocupe a largura total */
     }
 
     .favorite-btn {
       background: none;
       border: none;
       color: var(--light-text-color);
-      font-size: 24px; /* Fixa tamanho */
+      font-size: 24px; /* Fixa tamanho do ícone */
       line-height: 1; /* Estabiliza linha */
       cursor: pointer;
-      padding: 0 5px;
+      padding: 0;
       transition: color 0.2s;
     }
 
     .favorite-btn.favorited {
       color: #ffb300;
     }
+    /* =========================== */
 
     .content {
       display: flex;
@@ -352,13 +354,7 @@
         gap: 40px; /* Adiciona espaço entre as colunas */
       }
     
-      /* 2. Header: Move para o topo da coluna do player */
-      .header {
-        justify-content: flex-start;
-        margin-bottom: 25px;
-      }
-    
-      /* 3. Coluna do Player (.content): Usa GRID para alinhamento misto (central e esquerdo) */
+      /* 2. Coluna do Player (.content): Usa GRID para alinhamento misto (central e esquerdo) */
       .content {
         flex: 2; /* Dá mais espaço à coluna do player (2/3) */
         padding-right: 0; 
@@ -380,7 +376,12 @@
       }
     
       /* Posicionamento dos elementos dentro do .content para telas maiores */
-      .header { grid-area: header; }
+      .header { 
+          grid-area: header; 
+          justify-content: flex-start; /* Alinha o botão à esquerda no desktop */
+          margin-bottom: 25px;
+          height: auto; /* Permite que a altura seja dinâmica novamente, mas a área grid já está reservada */
+      }
       .station-title { grid-area: title; }
       .station-desc { grid-area: desc; margin-bottom: 25px; }
       
@@ -506,6 +507,7 @@
         <div class="history-title">Recently Played</div>
         <div class="history-list" id="historyList" role="list">
           <div style="text-align:center;color:#666;padding:16px;">No songs yet...</div>
+          
         </div>
       </div>
       
@@ -843,6 +845,12 @@
           setTimeout(setupNowPlaying, 5000);
         };
       }
+
+      favoriteBtn.addEventListener('click', () => {
+        if (currentSong && currentArtist) {
+          toggleFavorite(`${currentArtist} - ${currentSong}`);
+        }
+      });
 
       setupNowPlaying();
       updatePlayButton();
