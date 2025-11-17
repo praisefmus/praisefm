@@ -71,19 +71,21 @@
       text-align: center;
     }
 
+    /* CORREÇÃO CLS: Garante altura mínima para evitar "pulo" no carregamento */
     .header {
       display: flex;
       justify-content: flex-end;
       align-items: center;
+      min-height: 24px; /* Fixa altura mínima */
       margin-bottom: 20px;
-      height: 24px;
     }
 
     .favorite-btn {
       background: none;
       border: none;
       color: var(--light-text-color);
-      font-size: 24px;
+      font-size: 24px; /* Fixa tamanho */
+      line-height: 1; /* Estabiliza linha */
       cursor: pointer;
       padding: 0 5px;
       transition: color 0.2s;
@@ -112,9 +114,10 @@
       margin-bottom: 15px;
     }
 
+    /* CORREÇÃO CLS: Garante dimensão fixa para imagem */
     .show-image {
       width: 200px;
-      height: 200px;
+      height: 200px; /* Garante que o espaço 200x200px seja reservado */
       border-radius: 50%;
       overflow: hidden;
       margin-bottom: 25px;
@@ -244,9 +247,11 @@
       padding-bottom: 5px;
     }
 
+    /* CORREÇÃO CLS: Garante altura mínima para lista de histórico (vazia ou carregando) */
     .history-list {
       max-height: 200px;
       overflow-y: auto;
+      min-height: 50px; 
     }
 
     .history-item {
@@ -469,7 +474,7 @@
             <span id="currentTitle">Loading...</span>
           </div>
           <div class="show-date" id="currentDate">—</div>
-        </div>
+          </div>
         <button
           class="play-button"
           id="playBtn"
