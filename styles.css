@@ -315,3 +315,120 @@ body {
     --border-color: #333;
   }
 }
+
+/* Media queries para responsividade */
+@media (min-width: 480px) {
+  .container {
+    max-width: 450px;
+    padding: 30px;
+  }
+
+  .show-image {
+    width: 250px;
+    height: 250px;
+  }
+
+  .station-title {
+    font-size: 1.8rem;
+  }
+
+  .show-title {
+    font-size: 1.3rem;
+  }
+
+  .play-button {
+    padding: 15px 40px;
+    font-size: 1.4rem;
+  }
+
+  .history-list {
+    max-height: 250px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 600px;
+    padding: 40px;
+  }
+
+  .show-image {
+    width: 300px;
+    height: 300px;
+  }
+
+  .station-title {
+    font-size: 2rem;
+  }
+
+  .station-desc {
+    font-size: 1rem;
+  }
+
+  .show-title {
+    font-size: 1.4rem;
+  }
+
+  .show-date {
+    font-size: 0.9rem;
+  }
+
+  .play-button {
+    width: auto;
+    min-width: 200px;
+  }
+
+  .volume-control {
+    max-width: 400px;
+    margin: 0 auto 30px;
+  }
+
+  .history-section {
+    margin-top: 20px;
+  }
+
+  .history-title {
+    font-size: 1.2rem;
+  }
+
+  .history-item {
+    padding: 12px 0;
+  }
+
+  .history-img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .history-title-item {
+    font-size: 1rem;
+  }
+
+  .history-artist {
+    font-size: 0.9rem;
+  }
+
+  .status {
+    font-size: 0.9rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 700px;
+    padding: 50px;
+  }
+
+  .show-image {
+    width: 350px;
+    height: 350px;
+  }
+
+  .play-button {
+    min-width: 250px;
+  }
+
+  .history-list {
+    max-height: 300px;
+  }
+}
