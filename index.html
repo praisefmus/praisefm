@@ -334,93 +334,108 @@
       border: 0;
     }
     
-    /* === INÍCIO DAS REGRAS PARA TELAS MAIORES === */
+    /* === INÍCIO DAS REGRAS CORRIGIDAS PARA TELAS MAIORES (TABLET E DESKTOP) === */
     @media (min-width: 768px) {
-      /* 1. Ajuste do Container Principal */
-      .container {
-        max-width: 850px;
-        padding: 35px;
-        display: flex;
-        flex-direction: row;
-        align-items: flex-start;
-        text-align: left;
-      }
-
-      /* 2. Ajuste do Conteúdo do Player (Coluna Esquerda) */
-      .content {
-        flex: 1;
-        padding-right: 30px;
-        align-items: flex-start;
-      }
+      /* 1. Container Principal: Ativa o layout de linha */
+      .container {
+        max-width: 900px; /* Aumentado para melhor visualização */
+        padding: 35px;
+        display: flex;
+        flex-direction: row; /* Coloca .content e .history-section lado a lado */
+        align-items: flex-start;
+        text-align: left;
+        gap: 40px; /* Adiciona espaço entre as colunas */
+      }
+    
+      /* 2. Header: Move para o topo da coluna do player */
+      .header {
+        justify-content: flex-start;
+        margin-bottom: 25px;
+      }
+    
+      /* 3. Coluna do Player (.content): Usa GRID para alinhamento misto (central e esquerdo) */
+      .content {
+        flex: 2; /* Dá mais espaço à coluna do player (2/3) */
+        padding-right: 0; 
+        align-items: flex-start; /* Alinhamento dos itens à esquerda por padrão */
+        
+        /* Define a estrutura de layout usando grid */
+        display: grid;
+        grid-template-areas:
+          "header"
+          "title"
+          "desc"
+          "image"
+          "info"
+          "play"
+          "volume"
+          "status-mobile";
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+    
+      /* Posicionamento dos elementos dentro do .content para telas maiores */
+      .header { grid-area: header; }
+      .station-title { grid-area: title; }
+      .station-desc { grid-area: desc; margin-bottom: 25px; }
       
-      /* Ajuste o alinhamento da imagem e dos botões dentro do .content para telas maiores */
-      .content > * {
-          align-self: flex-start;
+      .show-image { 
+          grid-area: image; 
+          justify-self: center; /* CENTRALIZA a imagem horizontalmente */
+          margin-bottom: 30px;
+          width: 250px;
+          height: 250px;
       }
       
-      .content .show-image {
-          align-self: center; /* Centraliza a imagem no meio da coluna do player */
+      .show-info { grid-area: info; margin-top: 25px; }
+      
+      .play-button { 
+          grid-area: play; 
+          width: 100%; 
+          max-width: 350px; 
+          justify-self: center; /* CENTRALIZA o botão */
+          margin-bottom: 20px;
       }
       
-      .content .station-title, .content .station-desc {
-          align-self: flex-start;
-          text-align: left;
+      .volume-control { 
+          grid-area: volume; 
+          width: 100%; 
+          max-width: 350px; 
+          justify-self: center; /* CENTRALIZA o volume */
+          margin-bottom: 30px;
       }
-
-      /* 3. Ajuste do Header */
-      .header {
-        justify-content: flex-start;
-        margin-bottom: 25px;
-      }
-
-      /* 4. Ajuste da Imagem/Capa do Álbum */
-      .show-image {
-        width: 250px;
-        height: 250px;
-        margin-bottom: 30px;
-      }
-
-      /* 5. Ajuste dos Títulos e Descrições */
-      .station-title {
-        font-size: 1.8rem;
-      }
-
-      .station-desc {
-        font-size: 1rem;
-        margin-bottom: 20px;
-      }
-
-      .show-title {
-        font-size: 1.25rem;
-      }
       
-      /* Botões e Sliders para preencher a largura total da coluna do player */
-      .play-button, .volume-control {
-          width: 100%;
-          max-width: 350px; /* Limita a largura para melhor visualização (opcional) */
+      .status { grid-area: status-mobile; margin-top: 20px; padding-top: 0; border-top: none; }
+    
+      /* Ajuste dos Títulos */
+      .station-title {
+        font-size: 1.8rem;
+      }
+    
+      .station-desc {
+        font-size: 1rem;
+      }
+      
+      .show-title {
+        font-size: 1.25rem;
       }
 
-      /* 6. Ajuste da Seção de Histórico (Coluna Direita) */
-      .history-section {
-        width: 350px;
-        margin-top: 0;
-        padding-left: 30px;
-        border-left: 1px solid var(--border-color);
-        align-self: stretch; /* Garante que a coluna do histórico ocupe toda a altura */
-      }
-
-      .history-list {
-        max-height: 400px;
-      }
-
-      /* Remove a linha divisória de baixo no player para evitar redundância */
-      .status {
-        border-top: none;
-        margin-top: 15px;
-        padding-top: 0;
-      }
-    }
-    /* === FIM DAS REGRAS PARA TELAS MAIORES === */
+      /* 4. Coluna do Histórico (.history-section): Define largura e separador */
+      .history-section {
+        flex: 1; /* Dá menos espaço ao histórico (1/3) */
+        width: auto; 
+        min-width: 300px; 
+        margin-top: 0;
+        padding-left: 40px;
+        border-left: 1px solid var(--border-color);
+        align-self: stretch; /* Garante que o histórico ocupe toda a altura */
+      }
+    
+      .history-list {
+        max-height: 450px; /* Aumenta a altura máxima */
+      }
+    }
+    /* === FIM DAS REGRAS CORRIGIDAS PARA TELAS MAIORES === */
   </style>
 </head>
 <body>
@@ -478,14 +493,17 @@
             role="slider"
           />
         </div>
-        <div class="history-section">
-          <div class="history-title">Recently Played</div>
-          <div class="history-list" id="historyList" role="list">
-            <div style="text-align:center;color:#666;padding:16px;">No songs yet...</div>
-          </div>
-        </div>
-        <div class="status" id="status">Connecting to stream... • Real-time updates</div>
+        
+        <div class="status" id="status">Connecting to stream... • Real-time updates</div>
       </div>
+      
+      <div class="history-section">
+        <div class="history-title">Recently Played</div>
+        <div class="history-list" id="historyList" role="list">
+          <div style="text-align:center;color:#666;padding:16px;">No songs yet...</div>
+        </div>
+      </div>
+      
     </div>
   </main>
 
@@ -801,7 +819,7 @@
               console.error("Error fetching cover:", err);
               toggleCoverDisplay(false, '', true);
               coverImg.alt = 'Praise FM U.S. - Live';
-              addToHistory(song, artist, COMMERCIAL_IMAGE_URL);
+              addToHistory('Live', 'Praise FM U.S.', COMMERCIAL_IMAGE_URL);
               currentTitleEl.textContent = 'Praise FM U.S. - Live';
               statusText.textContent = 'LIVE • Live';
             });
