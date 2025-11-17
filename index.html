@@ -278,38 +278,41 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <button class="favorite-btn" id="favoriteBtn" title="Favorite this song" aria-label="Favorite this song">☆</button>
-        </div>
-        <div class="content">
-            <div class="station-title">Praise FM U.S.</div>
-            <div class="station-desc">Praise & Worship</div>
-            <div class="show-image" id="showImage">
-                <img id="coverImg" src="" alt="Current song album cover" />
+    <!-- Adicionado a tag <main> para melhorar a acessibilidade -->
+    <main>
+        <div class="container">
+            <div class="header">
+                <button class="favorite-btn" id="favoriteBtn" title="Favorite this song" aria-label="Favorite this song">☆</button>
             </div>
-            <div class="show-info">
-                <div class="live-indicator">LIVE • <span id="currentTime">—</span></div>
-                <div class="show-title">
-                    <span id="currentTitle">Loading...</span>
+            <div class="content">
+                <div class="station-title">Praise FM U.S.</div>
+                <div class="station-desc">Praise & Worship</div>
+                <div class="show-image" id="showImage">
+                    <img id="coverImg" src="" alt="Current song album cover" />
                 </div>
-                <div class="show-date" id="currentDate">—</div>
-            </div>
-            <button class="play-button" id="playBtn" aria-label="Play or pause radio">▶ Play</button>
-            <div class="volume-control">
-                <label for="volumeSlider" class="sr-only">Adjust volume</label>
-                <i class="fas fa-volume-up" aria-hidden="true"></i>
-                <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.01" value="0.7" aria-valuemin="0" aria-valuenow="0.7" role="slider" />
-            </div>
-            <div class="history-section">
-                <div class="history-title">Recently Played</div>
-                <div class="history-list" id="historyList">
-                    <div style="text-align:center;color:#666;padding:16px;">No songs yet...</div>
+                <div class="show-info">
+                    <div class="live-indicator">LIVE • <span id="currentTime">—</span></div>
+                    <div class="show-title">
+                        <span id="currentTitle">Loading...</span>
+                    </div>
+                    <div class="show-date" id="currentDate">—</div>
                 </div>
+                <button class="play-button" id="playBtn" aria-label="Play or pause radio">▶ Play</button>
+                <div class="volume-control">
+                    <label for="volumeSlider" class="sr-only">Adjust volume</label>
+                    <i class="fas fa-volume-up" aria-hidden="true"></i>
+                    <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.01" value="0.7" aria-valuemin="0" aria-valuenow="0.7" role="slider" />
+                </div>
+                <div class="history-section">
+                    <div class="history-title">Recently Played</div>
+                    <div class="history-list" id="historyList">
+                        <div style="text-align:center;color:#666;padding:16px;">No songs yet...</div>
+                    </div>
+                </div>
+                <div class="status" id="status">Connecting to stream... • Real-time updates</div>
             </div>
-            <div class="status" id="status">Connecting to stream... • Real-time updates</div>
         </div>
-    </div>
+    </main>
     <audio id="radioPlayer" preload="auto" aria-hidden="true"></audio>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
