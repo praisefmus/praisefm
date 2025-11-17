@@ -1,746 +1,320 @@
+<!-- Versão responsiva otimizada do seu HTML, mantendo o layout original (PC) e criando versão fluida e adaptada para celular.  -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Praise FM U.S. — Listen Live</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Praise FM Brasil — Ouça ao Vivo</title>
 
-  <!-- SEO & tema -->
-  <meta name="description" content="Listen live to Praise FM U.S. — Praise & Worship Radio." />
-  <meta name="theme-color" content="#ff527c" />
+    <!-- Preconnect & Fontes -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" />
 
-  <!-- FAVICONS -->
-  <link rel="icon" type="image/png" sizes="32x32" href="https://raw.githubusercontent.com/praisefmus/praisefm/main/image/favicon-32x32.png" />
-  <link rel="icon" type="image/png" sizes="16x16" href="https://raw.githubusercontent.com/praisefmus/praisefm/main/image/favicon-16x16.png" />
-  <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/praisefmus/praisefm/main/image/apple-touch-icon.png" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0RNK6G5iWL"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-0RNK6G5iWL');
-  </script>
+    <style>
+        /* ----------------------- */
+        /* Variáveis Globais       */
+        /* ----------------------- */
+        :root {
+            --primary-color: #ff527c;
+            --secondary-color: #ffffff;
+            --bg-color: #f0f4f8;
+            --text-color: #333;
+            --light-text-color: #666;
+            --border-color: #eee;
+            --shadow-main: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+        }
 
-  <!-- Fonte -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" as="style" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+        /* ----------------------- */
+        /* RESET                   */
+        /* ----------------------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  <!-- Ícones -->
-  <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+        body {
+            font-family: "Poppins", sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+            min-height: 100vh;
+        }
 
-  <style>
-    :root {
-      /* Cores */
-      --primary-color: #ff527c;
-      --secondary-color: #ffffff;
-      --background-color: #f0f4f8;
-      --text-color: #333;
-      --light-text-color: #666;
-      --border-color: #eee;
+        /* ----------------------------- */
+        /* CONTAINER GERAL (LAYOUT PC)   */
+        /* ----------------------------- */
+        .container {
+            display: flex;
+            flex-direction: row;
+            gap: 25px;
+            max-width: 1200px;
+            width: 100%;
+        }
 
-      /* Outros tokens */
-      --radius-lg: 12px;
-      --shadow-main: 0 10px 30px rgba(0, 0, 0, 0.1);
-      --shadow-btn: 0 4px 10px rgba(255, 82, 124, 0.4);
-    }
+        /* ----------------------------- */
+        /* PLAYER (ESQUERDA)             */
+        /* ----------------------------- */
+        .left-panel {
+            flex: 2;
+        }
 
-    /* Reset + base */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
-    }
+        .player-container {
+            background: var(--secondary-color);
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow-main);
+            text-align: center;
+        }
 
-    body {
-      background-color: var(--background-color);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-    }
+        .show-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: var(--shadow-main);
+            margin: 0 auto;
+        }
 
-    .container {
-      background-color: var(--secondary-color);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-main);
-      width: 100%;
-      max-width: 380px;
-      padding: 25px;
-      text-align: center;
-    }
+        .show-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity .25s ease-in-out;
+        }
 
-    .header {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      margin-bottom: 20px;
-      height: 24px;
-    }
+        .now-playing {
+            margin-top: 20px;
+        }
 
-    .favorite-btn {
-      background: none;
-      border: none;
-      color: var(--light-text-color);
-      font-size: 24px;
-      cursor: pointer;
-      padding: 0 5px;
-      transition: color 0.2s;
-    }
+        .title {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
 
-    .favorite-btn.favorited {
-      color: #ffb300;
-    }
+        .artist {
+            font-size: 1.1rem;
+            color: var(--light-text-color);
+        }
 
-    .content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
 
-    .station-title {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--primary-color);
-      margin-bottom: 5px;
-    }
+        .btn-play {
+            background: var(--primary-color);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+            cursor: pointer;
+            transition: .2s;
+        }
 
-    .station-desc {
-      font-size: 0.9rem;
-      color: var(--light-text-color);
-      margin-bottom: 15px;
-    }
+        .btn-play:hover {
+            transform: scale(1.08);
+        }
 
-    .show-image {
-      width: 200px;
-      height: 200px;
-      border-radius: 50%;
-      overflow: hidden;
-      margin-bottom: 25px;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-      transition: transform 0.3s ease-out, border 0.3s ease-out;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: #f0f0f0;
-    }
+        /* ----------------------------- */
+        /* HISTÓRICO (DIREITA)           */
+        /* ----------------------------- */
+        .right-panel {
+            flex: 1;
+        }
 
-    .show-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      transition: opacity 0.25s ease-in-out;
-    }
+        .history-container {
+            background: var(--secondary-color);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow-main);
+            max-height: 600px;
+            overflow-y: auto;
+        }
 
-    .show-image.favorited-cover {
-      border: 3px solid #ffb300;
-      transform: scale(1.02);
-    }
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
 
-    .show-info {
-      margin-bottom: 25px;
-      width: 100%;
-    }
+        .history-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
 
-    .live-indicator {
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: var(--primary-color);
-      text-transform: uppercase;
-      margin-bottom: 5px;
-    }
+        .history-item img {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            object-fit: cover;
+        }
 
-    .show-title {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--text-color);
-      margin-bottom: 2px;
-      word-wrap: break-word;
-      white-space: normal;
-    }
+        /* ----------------------------- */
+        /* 100% RESPONSIVO               */
+        /* ----------------------------- */
+        @media (max-width: 850px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
 
-    .show-date {
-      font-size: 0.8rem;
-      color: var(--light-text-color);
-    }
+            .right-panel {
+                width: 100%;
+            }
 
-    .play-button {
-      background-color: var(--primary-color);
-      color: var(--secondary-color);
-      border: none;
-      border-radius: 50px;
-      padding: 12px 30px;
-      font-size: 1.2rem;
-      font-weight: 700;
-      cursor: pointer;
-      width: 100%;
-      transition: background-color 0.2s, box-shadow 0.2s;
-      margin-bottom: 30px;
-      box-shadow: var(--shadow-btn);
-    }
+            .player-container {
+                width: 100%;
+            }
+        }
 
-    .play-button:hover {
-      background-color: #e5476d;
-      box-shadow: 0 6px 15px rgba(255, 82, 124, 0.6);
-    }
+        @media (max-width: 500px) {
+            .show-image {
+                width: 150px;
+                height: 150px;
+            }
 
-    .volume-control {
-      display: flex;
-      align-items: center;
-      width: 100%;
-      margin-bottom: 30px;
-      padding: 0 10px;
-    }
+            .title {
+                font-size: 1.4rem;
+            }
 
-    .volume-control i {
-      color: var(--light-text-color);
-      margin-right: 10px;
-      font-size: 1.1rem;
-    }
+            .artist {
+                font-size: 1rem;
+            }
 
-    .volume-slider {
-      flex-grow: 1;
-      -webkit-appearance: none;
-      appearance: none;
-      height: 4px;
-      background: var(--border-color);
-      border-radius: 5px;
-      outline: none;
-    }
+            .controls {
+                gap: 12px;
+            }
 
-    .volume-slider::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 14px;
-      height: 14px;
-      background: var(--primary-color);
-      border-radius: 50%;
-      cursor: pointer;
-    }
-
-    .volume-slider::-moz-range-thumb {
-      width: 14px;
-      height: 14px;
-      background: var(--primary-color);
-      border: none;
-      border-radius: 50%;
-      cursor: pointer;
-    }
-
-    .history-section {
-      width: 100%;
-      text-align: left;
-      margin-top: 10px;
-    }
-
-    .history-title {
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--text-color);
-      margin-bottom: 10px;
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: 5px;
-    }
-
-    .history-list {
-      max-height: 200px;
-      overflow-y: auto;
-    }
-
-    .history-item {
-      display: flex;
-      align-items: center;
-      padding: 8px 0;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .history-item:last-child {
-      border-bottom: none;
-    }
-
-    .history-img {
-      width: 40px;
-      height: 40px;
-      border-radius: 4px;
-      overflow: hidden;
-      margin-right: 10px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: var(--background-color);
-    }
-
-    .history-img img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: opacity 0.25s ease-in-out;
-    }
-
-    .history-text {
-      flex-grow: 1;
-      min-width: 0;
-    }
-
-    .history-title-item {
-      font-size: 0.9rem;
-      font-weight: 500;
-      color: var(--text-color);
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .history-artist {
-      font-size: 0.8rem;
-      color: var(--light-text-color);
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .favorite-history {
-      cursor: pointer;
-      font-size: 1.1rem;
-      margin-left: 5px;
-      color: var(--light-text-color);
-      transition: color 0.2s;
-    }
-
-    .favorite-history[data-key*="★"] {
-      color: #ffb300;
-    }
-
-    .status {
-      font-size: 0.8rem;
-      color: var(--light-text-color);
-      padding-top: 20px;
-      border-top: 1px solid var(--border-color);
-      margin-top: 20px;
-    }
-
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      border: 0;
-    }
-  </style>
+            .btn-play {
+                width: 60px;
+                height: 60px;
+            }
+        }
+    </style>
 </head>
+
 <body>
-  <main>
-    <div class="container">
-      <div class="header">
-        <button
-          class="favorite-btn"
-          id="favoriteBtn"
-          title="Favorite this song"
-          aria-label="Favorite this song"
-          aria-pressed="false"
-        >☆</button>
-      </div>
-      <div class="content">
-        <div class="station-title">Praise FM U.S.</div>
-        <div class="station-desc">Praise & Worship</div>
-        <div class="show-image" id="showImage" role="img" aria-label="Album cover">
-          <img
-            id="coverImg"
-            src=""
-            alt="Current song album cover"
-            width="200"
-            height="200"
-            loading="lazy"
-          />
+<div class="container">
+
+    <!-- PAINEL ESQUERDO / PLAYER -->
+    <div class="left-panel">
+        <div class="player-container">
+            <div class="show-image">
+                <img id="coverImg" src="assets/img/logo.webp" alt="Capa do Programa">
+            </div>
+
+            <div class="now-playing">
+                <h2 id="songTitle" class="title">Conectando…</h2>
+                <p id="songArtist" class="artist">Aguarde</p>
+            </div>
+
+            <div class="controls">
+                <button class="btn-play" id="playBtn" aria-label="Reproduzir áudio">
+                    <i class="fas fa-play"></i>
+                </button>
+            </div>
+
+            <audio id="audioPlayer" preload="none">
+                <source src="https://stream-150.zeno.fm/eh6auq9qhc9uv?zs=yE2cM90rT5uMalyBZguZ_g" type="audio/mpeg">
+            </audio>
         </div>
-        <div class="show-info">
-          <div class="live-indicator">LIVE • <span id="currentTime">—</span></div>
-          <div class="show-title">
-            <span id="currentTitle">Loading...</span>
-          </div>
-          <div class="show-date" id="currentDate">—</div>
-        </div>
-        <button
-          class="play-button"
-          id="playBtn"
-          aria-label="Play or pause radio"
-          aria-pressed="false"
-        >▶ Play</button>
-        <div class="volume-control">
-          <label for="volumeSlider" class="sr-only">Adjust volume</label>
-          <i class="fas fa-volume-up" aria-hidden="true"></i>
-          <input
-            type="range"
-            class="volume-slider"
-            id="volumeSlider"
-            min="0"
-            max="1"
-            step="0.01"
-            value="0.7"
-            aria-valuemin="0"
-            aria-valuemax="1"
-            aria-valuenow="0.7"
-            role="slider"
-          />
-        </div>
-        <div class="history-section">
-          <div class="history-title">Recently Played</div>
-          <div class="history-list" id="historyList" role="list">
-            <div style="text-align:center;color:#666;padding:16px;">No songs yet...</div>
-          </div>
-        </div>
-        <div class="status" id="status">Connecting to stream... • Real-time updates</div>
-      </div>
     </div>
-  </main>
 
-  <audio id="radioPlayer" preload="auto" aria-hidden="true"></audio>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const STREAM_URL = 'https://stream.zeno.fm/hvwifp8ezc6tv';
-      const NOWPLAYING_API = 'https://api.zeno.fm/mounts/metadata/subscribe/hvwifp8ezc6tv';
-      const LASTFM_API_KEY = '7744c8f90ee053fc761e0e23bfa00b89';
+    <!-- PAINEL DIREITO / HISTÓRICO -->
+    <div class="right-panel">
+        <div class="history-container">
+            <h3 style="margin-bottom:15px; font-size:1.2rem; font-weight:600;">Tocadas Recentemente</h3>
+            <div class="history-list" id="historyList" role="list"></div>
+        </div>
+    </div>
+</div>
 
-      const STREAM_LOGO_URL = 'https://raw.githubusercontent.com/praisefmus/praisefm/main/image/logopraisefm.webp';
-      const COMMERCIAL_IMAGE_URL = 'https://raw.githubusercontent.com/praisefmus/praisefm/main/image/commercial%20break.png';
+<script>
+// -----------------------------
+// PLAYER CONTROLS
+// -----------------------------
+const audioPlayer = document.getElementById("audioPlayer");
+const playBtn = document.getElementById("playBtn");
+const icon = playBtn.querySelector("i");
 
-      const player = document.getElementById('radioPlayer');
-      const playBtn = document.getElementById('playBtn');
-      const volumeSlider = document.getElementById('volumeSlider');
-      const statusText = document.getElementById('status');
-      const coverImg = document.getElementById('coverImg');
-      const currentTitleEl = document.getElementById('currentTitle');
-      const currentDateEl = document.getElementById('currentDate');
-      const currentTimeEl = document.getElementById('currentTime');
-      const historyList = document.getElementById('historyList');
-      const favoriteBtn = document.getElementById('favoriteBtn');
-      const showImageEl = document.getElementById('showImage');
+let playing = false;
 
-      if (!player || !playBtn || !volumeSlider) {
-        console.error("Error: Essential player elements not found.");
-        statusText.textContent = "Error loading player. Please refresh.";
-        return;
-      }
+playBtn.addEventListener("click", () => {
+    playing ? audioPlayer.pause() : audioPlayer.play();
+});
 
-      let playing = false;
-      let currentTrackKey = '';
-      const history = [];
-      const MAX_HISTORY = 5;
-      let currentSong = '';
-      let currentArtist = '';
+audioPlayer.addEventListener("play", () => {
+    playing = true;
+    icon.classList.replace("fa-play", "fa-pause");
+});
 
-      player.crossOrigin = 'anonymous';
-      player.src = STREAM_URL;
-      player.volume = volumeSlider.value;
+audioPlayer.addEventListener("pause", () => {
+    playing = false;
+    icon.classList.replace("fa-pause", "fa-play");
+});
 
-      coverImg.src = STREAM_LOGO_URL;
-      coverImg.alt = 'Praise FM U.S. Logo';
+// -----------------------------
+// EVENTSOURCE: NOW PLAYING + HISTORY
+// -----------------------------
+function setupNowPlaying() {
+    const eventSource = new EventSource("https://praisefm.onrender.com/events");
 
-      function updatePlayButton() {
-        playBtn.textContent = playing ? '⏸ Pause' : '▶ Play';
-        playBtn.setAttribute('aria-label', playing ? 'Pause radio' : 'Play radio');
-        playBtn.setAttribute('aria-pressed', playing ? 'true' : 'false');
-      }
+    eventSource.onmessage = function(event) {
+        const data = JSON.parse(event.data);
 
-      player.play().then(() => {
-        playing = true;
-        updatePlayButton();
-        statusText.textContent = 'LIVE • Now Playing';
-      }).catch(err => {
-        console.warn('Autoplay blocked — user interaction required');
-        playing = false;
-        updatePlayButton();
-        statusText.textContent = 'Click Play to listen.';
-      });
+        document.getElementById("songTitle").textContent = data.title;
+        document.getElementById("songArtist").textContent = data.artist;
 
-      playBtn.addEventListener('click', () => {
-        if (playing) {
-          player.pause();
-          statusText.textContent = 'Paused';
-        } else {
-          player.play().then(() => {
-            statusText.textContent = 'LIVE • Now Playing';
-          }).catch(err => {
-            statusText.textContent = 'Failed to play — try again.';
-            console.error('Play error:', err);
-          });
-        }
-        playing = !playing;
-        updatePlayButton();
-      });
+        const cover = document.getElementById("coverImg");
+        cover.src = data.cover || "assets/img/logo.webp";
 
-      volumeSlider.addEventListener('input', () => {
-        player.volume = volumeSlider.value;
-        volumeSlider.setAttribute('aria-valuenow', volumeSlider.value);
-        statusText.textContent = `Volume: ${Math.round(player.volume * 100)}%`;
-      });
+        // Atualiza histórico
+        const historyList = document.getElementById("historyList");
+        historyList.innerHTML = "";
 
-      function updateTime() {
-        const now = new Date();
-        const optionsTime = { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'America/Chicago' };
-        const optionsDate = { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'America/Chicago' };
-        const timeFormatted = now.toLocaleTimeString('en-US', optionsTime);
-        const dateFormatted = now.toLocaleDateString('en-US', optionsDate);
-        currentTimeEl.textContent = timeFormatted;
-        currentDateEl.textContent = dateFormatted;
-      }
+        data.history.forEach(item => {
+            const div = document.createElement("div");
+            div.className = "history-item";
 
-      setInterval(updateTime, 1000);
-      updateTime();
-
-      function addToHistory(song, artist, coverUrl = '') {
-        const key = `${artist} - ${song}`;
-        if (key === currentTrackKey) return;
-        currentTrackKey = key;
-
-        const existing = history.findIndex(item => item.song === song && item.artist === artist);
-        if (existing !== -1) history.splice(existing, 1);
-        history.unshift({ song, artist, coverUrl });
-        if (history.length > MAX_HISTORY) history.pop();
-        renderHistory();
-      }
-
-      function renderHistory() {
-        if (history.length === 0) {
-          historyList.innerHTML = '<div style="text-align:center;color:#666;padding:16px;">No songs yet...</div>';
-          return;
-        }
-
-        historyList.innerHTML = history.map(item => {
-          const key = `${item.artist} - ${item.song}`;
-          const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-          const isFav = favorites.includes(key);
-          const star = isFav ? '★' : '☆';
-          const displayImg = item.coverUrl && item.coverUrl !== STREAM_LOGO_URL
-            ? item.coverUrl
-            : STREAM_LOGO_URL;
-
-          return `
-            <div class="history-item" role="listitem">
-              <div class="history-img">
-                <img
-                  src="${displayImg}"
-                  alt="${item.artist} - ${item.song}"
-                  width="40"
-                  height="40"
-                  loading="lazy"
-                />
-              </div>
-              <div class="history-text">
-                <div class="history-title-item">
-                  ${item.song}
-                  <span
-                    class="favorite-history"
-                    data-key="${key}"
-                    role="button"
-                    tabindex="0"
-                    aria-label="Favorite ${item.artist} - ${item.song}"
-                  >${star}</span>
+            div.innerHTML = `
+                <img src="${item.cover || 'assets/img/logo.webp'}" alt="Capa">
+                <div>
+                    <strong>${item.title}</strong><br>
+                    <span style="color:var(--light-text-color); font-size:0.85rem">${item.artist}</span>
                 </div>
-                <div class="history-artist">${item.artist}</div>
-              </div>
-            </div>`;
-        }).join('');
+            `;
 
-        document.querySelectorAll('.favorite-history').forEach(el => {
-          el.addEventListener('click', (e) => {
-            e.stopPropagation();
-            toggleFavorite(el.dataset.key, el);
-          });
-          el.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              toggleFavorite(el.dataset.key, el);
-            }
-          });
+            historyList.appendChild(div);
         });
-      }
+    }
 
-      function toggleFavorite(key, element = null) {
-        let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-        const index = favorites.indexOf(key);
-        if (index === -1) {
-          favorites.push(key);
-        } else {
-          favorites.splice(index, 1);
-        }
-        localStorage.setItem('favorites', JSON.stringify(favorites));
+    eventSource.onerror = function() {
+        console.warn("Conexão perdida. Tentando reconectar…");
+        setTimeout(setupNowPlaying, 5000);
+    }
+}
+setupNowPlaying();
+</script>
 
-        const isNowFav = index === -1;
-        if (key === `${currentArtist} - ${currentSong}`) {
-          favoriteBtn.textContent = isNowFav ? '★' : '☆';
-          favoriteBtn.classList.toggle('favorited', isNowFav);
-          showImageEl.classList.toggle('favorited-cover', isNowFav);
-        }
-        if (element) {
-          element.textContent = isNowFav ? '★' : '☆';
-          element.setAttribute('data-key', key);
-        }
-        updateFavoriteButton();
-      }
-
-      function updateFavoriteButton() {
-        if (!currentSong || !currentArtist) return;
-        const key = `${currentArtist} - ${currentSong}`;
-        const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-        const isFav = favorites.includes(key);
-        favoriteBtn.textContent = isFav ? '★' : '☆';
-        favoriteBtn.classList.toggle('favorited', isFav);
-        showImageEl.classList.toggle('favorited-cover', isFav);
-        favoriteBtn.setAttribute('aria-pressed', isFav ? 'true' : 'false');
-      }
-
-      function isCommercial(title) {
-        const keywords = [
-          'commercial', 'advertisement', 'sponsor', 'spot',
-          'publicidade', 'intervalo', 'break', 'jingle',
-          'comercial', 'anúncio', 'patrocínio'
-        ];
-        const lower = title.toLowerCase()
-          .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-        return keywords.some(k => lower.includes(k));
-      }
-
-      function fetchCoverArt(artist, song) {
-        if (!artist || !song || isCommercial(song) || artist === 'Praise FM U.S.' || song === 'Live') {
-          return Promise.resolve(STREAM_LOGO_URL);
-        }
-        return fetch(`https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${LASTFM_API_KEY}&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(song)}&format=json`)
-          .then(res => res.json())
-          .then(data => {
-            const images = data.track?.album?.image;
-            if (images) {
-              const cover = images.find(img => img.size === 'extralarge') || images[images.length - 1];
-              return cover['#text'] || STREAM_LOGO_URL;
-            }
-            return STREAM_LOGO_URL;
-          })
-          .catch(err => {
-            console.warn('Failed to fetch cover:', err);
-            return STREAM_LOGO_URL;
-          });
-      }
-
-      function isInvalidCover(imageUrl) {
-        return new Promise(resolve => {
-          const img = new Image();
-          img.onload = () => resolve(false);
-          img.onerror = () => resolve(true);
-          img.src = imageUrl;
-          setTimeout(() => resolve(true), 5000);
-        });
-      }
-
-      function toggleCoverDisplay(showImage = true, imageUrl = '', isSpot = false) {
-        if (isSpot) {
-          coverImg.src = COMMERCIAL_IMAGE_URL;
-          coverImg.alt = 'Commercial Break';
-        } else if (showImage && imageUrl && imageUrl !== STREAM_LOGO_URL) {
-          coverImg.src = imageUrl;
-          coverImg.alt = `${currentArtist} - ${currentSong}`;
-        } else {
-          coverImg.src = STREAM_LOGO_URL;
-          coverImg.alt = `${currentArtist} - ${currentSong}`;
-        }
-      }
-
-      function setupNowPlaying() {
-        const eventSource = new EventSource(NOWPLAYING_API);
-        eventSource.onmessage = (event) => {
-          try {
-            const data = JSON.parse(event.data);
-            let streamTitle = (data.streamTitle || '').trim() || 'Unknown Song';
-            streamTitle = streamTitle
-              .replace(/[^\p{L}\p{N}\-.,!? ]+/gu, '')
-              .replace(/\s+/g, ' ')
-              .trim();
-
-            if (!streamTitle || streamTitle.length < 3) {
-              streamTitle = 'Praise FM U.S. - Spot';
-            }
-
-            const isSpot = isCommercial(streamTitle);
-            if (isSpot) {
-              streamTitle = 'Praise FM U.S. - Spot';
-            }
-
-            const parts = streamTitle.split(' - ').map(p => p.trim()).filter(Boolean);
-            const artist = parts[0] || 'Praise FM U.S.';
-            const song = parts.length > 1 ? parts.slice(1).join(' - ') : streamTitle;
-            currentSong = song;
-            currentArtist = artist;
-
-            currentTitleEl.textContent = `${artist} - ${song}`;
-            currentTitleEl.title = `${artist} - ${song}`;
-
-            fetchCoverArt(artist, song).then(coverUrl => {
-              if (!coverUrl || isSpot || coverUrl === STREAM_LOGO_URL) {
-                toggleCoverDisplay(false, '', isSpot);
-                coverImg.alt = isSpot ? 'Commercial Break' : `${artist} - ${song}`;
-                addToHistory(song, artist, isSpot ? COMMERCIAL_IMAGE_URL : STREAM_LOGO_URL);
-              } else {
-                isInvalidCover(coverUrl).then(isInvalid => {
-                  if (isInvalid) {
-                    toggleCoverDisplay(false, '', isSpot);
-                    coverImg.alt = `${artist} - ${song}`;
-                    addToHistory(song, artist, STREAM_LOGO_URL);
-                  } else {
-                    toggleCoverDisplay(true, coverUrl, isSpot);
-                    coverImg.alt = `${artist} - ${song}`;
-                    addToHistory(song, artist, coverImg.src);
-                  }
-                }).catch(() => {
-                  toggleCoverDisplay(false, '', isSpot);
-                  coverImg.alt = `${artist} - ${song}`;
-                  addToHistory(song, artist, STREAM_LOGO_URL);
-                });
-              }
-
-              updateFavoriteButton();
-              statusText.textContent = `LIVE • Now Playing: ${artist} - ${song}`;
-              if (isSpot) {
-                statusText.textContent = '📢 Commercial Break';
-              }
-            }).catch(err => {
-              console.error("Error fetching cover:", err);
-              toggleCoverDisplay(false, '', true);
-              coverImg.alt = 'Praise FM U.S. - Live';
-              addToHistory(song, artist, COMMERCIAL_IMAGE_URL);
-              currentTitleEl.textContent = 'Praise FM U.S. - Live';
-              statusText.textContent = 'LIVE • Live';
-            });
-          } catch (err) {
-            console.warn('Error parsing metadata', err);
-            currentTitleEl.textContent = 'Praise FM U.S. - Live';
-            toggleCoverDisplay(false, '', true);
-            statusText.textContent = 'LIVE • Live';
-            addToHistory('Live', 'Praise FM U.S.', COMMERCIAL_IMAGE_URL);
-          }
-        };
-
-        eventSource.onerror = () => {
-          console.warn('EventSource disconnected, retrying in 5s...');
-          statusText.textContent = 'Connection failed. Retrying...';
-          setTimeout(setupNowPlaying, 5000);
-        };
-      }
-
-      setupNowPlaying();
-      updatePlayButton();
-    });
-  </script>
 </body>
 </html>
