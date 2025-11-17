@@ -50,14 +50,12 @@ document.addEventListener('DOMContentLoaded', () => {
     playing = true;
     updatePlayButton();
     statusText.textContent = 'LIVE • Now Playing';
-  }).catch(err => {
-    console.warn('Autoplay blocked — user interaction required');
+  }).catch(() => {
     playing = false;
     updatePlayButton();
     statusText.textContent = 'Click Play to listen.';
   });
 
-  // ===== EVENTO GOOGLE ANALYTICS: PLAY / PAUSE =====
   playBtn.addEventListener('click', () => {
     if (playing) {
       player.pause();
@@ -90,10 +88,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const now = new Date();
     const optionsTime = { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'America/Chicago' };
     const optionsDate = { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'America/Chicago' };
-    const timeFormatted = now.toLocaleTimeString('en-US', optionsTime);
-    const dateFormatted = now.toLocaleDateString('en-US', optionsDate);
-    currentTimeEl.textContent = timeFormatted;
-    currentDateEl.textContent = dateFormatted;
+    currentTimeEl.textContent = now.toLocaleTimeString('en-US', optionsTime);
+    currentDateEl.textContent = now.toLocaleDateString('en-US', optionsDate);
   }
 
   setInterval(updateTime, 1000);
@@ -106,6 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const existing = history.findIndex(item => item.song === song && item.artist === artist);
     if (existing !== -1) history.splice(existing, 1);
+
     history.unshift({ song, artist, coverUrl });
     if (history.length > MAX_HISTORY) history.pop();
     renderHistory();
@@ -140,16 +137,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }).join('');
 
     document.querySelectorAll('.favorite-history').forEach(el => {
-      el.addEventListener('click', (e) => {
-        e.stopPropagation();
-        toggleFavorite(el.dataset.key, el);
-      });
-      el.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          toggleFavorite(el.dataset.key, el);
-        }
-      });
+      el.addEventListener('click', e => { e.stopPropagation(); toggleFavorite(el.dataset.key, el); });
+      el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleFavorite(el.dataset.key, el); } });
     });
   }
 
@@ -160,17 +149,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!wasFavorite) {
       favorites.push(key);
-      // ===== EVENTO GOOGLE ANALYTICS: FAVORITOU =====
-      gtag('event', 'favorite_add', {
-        event_category: 'Engagement',
-        event_label: key
-      });
+      gtag('event', 'favorite_add', { event_category: 'Engagement', event_label: key });
     } else {
       favorites.splice(index, 1);
-      gtag('event', 'favorite_remove', {
-        event_category: 'Engagement',
-        event_label: key
-      });
+      gtag('event', 'favorite_remove', { event_category: 'Engagement', event_label: key });
     }
 
     localStorage.setItem('favorites', JSON.stringify(favorites));
@@ -180,9 +162,8 @@ document.addEventListener('DOMContentLoaded', () => {
       favoriteBtn.classList.toggle('favorited', !wasFavorite);
       showImageEl.classList.toggle('favorited-cover', !wasFavorite);
     }
-    if (element) {
-      element.textContent = wasFavorite ? '☆' : '★';
-    }
+    if (element) element.textContent = wasFavorite ? '☆' : '★';
+
     updateFavoriteButton();
   }
 
@@ -204,19 +185,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function fetchCoverArt(artist, song) {
-    if (!artist || !song || isCommercial(song) || artist === 'Praise FM U.S.' || song === 'Live') {
-      return Promise.resolve(STREAM_LOGO_URL);
-    }
+    if (!artist || !song || artist === 'Praise FM U.S.' || song === 'Live') return Promise.resolve(STREAM_LOGO_URL);
     return fetch(`https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${LASTFM_API_KEY}&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(song)}&format=json`)
       .then(res => res.json())
-      .then(data => {
-        const images = data.track?.album?.image;
-        if (images) {
-          const cover = images.find(img => img.size === 'extralarge') || images[images.length - 1];
-          return cover['#text'] || STREAM_LOGO_URL;
-        }
-        return STREAM_LOGO_URL;
-      })
+      .then(data => data.track?.album?.image?.find(img => img.size === 'extralarge')?.['#text'] || data.track?.album?.image?.slice(-1)[0]?.['#text'] || STREAM_LOGO_URL)
       .catch(() => STREAM_LOGO_URL);
   }
 
@@ -231,16 +203,16 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function toggleCoverDisplay(showImage = true, imageUrl = '', isSpot = false) {
-    let altText = `${currentArtist} - ${currentSong}`;
     if (isSpot) {
       coverImg.src = COMMERCIAL_IMAGE_URL;
-      altText = 'Commercial Break';
+      coverImg.alt = 'Commercial Break';
     } else if (showImage && imageUrl && imageUrl !== STREAM_LOGO_URL) {
       coverImg.src = imageUrl;
+      coverImg.alt = `${currentArtist} - ${currentSong}`;
     } else {
       coverImg.src = STREAM_LOGO_URL;
+      coverImg.alt = 'Praise FM U.S. Logo';
     }
-    coverImg.alt = altText;
   }
 
   function setupNowPlaying() {
@@ -249,17 +221,26 @@ document.addEventListener('DOMContentLoaded', () => {
       retryCount = 0;
       try {
         const data = JSON.parse(event.data);
-        let streamTitle = (data.streamTitle || '').trim() || 'Unknown Song';
-        streamTitle = streamTitle.replace(/[^\p{L}\p{N}\-.,!? ]+/gu, '').replace(/\s+/g, ' ').trim();
+        let streamTitle = (data.streamTitle || '').trim();
+        streamTitle = streamTitle.replace(/[^\p{L}\p{N}\-.,!?& ]+/gu, '').replace(/\s+/g, ' ').trim();
 
-        if (!streamTitle || streamTitle.length < 3) streamTitle = 'Praise FM U.S. - Spot';
+        const isSpot = isCommercial(streamTitle) || !streamTitle || streamTitle.length < 3;
 
-        const isSpot = isCommercial(streamTitle);
-        if (isSpot) streamTitle = 'Praise FM U.S. - Spot';
+        if (isSpot) {
+          currentSong = '';
+          currentArtist = 'Praise FM U.S.';
+          currentTitleEl.textContent = 'Commercial Break';
+          currentTitleEl.title = 'Commercial Break';
+          toggleCoverDisplay(false, '', true);
+          statusText.textContent = 'Commercial Break';
+          updateFavoriteButton(); // esconde o botão de favorito
+          return;
+        }
 
         const parts = streamTitle.split(' - ').map(p => p.trim()).filter(Boolean);
         const artist = parts[0] || 'Praise FM U.S.';
         const song = parts.length > 1 ? parts.slice(1).join(' - ') : streamTitle;
+
         currentSong = song;
         currentArtist = artist;
 
@@ -267,30 +248,26 @@ document.addEventListener('DOMContentLoaded', () => {
         currentTitleEl.title = `${artist} - ${song}`;
 
         fetchCoverArt(artist, song).then(coverUrl => {
-          if (!coverUrl || isSpot || coverUrl === STREAM_LOGO_URL) {
-            toggleCoverDisplay(false, '', isSpot);
-            addToHistory(song, artist, isSpot ? COMMERCIAL_IMAGE_URL : STREAM_LOGO_URL);
+          if (!coverUrl || coverUrl === STREAM_LOGO_URL) {
+            toggleCoverDisplay(false, '', false);
+            addToHistory(song, artist, STREAM_LOGO_URL);
           } else {
             isInvalidCover(coverUrl).then(isInvalid => {
-              if (isInvalid) {
-                toggleCoverDisplay(false, '', isSpot);
-                addToHistory(song, artist, STREAM_LOGO_URL);
-              } else {
-                toggleCoverDisplay(true, coverUrl, isSpot);
-                addToHistory(song, artist, coverImg.src);
-              }
+              const finalUrl = isInvalid ? STREAM_LOGO_URL : coverUrl;
+              toggleCoverDisplay(!isInvalid, finalUrl, false);
+              addToHistory(song, artist, finalUrl);
             });
           }
 
           updateFavoriteButton();
-          statusText.textContent = isSpot ? 'Commercial Break' : `LIVE • Now Playing: ${artist} - ${song}`;
+          statusText.textContent = `LIVE • Now Playing: ${artist} - ${song}`;
         });
+
       } catch (err) {
         console.warn('Error parsing metadata', err);
         currentTitleEl.textContent = 'Praise FM U.S. - Live';
-        toggleCoverDisplay(false, '', true);
+        toggleCoverDisplay(false, '', false);
         statusText.textContent = 'LIVE • Live';
-        addToHistory('Live', 'Praise FM U.S.', COMMERCIAL_IMAGE_URL);
       }
     };
 
@@ -308,9 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   favoriteBtn.addEventListener('click', () => {
-    if (currentSong && currentArtist) {
-      toggleFavorite(`${currentArtist} - ${currentSong}`);
-    }
+    if (currentSong && currentArtist) toggleFavorite(`${currentArtist} - ${currentSong}`);
   });
 
   setupNowPlaying();
