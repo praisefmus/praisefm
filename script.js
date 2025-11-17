@@ -57,13 +57,16 @@ document.addEventListener('DOMContentLoaded', () => {
     statusText.textContent = 'Click Play to listen.';
   });
 
+  // ===== EVENTO GOOGLE ANALYTICS: PLAY / PAUSE =====
   playBtn.addEventListener('click', () => {
     if (playing) {
       player.pause();
       statusText.textContent = 'Paused';
+      gtag('event', 'pause_radio', { event_category: 'Radio Player' });
     } else {
       player.play().then(() => {
         statusText.textContent = 'LIVE • Now Playing';
+        gtag('event', 'play_radio', { event_category: 'Radio Player' });
       }).catch(err => {
         statusText.textContent = 'Failed to play — try again.';
         console.error('Play error:', err);
@@ -77,7 +80,10 @@ document.addEventListener('DOMContentLoaded', () => {
     player.volume = volumeSlider.value;
     localStorage.setItem('volume', volumeSlider.value);
     volumeSlider.setAttribute('aria-valuenow', volumeSlider.value);
-    statusText.textContent = `Volume: ${Math.round(player.volume * 100)}%`;
+    gtag('event', 'volume_change', {
+      event_category: 'Radio Player',
+      value: Math.round(player.volume * 100)
+    });
   });
 
   function updateTime() {
@@ -116,31 +122,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
       const isFav = favorites.includes(key);
       const star = isFav ? '★' : '☆';
-      const displayImg = item.coverUrl && item.coverUrl !== STREAM_LOGO_URL
-        ? item.coverUrl
-        : STREAM_LOGO_URL;
+      const displayImg = item.coverUrl && item.coverUrl !== STREAM_LOGO_URL ? item.coverUrl : STREAM_LOGO_URL;
 
       return `
         <li class="history-item" role="listitem">
           <div class="history-img">
-            <img
-              src="${displayImg}"
-              alt="${item.artist} - ${item.song}"
-              width="40"
-              height="40"
-              loading="lazy"
-            />
+            <img src="${displayImg}" alt="${item.artist} - ${item.song}" width="40" height="40" loading="lazy" />
           </div>
           <div class="history-text">
             <div class="history-title-item">
               ${item.song}
-              <span
-                class="favorite-history"
-                data-key="${key}"
-                role="button"
-                tabindex="0"
-                aria-label="Favorite ${item.artist} - ${item.song}"
-              >${star}</span>
+              <span class="favorite-history" data-key="${key}" role="button" tabindex="0" aria-label="Favorite ${item.artist} - ${item.song}">${star}</span>
             </div>
             <div class="history-artist">${item.artist}</div>
           </div>
@@ -164,22 +156,32 @@ document.addEventListener('DOMContentLoaded', () => {
   function toggleFavorite(key, element = null) {
     let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
     const index = favorites.indexOf(key);
-    if (index === -1) {
+    const wasFavorite = index !== -1;
+
+    if (!wasFavorite) {
       favorites.push(key);
+      // ===== EVENTO GOOGLE ANALYTICS: FAVORITOU =====
+      gtag('event', 'favorite_add', {
+        event_category: 'Engagement',
+        event_label: key
+      });
     } else {
       favorites.splice(index, 1);
+      gtag('event', 'favorite_remove', {
+        event_category: 'Engagement',
+        event_label: key
+      });
     }
+
     localStorage.setItem('favorites', JSON.stringify(favorites));
 
-    const isNowFav = index === -1;
     if (key === `${currentArtist} - ${currentSong}`) {
-      favoriteBtn.textContent = isNowFav ? '★' : '☆';
-      favoriteBtn.classList.toggle('favorited', isNowFav);
-      showImageEl.classList.toggle('favorited-cover', isNowFav);
+      favoriteBtn.textContent = wasFavorite ? '☆' : '★';
+      favoriteBtn.classList.toggle('favorited', !wasFavorite);
+      showImageEl.classList.toggle('favorited-cover', !wasFavorite);
     }
     if (element) {
-      element.textContent = isNowFav ? '★' : '☆';
-      element.setAttribute('data-key', key);
+      element.textContent = wasFavorite ? '☆' : '★';
     }
     updateFavoriteButton();
   }
@@ -196,13 +198,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function isCommercial(title) {
-    const keywords = [
-      'commercial', 'advertisement', 'sponsor', 'spot',
-      'publicidade', 'intervalo', 'break', 'jingle',
-      'comercial', 'anúncio', 'patrocínio'
-    ];
-    const lower = title.toLowerCase()
-      .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const keywords = ['commercial', 'advertisement', 'sponsor', 'spot', 'publicidade', 'intervalo', 'break', 'jingle', 'comercial', 'anúncio', 'patrocínio'];
+    const lower = title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     return keywords.some(k => lower.includes(k));
   }
 
@@ -220,10 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         return STREAM_LOGO_URL;
       })
-      .catch(err => {
-        console.warn('Failed to fetch cover:', err);
-        return STREAM_LOGO_URL;
-      });
+      .catch(() => STREAM_LOGO_URL);
   }
 
   function isInvalidCover(imageUrl) {
@@ -252,23 +246,16 @@ document.addEventListener('DOMContentLoaded', () => {
   function setupNowPlaying() {
     const eventSource = new EventSource(NOWPLAYING_API);
     eventSource.onmessage = (event) => {
-      retryCount = 0; // Reset retry on success
+      retryCount = 0;
       try {
         const data = JSON.parse(event.data);
         let streamTitle = (data.streamTitle || '').trim() || 'Unknown Song';
-        streamTitle = streamTitle
-          .replace(/[^\p{L}\p{N}\-.,!? ]+/gu, '')
-          .replace(/\s+/g, ' ')
-          .trim();
+        streamTitle = streamTitle.replace(/[^\p{L}\p{N}\-.,!? ]+/gu, '').replace(/\s+/g, ' ').trim();
 
-        if (!streamTitle || streamTitle.length < 3) {
-          streamTitle = 'Praise FM U.S. - Spot';
-        }
+        if (!streamTitle || streamTitle.length < 3) streamTitle = 'Praise FM U.S. - Spot';
 
         const isSpot = isCommercial(streamTitle);
-        if (isSpot) {
-          streamTitle = 'Praise FM U.S. - Spot';
-        }
+        if (isSpot) streamTitle = 'Praise FM U.S. - Spot';
 
         const parts = streamTitle.split(' - ').map(p => p.trim()).filter(Boolean);
         const artist = parts[0] || 'Praise FM U.S.';
@@ -292,23 +279,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 toggleCoverDisplay(true, coverUrl, isSpot);
                 addToHistory(song, artist, coverImg.src);
               }
-            }).catch(() => {
-              toggleCoverDisplay(false, '', isSpot);
-              addToHistory(song, artist, STREAM_LOGO_URL);
             });
           }
 
           updateFavoriteButton();
-          statusText.textContent = `LIVE • Now Playing: ${artist} - ${song}`;
-          if (isSpot) {
-            statusText.textContent = '📢 Commercial Break';
-          }
-        }).catch(err => {
-          console.error("Error fetching cover:", err);
-          toggleCoverDisplay(false, '', true);
-          addToHistory(song, artist, COMMERCIAL_IMAGE_URL);
-          currentTitleEl.textContent = 'Praise FM U.S. - Live';
-          statusText.textContent = 'LIVE • Live';
+          statusText.textContent = isSpot ? 'Commercial Break' : `LIVE • Now Playing: ${artist} - ${song}`;
         });
       } catch (err) {
         console.warn('Error parsing metadata', err);
@@ -320,7 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     eventSource.onerror = () => {
-      console.warn('EventSource disconnected, retrying in 5s...');
+      console.warn('EventSource disconnected, retrying...');
       statusText.textContent = 'Connection failed. Retrying...';
       eventSource.close();
       if (retryCount < MAX_RETRIES) {
@@ -340,6 +315,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   setupNowPlaying();
   updatePlayButton();
-  volumeSlider.value = player.volume; // Sync slider with persisted volume
-  updateFavoriteButton(); // Inicializa favoritos
+  volumeSlider.value = player.volume;
+  updateFavoriteButton();
 });
