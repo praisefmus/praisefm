@@ -3,198 +3,46 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Praise FM U.S.</title>
+    <title>Praise FM U.S. — Live Player</title>
 
-    <!-- ======================= FAVICONS ======================= -->
-    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png" />
-    <link rel="manifest" href="/favicon/site.webmanifest" />
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" href="./image/favicon.png" />
+    <link rel="apple-touch-icon" href="./image/apple-touch-icon.png" />
 
-    <!-- ======================= FONTES ======================= -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-
-    <!-- ======================= ESTILOS ======================= -->
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background: white;
-            font-family: "Poppins", sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 420px;
-            padding: 40px 20px;
-            text-align: center;
-        }
-
-        h1 {
-            margin: 0;
-            font-size: 26px;
-            font-weight: 600;
-            color: #e53981;
-        }
-
-        h2 {
-            margin: -5px 0 20px 0;
-            font-size: 14px;
-            font-weight: 300;
-            color: #555;
-        }
-
-        .cover {
-            width: 260px;
-            height: 260px;
-            border-radius: 50%;
-            margin: 0 auto 25px auto;
-            background-size: cover;
-            background-position: center;
-            background-image: url("logopraisefm.webp");
-            border: 8px solid #f3f3f3;
-        }
-
-        .nowplaying {
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 20px;
-        }
-
-        .btn {
-            background: #ff4f98;
-            color: white;
-            padding: 12px;
-            width: 90%;
-            border-radius: 25px;
-            border: none;
-            cursor: pointer;
-            font-size: 15px;
-            margin-bottom: 15px;
-        }
-
-        .volume {
-            width: 90%;
-        }
-
-        .section-title {
-            margin-top: 35px;
-            font-size: 14px;
-            font-weight: 600;
-            text-align: left;
-        }
-
-        .history-item {
-            border-bottom: 1px solid #eee;
-            padding: 10px 0;
-            display: flex;
-            gap: 10px;
-        }
-
-        footer {
-            margin-top: 40px;
-            font-size: 11px;
-            color: #666;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
+    <div class="player-container">
 
-    <div class="container">
+        <header class="header">
+            <h1>Praise FM U.S.</h1>
+            <p class="tagline">Praise & Worship</p>
+        </header>
 
-        <h1>Praise FM U.S.</h1>
-        <h2>Praise & Worship</h2>
-
-        <!-- CAPA -->
-        <div id="cover" class="cover"></div>
-
-        <!-- MÚSICA ATUAL -->
-        <div id="nowPlaying" class="nowplaying">
-            Loading...
+        <div class="cover-wrapper">
+            <img id="coverArt" src="./image/logopraisefm.webp" alt="Cover" class="cover" />
         </div>
 
-        <!-- PLAYER -->
-        <audio id="player" src="https://stream.zeno.fm/hvwifp8ezc6tv"></audio>
+        <div class="nowplaying">
+            <span id="statusText">LIVE • Connecting...</span>
+            <h2 id="currentTitle">Loading...</h2>
+        </div>
 
-        <button id="playButton" class="btn">▶ Play</button>
+        <div class="controls">
+            <button id="playButton" class="btn">Play</button>
+            <input id="volumeControl" type="range" min="0" max="1" step="0.01" value="0.7" />
+        </div>
 
-        <input type="range" id="volume" class="volume" min="0" max="1" step="0.01" value="0.7">
+        <section class="history">
+            <h3>Recently Played</h3>
+            <ul id="historyList"></ul>
+        </section>
 
-        <!-- RECENTLY PLAYED -->
-        <div class="section-title">Recently Played</div>
-        <div id="history"></div>
-
-        <footer>
+        <footer class="footer">
             LIVE • Audio Connected
         </footer>
     </div>
 
-    <!-- ======================= JAVASCRIPT ======================= -->
-    <script>
-        const STREAM_URL = "https://stream.zeno.fm/hvwifp8ezc6tv";
-        const API = "https://api.zeno.fm/mounts/metadata/subscribe/hvwifp8ezc6tv";
-
-        const audio = document.getElementById("player");
-        const playBtn = document.getElementById("playButton");
-        const volume = document.getElementById("volume");
-        const cover = document.getElementById("cover");
-        const nowPlaying = document.getElementById("nowPlaying");
-        const historyBox = document.getElementById("history");
-
-        // PLAY/PAUSE
-        playBtn.addEventListener("click", () => {
-            if (audio.paused) {
-                audio.play();
-                playBtn.textContent = "❚❚ Pause";
-            } else {
-                audio.pause();
-                playBtn.textContent = "▶ Play";
-            }
-        });
-
-        volume.addEventListener("input", () => {
-            audio.volume = volume.value;
-        });
-
-        // NOW PLAYING API
-        async function loadNowPlaying() {
-            try {
-                const res = await fetch(API);
-                const data = await res.json();
-
-                const song = data?.metadata?.title || "Live Stream";
-                const art = data?.metadata?.artwork;
-
-                nowPlaying.textContent = song;
-
-                // CAPA (fallback para logo)
-                if (art) {
-                    cover.style.backgroundImage = `url(${art})`;
-                } else {
-                    cover.style.backgroundImage = `url('logopraisefm.webp')`;
-                }
-
-                // ADICIONA AO HISTÓRICO
-                const item = document.createElement("div");
-                item.className = "history-item";
-                item.innerHTML = `
-                    <img src="${art || "logopraisefm.webp"}" width="48" height="48" style="border-radius:6px;">
-                    <div>${song}</div>
-                `;
-                historyBox.prepend(item);
-
-            } catch (e) {
-                nowPlaying.textContent = "Live";
-            }
-        }
-
-        setInterval(loadNowPlaying, 7000);
-        loadNowPlaying();
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
