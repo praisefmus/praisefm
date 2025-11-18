@@ -1,90 +1,259 @@
+:root {
+  --primary-color: #ff527c;
+  --secondary-color: #ffffff;
+  --background-color: #ffffff; /* fundo branco */
+  --text-color: #333;
+  --light-text-color: #666;
+  --border-color: #eee;
+  --radius-lg: 12px;
+  --shadow-main: 0 10px 30px rgba(0, 0, 0, 0.1);
+  --shadow-btn: 0 4px 10px rgba(255, 82, 124, 0.4);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
 body {
-    margin: 0;
-    background: #ffffff;
-    font-family: Arial, sans-serif;
-    color: #111;
-    display: flex;
-    justify-content: center;
+  background-color: var(--background-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
 }
 
-.app {
-    text-align: center;
-    max-width: 500px;
-    width: 100%;
-    padding: 20px;
+.container {
+  background-color: var(--secondary-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-main);
+  width: 100%;
+  max-width: 380px;
+  padding: 25px;
+  text-align: center;
 }
 
-.cover-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 30px;
+.header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
 }
 
-#cover {
-    width: 80%;
-    max-width: 280px;
-    border-radius: 12px;
-    box-shadow: 0px 0px 25px rgba(0,0,0,0.15);
+.favorite-btn {
+  background: none;
+  border: none;
+  color: var(--light-text-color);
+  font-size: 24px;
+  cursor: pointer;
+  transition: color 0.2s;
 }
 
-h2 {
-    margin-top: 20px;
-    font-size: 22px;
-    font-weight: 600;
+.favorite-btn.favorited {
+  color: #ffb300;
 }
 
-/* PLAYER BARRA ESTILO SPOTIFY */
-.player-bar {
-    background: #ff008c; /* ROSA */
-    padding: 14px;
-    border-radius: 50px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    margin-top: 25px;
-    box-shadow: 0px 5px 20px rgba(255,0,140,0.3);
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-/* Botão PLAY */
+.station-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 5px;
+}
+
+.station-desc {
+  font-size: 0.9rem;
+  color: var(--light-text-color);
+  margin-bottom: 15px;
+}
+
+.show-image {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 25px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.show-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.25s ease-in-out;
+}
+
+.show-info {
+  margin-bottom: 25px;
+  width: 100%;
+}
+
+.live-indicator {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.show-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-color);
+  word-wrap: break-word;
+}
+
+.show-date {
+  font-size: 0.8rem;
+  color: var(--light-text-color);
+}
+
 .play-button {
-    background: white;
-    color: #ff008c;
-    border: none;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    font-size: 22px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.2s;
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+  border: none;
+  border-radius: 50px;
+  padding: 12px 30px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 30px;
+  box-shadow: var(--shadow-btn);
+  transition: background-color 0.2s, transform 0.1s ease-in-out;
 }
 
 .play-button:hover {
-    transform: scale(1.1);
+  background-color: #e5476d;
+  transform: translateY(-2px);
 }
 
-/* Volume Slider */
-#volumeSlider {
-    width: 100%;
+.volume-control {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 30px;
 }
 
-/* RECENTLY PLAYED */
-.recent-container {
-    text-align: left;
-    margin-top: 40px;
+.volume-slider {
+  flex-grow: 1;
+  appearance: none;
+  height: 4px;
+  background: var(--border-color);
+  border-radius: 5px;
+  outline: none;
 }
 
-.recent-container h3 {
-    font-size: 20px;
-    margin-bottom: 10px;
+.volume-slider::-webkit-slider-thumb {
+  width: 14px;
+  height: 14px;
+  background: var(--primary-color);
+  border-radius: 50%;
+  cursor: pointer;
+  appearance: none;
 }
 
-#recentList {
-    list-style: none;
-    padding: 0;
+.volume-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  background: var(--primary-color);
+  border-radius: 50%;
+  cursor: pointer;
 }
 
-#recentList li {
-    padding: 6px 0;
-    border-bottom: 1px solid #ddd;
+.history-section {
+  width: 100%;
+  text-align: left;
+  margin-top: 10px;
+}
+
+.history-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-color);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+}
+
+.history-list {
+  max-height: 200px;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.history-item:last-child {
+  border-bottom: none;
+}
+
+.history-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-right: 10px;
+  background-color: var(--background-color);
+}
+
+.history-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.history-text {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.history-title-item {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.history-artist {
+  font-size: 0.8rem;
+  color: var(--light-text-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.status {
+  font-size: 0.8rem;
+  color: var(--light-text-color);
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+  margin-top: 20px;
+}
+
+@media (min-width: 480px) {
+  .container { max-width: 450px; padding: 30px; }
+  .show-image { width: 250px; height: 250px; }
+  .station-title { font-size: 1.8rem; }
+  .play-button { padding: 15px 40px; font-size: 1.4rem; }
+  .history-list { max-height: 250px; }
+}
+
+@media (min-width: 768px) {
+  .container { max-width: 600px; padding: 40px; }
+  .show-image { width: 300px; height: 300px; }
+  .history-list { max-height: 300px; }
 }
