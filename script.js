@@ -4,14 +4,11 @@ const blurBg = document.getElementById('blur-background');
 const artistSpan = document.getElementById('artist');
 const trackSpan = document.getElementById('track');
 
-// Música inicial (exemplo)
-let currentSong = {
-  artist: 'Needtobreathe',
-  track: 'Brother'
-};
-
 // Fallback do logo
 const LOGO_URL = '/image/logopraisefm.webp';
+
+// Música inicial (exemplo)
+let currentSong = { artist: 'Needtobreathe', track: 'Brother' };
 
 async function updateCover(song) {
   try {
@@ -27,7 +24,6 @@ async function updateCover(song) {
 
     artistSpan.textContent = song.artist;
     trackSpan.textContent = song.track;
-
   } catch (err) {
     console.error('Erro ao buscar capa:', err);
     coverImg.src = LOGO_URL;
@@ -35,7 +31,8 @@ async function updateCover(song) {
   }
 }
 
-// Inicializa a capa
+// Inicializa capa
 updateCover(currentSong);
 
 // Aqui você pode adicionar lógica para atualizar currentSong dinamicamente
+// por exemplo, integrando com a API de Now Playing do seu stream.
