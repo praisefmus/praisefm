@@ -6,6 +6,7 @@ body {
   align-items: center;
   height: 100vh;
   margin: 0;
+  flex-direction: column;
 }
 
 #player {
@@ -21,6 +22,7 @@ body {
   height: 300px;
   overflow: hidden;
   border-radius: 20px;
+  margin-bottom: 10px;
 }
 
 #cover {
@@ -49,7 +51,13 @@ body {
 }
 
 #song-info {
-  margin-top: 15px;
+  margin-top: 5px;
   font-weight: bold;
   text-shadow: 0 0 5px black;
+}
+
+audio {
+  width: 100%;
+  margin-top: 10px;
+  border-radius: 10px;
 }
