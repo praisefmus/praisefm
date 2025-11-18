@@ -1,183 +1,124 @@
 const STREAM_URL = "https://stream.zeno.fm/hvwifp8ezc6tv";
 const NOWPLAYING_API = "https://api.zeno.fm/mounts/metadata/subscribe/hvwifp8ezc6tv";
-const STREAM_LOGO_URL = "image/logopraisefm.webp";
 
-const audio = document.getElementById("radioPlayer");
-const playBtn = document.getElementById("playBtn");
+const STREAM_LOGO_URL = "/image/logopraisefm.webp";
+
+const audio = document.getElementById("audioPlayer");
+const playButton = document.getElementById("playButton");
 const volumeSlider = document.getElementById("volumeSlider");
+const coverImage = document.getElementById("coverImage");
 const currentTitleEl = document.getElementById("currentTitle");
-const currentTimeEl = document.getElementById("currentTime");
-const statusText = document.getElementById("status");
-const coverImg = document.getElementById("coverImg");
 const historyList = document.getElementById("historyList");
-const favoriteBtn = document.getElementById("favoriteBtn");
+const statusText = document.getElementById("status");
 
 let retryCount = 0;
-const MAX_RETRIES = 5;
-
 let currentSong = "";
 let currentArtist = "";
 
-// Atualiza horário de Chicago
-function updateChicagoTime() {
-  const now = new Date();
-  const chicago = now.toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZone: "America/Chicago"
-  });
-  currentTimeEl.textContent = chicago;
-}
-setInterval(updateChicagoTime, 30000);
-updateChicagoTime();
+audio.src = STREAM_URL;
+audio.volume = 0.7;
 
-// Play / Pause
-playBtn.addEventListener("click", () => {
+playButton.addEventListener("click", () => {
   if (audio.paused) {
-    audio.src = STREAM_URL + "?t=" + Date.now();
-    audio.play().then(() => {
-      playBtn.textContent = "❚❚ Pause";
-      playBtn.setAttribute("aria-pressed", "true");
-    }).catch(err => {
-      console.error("Error playing:", err);
-      statusText.textContent = "Error playing stream";
-    });
+    audio.play();
+    playButton.textContent = "⏸ Pause";
   } else {
     audio.pause();
-    playBtn.textContent = "▶ Play";
-    playBtn.setAttribute("aria-pressed", "false");
+    playButton.textContent = "▶ Listen Live";
   }
 });
 
-// Volume
-volumeSlider.addEventListener("input", (e) => {
-  audio.volume = e.target.value;
+volumeSlider.addEventListener("input", () => {
+  audio.volume = volumeSlider.value;
 });
 
-// Verifica se a capa é inválida (404)
-async function isInvalidCover(url) {
-  try {
-    const res = await fetch(url, { method: "HEAD" });
-    return !res.ok;
-  } catch {
-    return true;
-  }
+/* --- IGNORAR COMMERCIAL BREAK E REPETIÇÕES --- */
+function isCommercial(text) {
+  text = text.toLowerCase();
+  return (
+    text.includes("commercial") ||
+    text.includes("break") ||
+    text.includes("spot") ||
+    text.includes("ad")
+  );
 }
 
-// Busca capa no LastFM
-async function fetchCoverArt(artist, song) {
-  const apiKey = "7744c8f90ee053fc761e3b7a8dfe88b1"; // troque se tiver outro
-  const endpoint = `https://ws.audioscrobbler.com/2.0/?method=track.getInfo&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(song)}&api_key=${apiKey}&format=json`;
-  try {
-    const res = await fetch(endpoint);
-    const data = await res.json();
-    const img = data?.track?.album?.image?.pop()?.["#text"];
-    return img || STREAM_LOGO_URL;
-  } catch {
-    return STREAM_LOGO_URL;
-  }
-}
-
-// Adiciona no histórico (evita duplicatas)
+/* --- ADICIONAR AO HISTÓRICO --- */
 function addToHistory(song, artist, cover) {
-  const newKey = `${artist} - ${song}`;
-  if (historyList.firstChild) {
-    const firstText = historyList.firstChild.querySelector(".history-title-item")?.textContent;
-    if (firstText === newKey) {
-      return;
-    }
-  }
+  const item = document.createElement("li");
+  item.className = "history-item";
 
-  const li = document.createElement("li");
-  li.className = "history-item";
-  li.innerHTML = `
-    <div class="history-img"><img src="${cover}" alt="${song}" /></div>
+  item.innerHTML = `
+    <div class="history-img"><img src="${cover}"></div>
     <div class="history-text">
-      <div class="history-title-item">${artist} - ${song}</div>
+      <div class="history-title-item">${song}</div>
+      <div class="history-artist">${artist}</div>
     </div>
   `;
-  historyList.prepend(li);
+
+  historyList.prepend(item);
 }
 
-// Favoritos
-function updateFavoriteButton() {
-  const key = `${currentArtist} - ${currentSong}`;
-  const favs = JSON.parse(localStorage.getItem("favorites") || "[]");
-  favoriteBtn.classList.toggle("favorited", favs.includes(key));
-}
-favoriteBtn.addEventListener("click", () => {
-  const key = `${currentArtist} - ${currentSong}`;
-  let favs = JSON.parse(localStorage.getItem("favorites") || "[]");
-  if (favs.includes(key)) {
-    favs = favs.filter(item => item !== key);
-  } else {
-    favs.push(key);
-  }
-  localStorage.setItem("favorites", JSON.stringify(favs));
-  updateFavoriteButton();
-});
-
-// Pega metadados do Zeno
+/* --- INICIAR METADATA --- */
 function setupNowPlaying() {
-  const eventSource = new EventSource(NOWPLAYING_API);
-  eventSource.onmessage = async (event) => {
-    retryCount = 0;
+  const es = new EventSource(NOWPLAYING_API);
+
+  es.onmessage = (event) => {
     try {
       const data = JSON.parse(event.data);
-      let streamTitle = (data.streamTitle || "").trim();
-      streamTitle = streamTitle.replace(/[^\p{L}\p{N}\-.,!?& ]+/gu, "").replace(/\s+/g, " ").trim();
+      let title = (data.streamTitle || "").trim();
 
-      // se for commercial break
-      if (streamTitle.toLowerCase().includes("commercial break")) {
-        currentArtist = "Commercial Break";
-        currentSong = "";
-        currentTitleEl.textContent = "Commercial Break";
-        statusText.textContent = "LIVE • Commercial Break";
-        coverImg.src = STREAM_LOGO_URL;
-        return;
-      }
-
-      // se for jingle ou vazio
-      if (!streamTitle || streamTitle.toLowerCase().includes("praise fm")) {
-        currentArtist = "Praise FM U.S.";
-        currentSong = "";
-        currentTitleEl.textContent = "Praise FM U.S.";
+      if (!title || isCommercial(title)) {
         statusText.textContent = "LIVE • Praise FM U.S.";
-        coverImg.src = STREAM_LOGO_URL;
+        currentTitleEl.textContent = "Praise FM U.S.";
+        coverImage.src = STREAM_LOGO_URL;
         return;
       }
 
-      // música normal
-      const parts = streamTitle.split(" - ").map(p => p.trim()).filter(Boolean);
-      const artist = parts[0];
-      const song = parts.slice(1).join(" - ") || parts[0];
-      currentArtist = artist;
+      const parts = title.split(" - ");
+      const artist = parts[0] || "Praise FM";
+      const song = parts[1] || title;
+
+      if (song === currentSong && artist === currentArtist) return;
+
       currentSong = song;
+      currentArtist = artist;
 
       currentTitleEl.textContent = `${artist} - ${song}`;
-      statusText.textContent = `LIVE • Now Playing`;
+      statusText.textContent = `LIVE • Now Playing: ${artist} - ${song}`;
 
-      const coverUrl = await fetchCoverArt(artist, song);
-      const invalid = await isInvalidCover(coverUrl);
-      coverImg.src = invalid ? STREAM_LOGO_URL : coverUrl;
-
-      addToHistory(song, artist, coverUrl);
-      updateFavoriteButton();
-
-    } catch (err) {
-      console.warn("Erro no metadata:", err);
+      fetchCover(artist, song);
+    } catch (e) {
+      console.log("Metadata error:", e);
     }
   };
 
-  eventSource.onerror = () => {
-    retryCount++;
-    statusText.textContent = "Reconnecting...";
-    eventSource.close();
-    if (retryCount < MAX_RETRIES) {
-      setTimeout(setupNowPlaying, 5000);
-    } else {
-      statusText.textContent = "Connection failed.";
-    }
+  es.onerror = () => {
+    es.close();
+    setTimeout(setupNowPlaying, 5000);
   };
 }
+
+/* --- BUSCAR CAPA NO LASTFM --- */
+async function fetchCover(artist, song) {
+  try {
+    const r = await fetch(
+      `https://ws.audioscrobbler.com/2.0/?method=track.getInfo&artist=${encodeURIComponent(
+        artist
+      )}&track=${encodeURIComponent(
+        song
+      )}&api_key=7744c8f90ee053fc761e6a2f7e45f409&format=json`
+    );
+
+    const json = await r.json();
+    const img =
+      json?.track?.album?.image?.pop()?.["#text"] || STREAM_LOGO_URL;
+
+    coverImage.src = img;
+    addToHistory(song, artist, img);
+  } catch {
+    coverImage.src = STREAM_LOGO_URL;
+  }
+}
+
 setupNowPlaying();
