@@ -1,210 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Praise FM</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Praise FM U.S. — Live</title>
 
-  <!-- FAVICONS -->
-  <link rel="icon" href="/image/favicon.ico" />
-  <link rel="apple-touch-icon" href="/image/apple-touch-icon.png" />
-  <link rel="manifest" href="/image/site.webmanifest" />
+  <!-- Favicons -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/image/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/image/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/image/favicon-16x16.png">
 
-  <style>
-    :root {
-      --pink: #ff2d70;
-      --gray: #f2f2f2;
-      --text: #111;
-    }
-
-    body {
-      margin: 0;
-      padding: 0;
-      background: #fff;
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      text-align: center;
-      overflow: hidden;
-    }
-
-    /* dynamic background */
-    .bg-expand {
-      position: fixed;
-      inset: 0;
-      background-size: cover;
-      background-position: center;
-      filter: blur(45px) brightness(1.2);
-      transform: scale(1.25);
-      transition: background-image 0.6s ease;
-      z-index: -1;
-    }
-
-    .container {
-      max-width: 420px;
-      width: 100%;
-      padding: 20px;
-    }
-
-    /* COVER */
-    .cover {
-      width: 100%;
-      aspect-ratio: 1;
-      border-radius: 22px;
-      background: var(--gray);
-      overflow: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-bottom: 25px;
-    }
-
-    .cover img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    /* TITLE */
-    #title {
-      font-size: 1.3rem;
-      font-weight: 600;
-      margin-bottom: 18px;
-    }
-
-    /* PLAYER BUTTON */
-    .player-btn {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      border: none;
-      background: var(--pink);
-      color: #fff;
-      font-size: 34px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      box-shadow: 0 8px 18px rgba(255, 45, 112, 0.4);
-      margin: 25px auto;
-      transition: 0.25s ease;
-    }
-
-    .player-btn:active {
-      transform: scale(0.94);
-    }
-
-    /* INFO */
-    #status {
-      opacity: 0.6;
-      font-size: 0.9rem;
-      margin-bottom: 30px;
-    }
-
-    /* HISTORY */
-    .history-title {
-      margin: 20px 0 10px;
-      font-weight: 600;
-      font-size: 1rem;
-    }
-
-    .history-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    .history-item {
-      font-size: 0.92rem;
-      padding: 10px 0;
-      border-bottom: 1px solid #eee;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="bg-expand" id="bg"></div>
-  <div class="container">
-    <div class="cover" id="cover-box">
-      <img src="image/logopraisefm.webp" id="cover" alt="Cover" />
-    </div>
+  <!-- Blurred dynamic background -->
+  <div id="bgExpand" class="bg-expand" aria-hidden="true"></div>
 
-    <div id="title">Praise FM U.S.</div>
+  <main class="app" role="main">
+    <section class="player-card" aria-label="Praise FM Live player">
+      <div class="cover-wrap">
+        <img id="coverImg" class="cover" src="/image/logopraisefm.webp" alt="Cover art">
+      </div>
 
-    <button class="player-btn" id="play">▶</button>
+      <div class="meta">
+        <div class="meta-top">
+          <span class="live-pill">LIVE • <span id="currentTime">--:--</span></span>
+        </div>
 
-    <div id="status">LIVE • Praise FM U.S.</div>
+        <h1 id="currentTitle" class="track-title">Praise FM U.S.</h1>
+        <p id="currentSub" class="track-sub">Praise & Worship</p>
+      </div>
 
-    <div class="history-title">Recently Played</div>
-    <ul class="history-list" id="history"></ul>
-  </div>
+      <div class="controls">
+        <button id="playBtn" class="play-circle" aria-pressed="false" aria-label="Play or pause">
+          <span id="playIcon" class="play-icon" aria-hidden="true"></span>
+        </button>
 
-  <script>
-    const STREAM_URL = "https://stream.zeno.fm/hvwifp8ezc6tv";
-    const NOWPLAYING_API = "https://api.zeno.fm/mounts/metadata/subscribe/hvwifp8ezc6tv";
-    const fallbackCover = "image/logopraisefm.webp";
+        <div class="control-stack" aria-hidden="true">
+          <div class="progress-shell" aria-hidden="true">
+            <div id="progressBar" class="progress-bar"></div>
+          </div>
 
-    const audio = new Audio(STREAM_URL);
-    audio.crossOrigin = "anonymous";
+          <div class="volume-row" aria-hidden="true">
+            <input id="volumeSlider" class="volume-slider" type="range" min="0" max="1" step="0.01" value="0.7" aria-label="Volume">
+          </div>
+        </div>
+      </div>
 
-    const playBtn = document.getElementById("play");
-    const statusText = document.getElementById("status");
-    const titleText = document.getElementById("title");
-    const coverImg;
-    const bg = document.getElementById("bg"); = document.getElementById("cover");
-    const historyList = document.getElementById("history");
+      <div class="recent">
+        <h2>Recently Played</h2>
+        <ul id="historyList" class="history-list" role="list">
+          <li class="empty">No songs yet…</li>
+        </ul>
+      </div>
 
-    let playing = false;
+      <div id="status" class="status" role="status">Connecting…</div>
+    </section>
+  </main>
 
-    playBtn.onclick = () => {
-      if (!playing) {
-        audio.play();
-        playBtn.innerHTML = "⏸";
-        playing = true;
-      } else {
-        audio.pause();
-        playBtn.innerHTML = "▶";
-        playing = false;
-      }
-    };
+  <audio id="radioPlayer" preload="auto" aria-hidden="true"></audio>
 
-    function addHistory(artist, song) {
-      const li = document.createElement("li");
-      li.className = "history-item";
-      li.textContent = `${artist} - ${song}`;
-      historyList.prepend(li);
-    }
-
-    function setupNowPlaying() {
-      const eventSource = new EventSource(NOWPLAYING_API);
-
-      eventSource.onmessage = evt => {
-        try {
-          const data = JSON.parse(evt.data);
-          let title = (data.streamTitle || "").trim();
-
-          const parts = title.split(" - ");
-          const artist = parts[0] || "Praise FM";
-          const song = parts[1] || "";
-
-          if (!song) return;
-
-          titleText.textContent = `${artist} - ${song}`;
-          statusText.textContent = `LIVE • Now Playing`;
-
-          coverImg.src = fallbackCover;
-          bg.style.backgroundImage = `url(${fallbackCover})`;
-
-          addHistory(artist, song);
-        } catch (e) {
-          console.log("Metadata error", e);
-        }
-      };
-    }
-
-    setupNowPlaying();
-  </script>
+  <script src="script.js" defer></script>
 </body>
 </html>
