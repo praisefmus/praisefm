@@ -1,65 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Praise FM U.S. — Live</title>
-
-  <!-- Favicons -->
-  <link rel="apple-touch-icon" sizes="180x180" href="/image/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/image/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/image/favicon-16x16.png">
-
-  <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Praise FM Player</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Blurred dynamic background -->
-  <div id="bgExpand" class="bg-expand" aria-hidden="true"></div>
+  <div id="player">
+    <div id="cover-container">
+      <img id="cover" src="https://raw.githubusercontent.com/praisefmus/praisefm/main/image/logopraisefm.webp" alt="Capa ou logo">
+      <div id="blur-background"></div>
+    </div>
+    <div id="song-info">
+      <span id="artist">Artista</span> - <span id="track">Música</span>
+    </div>
+  </div>
 
-  <main class="app" role="main">
-    <section class="player-card" aria-label="Praise FM Live player">
-      <div class="cover-wrap">
-        <img id="coverImg" class="cover" src="/image/logopraisefm.webp" alt="Cover art">
-      </div>
-
-      <div class="meta">
-        <div class="meta-top">
-          <span class="live-pill">LIVE • <span id="currentTime">--:--</span></span>
-        </div>
-
-        <h1 id="currentTitle" class="track-title">Praise FM U.S.</h1>
-        <p id="currentSub" class="track-sub">Praise & Worship</p>
-      </div>
-
-      <div class="controls">
-        <button id="playBtn" class="play-circle" aria-pressed="false" aria-label="Play or pause">
-          <span id="playIcon" class="play-icon" aria-hidden="true"></span>
-        </button>
-
-        <div class="control-stack" aria-hidden="true">
-          <div class="progress-shell" aria-hidden="true">
-            <div id="progressBar" class="progress-bar"></div>
-          </div>
-
-          <div class="volume-row" aria-hidden="true">
-            <input id="volumeSlider" class="volume-slider" type="range" min="0" max="1" step="0.01" value="0.7" aria-label="Volume">
-          </div>
-        </div>
-      </div>
-
-      <div class="recent">
-        <h2>Recently Played</h2>
-        <ul id="historyList" class="history-list" role="list">
-          <li class="empty">No songs yet…</li>
-        </ul>
-      </div>
-
-      <div id="status" class="status" role="status">Connecting…</div>
-    </section>
-  </main>
-
-  <audio id="radioPlayer" preload="auto" aria-hidden="true"></audio>
-
-  <script src="script.js" defer></script>
+  <script src="player.js"></script>
 </body>
 </html>
