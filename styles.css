@@ -1,100 +1,90 @@
-:root{
-  --primary-color:#ff527c;
-  --secondary-color:#ffffff;
-  --background-color:#ffffff; /* branco conforme pedido */
-  --text-color:#222;
-  --light-text-color:#7a7a7a;
-  --border-color:#eee;
-  --radius-lg:14px;
-  --shadow-main:0 12px 30px rgba(0,0,0,0.08);
-  --shadow-btn:0 8px 20px rgba(255,82,124,0.18);
+body {
+    margin: 0;
+    padding: 0;
+    background: #ffffff;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
 }
 
-/* reset */
-*{box-sizing:border-box;margin:0;padding:0;font-family:'Poppins',sans-serif}
-html,body{height:100%;background:var(--background-color);color:var(--text-color)}
-body{display:flex;align-items:center;justify-content:center;padding:30px}
-
-/* cartão central */
-.container{
-  width:100%;
-  max-width:420px;
-  background:var(--secondary-color);
-  border-radius:var(--radius-lg);
-  box-shadow:var(--shadow-main);
-  padding:30px;
-  text-align:center;
+.player-container {
+    width: 100%;
+    max-width: 450px;
+    padding: 25px;
+    text-align: center;
 }
 
-/* header */
-.header{display:flex;justify-content:flex-end}
-.favorite-btn{
-  background:none;border:none;font-size:20px;color:var(--light-text-color);cursor:pointer;
+.header h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
 }
-.favorite-btn.favorited{color:#ffb300}
 
-/* conteúdo */
-.content{display:flex;flex-direction:column;align-items:center}
-.station-title{color:var(--primary-color);font-weight:700;font-size:1.6rem;margin-top:6px}
-.station-desc{color:var(--light-text-color);font-size:0.9rem;margin-bottom:18px}
-
-/* capa circular */
-.show-image{
-  width:260px;height:260px;border-radius:50%;overflow:hidden;margin-bottom:22px;
-  display:flex;align-items:center;justify-content:center;background:#f3f3f3;
-  box-shadow:0 8px 30px rgba(0,0,0,0.06);
+.tagline {
+    margin-top: 5px;
+    color: #777;
 }
-.show-image img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s ease,opacity .25s}
 
-/* info do show */
-.show-info{width:100%;margin-bottom:20px}
-.live-indicator{display:block;color:var(--primary-color);font-weight:600;font-size:0.75rem;margin-bottom:6px}
-.show-title{font-size:1.05rem;font-weight:600;margin-bottom:4px;word-wrap:break-word}
-.show-date{font-size:0.85rem;color:var(--light-text-color)}
-
-/* botão principal estilo "pill" */
-.play-button{
-  background:var(--primary-color);
-  color:var(--secondary-color);
-  border:none;
-  border-radius:50px;
-  padding:14px 34px;
-  font-size:1.1rem;font-weight:700;
-  cursor:pointer;margin-bottom:22px;
-  box-shadow:var(--shadow-btn);
-  transition:transform .12s ease,box-shadow .12s ease;
-  width:100%;
+.cover-wrapper {
+    margin: 25px 0;
 }
-.play-button:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(255,82,124,0.2)}
-.play-button:active{transform:translateY(0)}
 
-/* volume */
-.volume-control{display:flex;align-items:center;width:100%;gap:12px;padding:0 6px;margin-bottom:18px}
-.volume-control i{color:var(--light-text-color);font-size:1rem}
-.volume-slider{flex:1;appearance:none;height:6px;background:var(--border-color);border-radius:6px;outline:none}
-.volume-slider::-webkit-slider-thumb{appearance:none;width:14px;height:14px;border-radius:50%;background:var(--primary-color);cursor:pointer}
-.volume-slider::-moz-range-thumb{width:14px;height:14px;background:var(--primary-color);border-radius:50%}
-
-/* histórico */
-.history-section{width:100%;text-align:left;margin-top:6px}
-.history-title{font-weight:700;color:var(--text-color);font-size:1rem;border-bottom:1px solid var(--border-color);padding-bottom:8px;margin-bottom:10px}
-.history-list{list-style:none;max-height:220px;overflow:auto;padding:0;margin:0}
-.history-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border-color)}
-.history-img{width:48px;height:48px;border-radius:6px;overflow:hidden;background:#fafafa;flex-shrink:0}
-.history-img img{width:100%;height:100%;object-fit:cover}
-.history-text{font-size:0.95rem}
-.history-title-item{font-weight:600;display:flex;justify-content:space-between;gap:6px}
-.history-artist{font-size:0.85rem;color:var(--light-text-color);margin-top:2px}
-
-/* status */
-.status{font-size:0.85rem;color:var(--light-text-color);margin-top:16px;border-top:1px solid var(--border-color);padding-top:12px}
-
-/* responsividade */
-@media (min-width:480px){
-  .container{max-width:480px;padding:34px}
-  .show-image{width:300px;height:300px}
+.cover {
+    width: 80%;
+    border-radius: 100%;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
 }
-@media (min-width:768px){
-  .container{max-width:600px;padding:40px}
-  .show-image{width:340px;height:340px}
+
+.nowplaying {
+    margin-bottom: 20px;
+}
+
+#currentTitle {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.controls {
+    margin: 20px 0;
+}
+
+.btn {
+    background: #ff4f8b;
+    padding: 14px 35px;
+    border: none;
+    border-radius: 30px;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+
+#volumeControl {
+    width: 70%;
+    margin-top: 12px;
+}
+
+.history {
+    margin-top: 20px;
+    text-align: left;
+}
+
+.history h3 {
+    border-bottom: 2px solid #eee;
+    padding-bottom: 8px;
+}
+
+.history li {
+    list-style: none;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.footer {
+    margin-top: 30px;
+    font-size: 12px;
+    color: #777;
 }
