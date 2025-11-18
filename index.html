@@ -1,102 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Praise FM U.S. — Listen Live</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Praise FM U.S. — Live Player</title>
 
-  <!-- SEO -->
-  <meta name="description" content="Listen live to Praise FM U.S. — Praise & Worship Radio." />
-  <meta name="theme-color" content="#ff527c" />
+  <link href="style.css" rel="stylesheet">
 
-  <!-- FAVICONS -->
-  <link rel="icon" type="image/png" sizes="32x32" href="https://raw.githubusercontent.com/praisefmus/praisefm/main/image/favicon-32x32.png" />
-  <link rel="icon" type="image/png" sizes="16x16" href="https://raw.githubusercontent.com/praisefmus/praisefm/main/image/favicon-16x16.png" />
-  <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/praisefmus/praisefm/main/image/apple-touch-icon.png" />
-
-  <!-- Google tag -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0RNK6G5iWL"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-0RNK6G5iWL');
-  </script>
-
-  <!-- Font -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-
-  <!-- Icons -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
-
-  <!-- CSS -->
-  <link rel="stylesheet" href="styles.css" />
+  <!-- Ícones (volume, coração etc) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
 <body>
 
-  <section class="content">
-    <header class="header">
-      <button
-        class="favorite-btn"
-        id="favoriteBtn"
-        title="Favorite this song"
-        aria-label="Favorite this song"
-        aria-pressed="false"
-      >☆</button>
-    </header>
+  <div class="container">
+      
+      <!-- Header com Favorito -->
+      <div class="header">
+        <button id="favorite-btn" class="favorite-btn">
+          <i class="fa-regular fa-star"></i>
+        </button>
+      </div>
 
-    <h1 class="station-title">Praise FM U.S.</h1>
-    <p class="station-desc">Praise & Worship</p>
+      <!-- Informação da Rádio -->
+      <div class="content">
+        <h1 class="station-title">Praise FM U.S.</h1>
+        <p class="station-desc">Your home for worship & praise</p>
 
-    <figure class="show-image" id="showImage">
-      <img
-        id="coverImg"
-        src=""
-        alt="Album cover"
-        width="200"
-        height="200"
-        loading="lazy"
-      />
-    </figure>
+        <!-- Capa da Música -->
+        <div id="cover-wrapper" class="show-image">
+          <img id="cover" src="logo.webp" alt="Cover Art">
+        </div>
 
-    <div class="show-info">
-      <span class="live-indicator">LIVE • <span id="currentTime">—</span></span>
-      <h2 class="show-title"><span id="currentTitle">Loading...</span></h2>
-      <p class="show-date" id="currentDate">—</p>
-    </div>
+        <!-- Informações da Música -->
+        <div class="show-info">
+          <div class="live-indicator">LIVE NOW</div>
 
-    <button class="play-button" id="playBtn" aria-label="Play radio">▶ Play</button>
+          <div id="current-title" class="show-title">Loading...</div>
+          <div id="current-artist" class="show-date"></div>
+        </div>
 
-    <div class="volume-control">
-      <i class="fas fa-volume-up"></i>
-      <input
-        type="range"
-        class="volume-slider"
-        id="volumeSlider"
-        min="0"
-        max="1"
-        step="0.01"
-        value="0.7"
-      />
-    </div>
+        <!-- Botão Play -->
+        <button id="play-btn" class="play-button">▶ Play</button>
 
-    <section class="history-section">
-      <h3 class="history-title">Recently Played</h3>
-      <ul class="history-list" id="historyList">
-        <li style="text-align:center;color:#666;padding:16px;">No songs yet...</li>
-      </ul>
-    </section>
+        <!-- Controle de Volume -->
+        <div class="volume-control">
+          <i class="fa-solid fa-volume-high"></i>
+          <input id="volume-slider" class="volume-slider" type="range" min="0" max="1" step="0.01">
+        </div>
 
-    <footer class="status" id="status">
-      Connecting to stream... • Real-time updates
-    </footer>
-  </section>
+        <!-- Histórico -->
+        <div class="history-section">
+          <div class="history-title">Recently Played</div>
+          <ul id="history-list" class="history-list"></ul>
+        </div>
 
-  <audio id="radioPlayer" preload="auto"></audio>
+        <!-- Status -->
+        <div id="status" class="status">Connecting...</div>
 
-  <script src="script.js" defer></script>
+      </div>
+  </div>
+
+  <!-- Player de Áudio (necessário!) -->
+  <audio id="audio-player" src="https://stream.zeno.fm/hvwifp8ezc6tv"></audio>
+
+  <script src="script.js"></script>
+
 </body>
 </html>
