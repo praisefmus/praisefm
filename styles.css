@@ -1,13 +1,13 @@
 :root {
-  /* Cores */
+  /* Cores - fundo branco puro */
   --primary-color: #ff527c;
   --secondary-color: #ffffff;
-  --background-color: #f0f4f8;
+  --background-color: #ffffff;   /* Fundo branco em tudo */
   --text-color: #333;
   --light-text-color: #666;
   --border-color: #eee;
 
-  /* Outros tokens */
+  /* Sombras e radius */
   --radius-lg: 12px;
   --shadow-main: 0 10px 30px rgba(0, 0, 0, 0.1);
   --shadow-btn: 0 4px 10px rgba(255, 82, 124, 0.4);
@@ -304,7 +304,7 @@ body {
   border: 0;
 }
 
-/* Responsividade */
+/* Responsividade (igual ao que você gostava) */
 @media (min-width: 480px) {
   .container { max-width: 450px; padding: 30px; }
   .show-image { width: 250px; height: 250px; }
