@@ -4,14 +4,14 @@ const blurBg = document.getElementById('blur-background');
 const artistSpan = document.getElementById('artist');
 const trackSpan = document.getElementById('track');
 
-// Exemplo inicial de música
+// Música inicial (exemplo)
 let currentSong = {
   artist: 'Needtobreathe',
   track: 'Brother'
 };
 
-// Link do logo da Praise FM como fallback
-const LOGO_URL = 'https://raw.githubusercontent.com/praisefmus/praisefm/main/image/logopraisefm.webp';
+// Fallback do logo
+const LOGO_URL = '/image/logopraisefm.webp';
 
 async function updateCover(song) {
   try {
@@ -37,3 +37,5 @@ async function updateCover(song) {
 
 // Inicializa a capa
 updateCover(currentSong);
+
+// Aqui você pode adicionar lógica para atualizar currentSong dinamicamente
