@@ -1,62 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Praise FM U.S.</title>
 
   <!-- Favicons -->
-  <link rel="icon" type="image/png" sizes="32x32" href="image/favicon-32x32.png" />
-  <link rel="icon" type="image/png" sizes="16x16" href="image/favicon-16x16.png" />
-  <link rel="apple-touch-icon" href="image/apple-touch-icon.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/image/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/image/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/image/favicon-16x16.png">
+  <link rel="manifest" href="/image/site.webmanifest">
 
-  <!-- Fonte e ícones -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css">
 
-  <!-- CSS -->
-  <link rel="stylesheet" href="styles.css" />
+  <!-- Icons -->
+  <script src="https://kit.fontawesome.com/4d53d79e8b.js" crossorigin="anonymous"></script>
 </head>
+
 <body>
+
   <div class="container">
+
     <header class="header">
-      <button id="favoriteBtn" class="favorite-btn" aria-label="Favorite this song">☆</button>
+      <button id="favoriteBtn" class="favorite-btn">☆</button>
     </header>
 
     <div class="content">
       <h1 class="station-title">Praise FM U.S.</h1>
-      <p class="station-desc">Praise & Worship</p>
+      <p class="station-desc">Positive. Encouraging. Praise.</p>
 
-      <figure class="show-image">
-        <img id="coverImg" src="image/logopraisefm.webp" alt="Album cover" />
-      </figure>
-
-      <div class="show-info">
-        <span class="live-indicator">LIVE • <span id="currentTime">--:--</span></span>
-        <h2 class="show-title"><span id="currentTitle">Loading...</span></h2>
-        <p class="show-date" id="currentDate">—</p>
+      <div id="showImage" class="show-image">
+        <img id="coverImage" src="/image/logopraisefm.webp" alt="Cover Art">
       </div>
 
-      <button id="playBtn" class="play-button">▶ Play</button>
+      <div class="show-info">
+        <div id="liveIndicator" class="live-indicator">LIVE</div>
+        <div id="currentTitle" class="show-title">Praise FM U.S.</div>
+        <div id="currentDate" class="show-date"></div>
+      </div>
+
+      <button id="playButton" class="play-button">▶ Listen Live</button>
 
       <div class="volume-control">
         <i class="fas fa-volume-up"></i>
-        <input type="range" id="volumeSlider" class="volume-slider" min="0" max="1" step="0.01" value="0.7" />
+        <input type="range" id="volumeSlider" class="volume-slider" min="0" max="1" step="0.01" value="0.7">
       </div>
 
       <section class="history-section">
-        <h3 class="history-title">Recently Played</h3>
-        <ul id="historyList" class="history-list">
-          <li style="text-align: center; color: #666; padding: 16px;">No songs yet...</li>
-        </ul>
+        <h2 class="history-title">Recently Played</h2>
+        <ul id="historyList" class="history-list"></ul>
       </section>
 
-      <footer id="status" class="status">Connecting to stream…</footer>
+      <div id="status" class="status">Connecting...</div>
+
     </div>
   </div>
 
-  <audio id="radioPlayer" preload="auto"></audio>
+  <audio id="audioPlayer"></audio>
 
-  <script src="script.js" defer></script>
+  <script src="script.js"></script>
+
 </body>
 </html>
