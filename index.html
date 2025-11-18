@@ -1,77 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Praise FM U.S. — Live</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Praise FM U.S. — Live</title>
 
-  <!-- Favicons (coloque os arquivos em /image) -->
-  <link rel="apple-touch-icon" sizes="180x180" href="/image/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/image/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/image/favicon-16x16.png">
-  <link rel="manifest" href="/image/site.webmanifest">
+    <!-- FAVICONS -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/image/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/image/favicon-16x16.png">
+    <link rel="apple-touch-icon" href="/image/apple-touch-icon.png">
 
-  <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <main class="app">
-    <header class="app-header">
-      <div class="brand">
-        <img src="/image/logopraisefm.webp" alt="Praise FM" class="brand-logo">
-        <div>
-          <h1 class="brand-title">Praise FM U.S.</h1>
-          <p class="brand-sub">Praise & Worship</p>
-        </div>
-      </div>
-      <button id="favoriteBtn" class="icon-btn" aria-label="Favorite">☆</button>
-    </header>
 
-    <section class="player-card" role="region" aria-label="Radio player">
-      <div class="cover-wrap">
-        <img id="coverImg" src="/image/logopraisefm.webp" alt="Cover art" class="cover">
-      </div>
+<header class="top-header">
+    <img src="/image/logopraisefm.webp" class="header-logo" alt="Praise FM Logo">
+    <h1 class="header-title">Praise FM U.S.</h1>
+</header>
 
-      <div class="meta">
-        <div class="meta-top">
-          <span class="live-pill">LIVE • <span id="currentTime">--:--</span></span>
-        </div>
-        <h2 id="currentTitle" class="track-title">Praise FM U.S.</h2>
-        <p id="currentDate" class="track-sub">—</p>
-      </div>
+<main class="container">
 
-      <div class="controls">
-        <button id="playBtn" class="play-circle" aria-pressed="false" aria-label="Play">
-          <svg id="playIcon" viewBox="0 0 64 64" width="28" height="28" fill="none" aria-hidden="true">
-            <path d="M22 18v28l20-14L22 18z" fill="#000"></path>
-          </svg>
-        </button>
+    <!-- COVER -->
+    <div class="cover-wrapper">
+        <img id="coverImg" src="/image/logopraisefm.webp" class="cover-img" alt="Now Playing">
+    </div>
 
-        <div class="control-stack">
-          <div class="progress-shell" aria-hidden="true">
-            <div id="progressBar" class="progress-bar"></div>
-          </div>
-          <div class="volume-row">
-            <i class="fas fa-volume-up" aria-hidden="true"></i>
-            <input id="volumeSlider" class="volume-slider" type="range" min="0" max="1" step="0.01" value="0.7" aria-label="Volume">
-          </div>
-        </div>
-      </div>
+    <!-- NOW PLAYING TEXT -->
+    <div class="now-playing">
+        <span class="live-dot"></span> LIVE • <span id="currentTime"></span>
+    </div>
 
-      <div class="recent">
+    <h2 id="currentTitle" class="track-title">Praise FM U.S.</h2>
+
+    <!-- PLAYER BUTTON -->
+    <button id="playBtn" class="play-btn" aria-label="Play">
+        ▶
+    </button>
+
+    <!-- VOLUME -->
+    <div class="vol-box">
+        <input id="volumeSlider" type="range" min="0" max="1" step="0.01" value="0.7" />
+    </div>
+
+    <!-- STATUS -->
+    <div id="status" class="status">Connecting…</div>
+
+    <!-- RECENTLY PLAYED -->
+    <section class="recent-section">
         <h3>Recently Played</h3>
-        <ul id="historyList" class="history-list" role="list">
-          <li class="empty">No songs yet...</li>
+        <ul id="historyList" class="history-list">
+            <li class="empty">No songs yet…</li>
         </ul>
-      </div>
-
-      <div id="status" class="status">Connecting…</div>
     </section>
-  </main>
 
-  <audio id="radioPlayer" preload="auto" aria-hidden="true"></audio>
+</main>
 
-  <!-- FontAwesome for icons (only used for volume icon) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous"></script>
-  <script src="script.js" defer></script>
+<audio id="radioPlayer" preload="auto"></audio>
+<script src="script.js" defer></script>
 </body>
 </html>
