@@ -1,124 +1,219 @@
+// CONFIG
 const STREAM_URL = "https://stream.zeno.fm/hvwifp8ezc6tv";
 const NOWPLAYING_API = "https://api.zeno.fm/mounts/metadata/subscribe/hvwifp8ezc6tv";
+const STREAM_LOGO = "/image/logopraisefm.webp";
 
-const STREAM_LOGO_URL = "/image/logopraisefm.webp";
-
-const audio = document.getElementById("audioPlayer");
-const playButton = document.getElementById("playButton");
+// DOM
+const audio = document.getElementById("radioPlayer");
+const playBtn = document.getElementById("playBtn");
+const coverImg = document.getElementById("coverImg");
 const volumeSlider = document.getElementById("volumeSlider");
-const coverImage = document.getElementById("coverImage");
 const currentTitleEl = document.getElementById("currentTitle");
+const statusEl = document.getElementById("status");
 const historyList = document.getElementById("historyList");
-const statusText = document.getElementById("status");
+const currentTimeEl = document.getElementById("currentTime");
+const progressBar = document.getElementById("progressBar");
+const favoriteBtn = document.getElementById("favoriteBtn");
 
-let retryCount = 0;
-let currentSong = "";
 let currentArtist = "";
+let currentSong = "";
+let retryCount = 0;
+const MAX_RETRIES = 6;
+const recentSet = new Set();
 
+// Initialize audio
 audio.src = STREAM_URL;
-audio.volume = 0.7;
+audio.preload = "auto";
+audio.volume = parseFloat(volumeSlider.value || 0.7);
 
-playButton.addEventListener("click", () => {
+// Chicago time
+function updateChicagoTime() {
+  const now = new Date();
+  const chicago = now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", timeZone: "America/Chicago" });
+  currentTimeEl.textContent = chicago;
+}
+updateChicagoTime();
+setInterval(updateChicagoTime, 30000);
+
+// Play / Pause toggle
+playBtn.addEventListener("click", () => {
   if (audio.paused) {
-    audio.play();
-    playButton.textContent = "⏸ Pause";
+    playStream();
   } else {
     audio.pause();
-    playButton.textContent = "▶ Listen Live";
+    setPlayButton(false);
   }
 });
 
-volumeSlider.addEventListener("input", () => {
-  audio.volume = volumeSlider.value;
+function playStream(){
+  audio.src = STREAM_URL + "?_=" + Date.now();
+  audio.play().then(() => setPlayButton(true)).catch(err => {
+    console.error("Play error:", err);
+    statusEl.textContent = "Unable to play stream";
+  });
+}
+
+function setPlayButton(playing){
+  const svgPath = document.querySelector("#playIcon path");
+  if (playing) {
+    playBtn.setAttribute("aria-pressed", "true");
+    // change icon to pause visually
+    playBtn.innerHTML = '⏸';
+  } else {
+    playBtn.setAttribute("aria-pressed", "false");
+    playBtn.innerHTML = '<svg id="playIcon" viewBox="0 0 64 64" width="28" height="28" fill="none"><path d="M22 18v28l20-14L22 18z" fill="#000"></path></svg>';
+  }
+}
+
+// Volume
+volumeSlider.addEventListener("input", (e) => {
+  audio.volume = e.target.value;
 });
 
-/* --- IGNORAR COMMERCIAL BREAK E REPETIÇÕES --- */
-function isCommercial(text) {
-  text = text.toLowerCase();
-  return (
-    text.includes("commercial") ||
-    text.includes("break") ||
-    text.includes("spot") ||
-    text.includes("ad")
-  );
+// Helpers
+function isCommercialText(t){
+  if (!t) return true;
+  const s = t.toLowerCase();
+  return s.includes("commercial") || s.includes("spot") || s.includes("ad") || s.includes("break");
 }
 
-/* --- ADICIONAR AO HISTÓRICO --- */
-function addToHistory(song, artist, cover) {
-  const item = document.createElement("li");
-  item.className = "history-item";
+function safeText(t){
+  try {
+    return t.replace(/[^\p{L}\p{N}\-.,!?&'’ ]+/gu, ' ').replace(/\s+/g,' ').trim();
+  } catch {
+    return t || "";
+  }
+}
 
-  item.innerHTML = `
-    <div class="history-img"><img src="${cover}"></div>
-    <div class="history-text">
-      <div class="history-title-item">${song}</div>
-      <div class="history-artist">${artist}</div>
+// Avoid duplicates and add to history
+function addToHistory(artist, song, cover){
+  const key = `${artist} - ${song}`;
+  if (!song || isCommercialText(key)) return;
+  if (recentSet.has(key)) return;
+  recentSet.add(key);
+
+  // cap max history to 30
+  if (recentSet.size > 30) {
+    const first = historyList.lastElementChild;
+    if (first) {
+      const txt = first.querySelector('.history-title')?.textContent || '';
+      recentSet.delete(txt);
+      historyList.removeChild(first);
+    }
+  }
+
+  const li = document.createElement("li");
+  li.className = "history-item";
+  li.innerHTML = `
+    <div class="history-thumb"><img src="${cover || STREAM_LOGO}" alt="${song}"></div>
+    <div class="history-meta">
+      <div class="history-title">${artist} - ${song}</div>
+      <div class="history-sub">${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div>
     </div>
   `;
-
-  historyList.prepend(item);
+  historyList.prepend(li);
 }
 
-/* --- INICIAR METADATA --- */
-function setupNowPlaying() {
+// LastFM cover fetch (best effort)
+async function fetchCover(artist, song){
+  try {
+    const apiKey = "7744c8f90ee053fc761e6a2f7e45f409";
+    const endpoint = `https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${apiKey}&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(song)}&format=json`;
+    const res = await fetch(endpoint);
+    const json = await res.json();
+    const img = json?.track?.album?.image?.pop()?.["#text"];
+    return img || STREAM_LOGO;
+  } catch {
+    return STREAM_LOGO;
+  }
+}
+
+// Check if cover reachable
+async function isCoverValid(url){
+  try {
+    const res = await fetch(url, { method: 'HEAD' });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
+// NowPlaying setup via EventSource
+function setupNowPlaying(){
   const es = new EventSource(NOWPLAYING_API);
 
-  es.onmessage = (event) => {
+  es.onmessage = async (e) => {
+    retryCount = 0;
     try {
-      const data = JSON.parse(event.data);
-      let title = (data.streamTitle || "").trim();
+      const data = JSON.parse(e.data);
+      let streamTitle = safeText(data.streamTitle || "");
 
-      if (!title || isCommercial(title)) {
-        statusText.textContent = "LIVE • Praise FM U.S.";
+      if (!streamTitle || isCommercialText(streamTitle) || streamTitle.toLowerCase().includes('praise fm')) {
+        // show station name and keep radio art
+        currentArtist = "Praise FM U.S.";
+        currentSong = "";
         currentTitleEl.textContent = "Praise FM U.S.";
-        coverImage.src = STREAM_LOGO_URL;
+        coverImg.src = STREAM_LOGO;
+        statusEl.textContent = "LIVE • Praise FM U.S.";
         return;
       }
 
-      const parts = title.split(" - ");
-      const artist = parts[0] || "Praise FM";
-      const song = parts[1] || title;
+      // handle "Commercial Break - Commercial Break" specifically
+      if (streamTitle.toLowerCase().includes("commercial break")) {
+        currentArtist = "Commercial Break";
+        currentSong = "";
+        currentTitleEl.textContent = "Commercial Break";
+        coverImg.src = STREAM_LOGO;
+        statusEl.textContent = "LIVE • Commercial Break";
+        return;
+      }
 
-      if (song === currentSong && artist === currentArtist) return;
+      // parse "Artist - Title" or fallback
+      const parts = streamTitle.split(" - ").map(p => p.trim()).filter(Boolean);
+      let artist = parts[0] || "Unknown";
+      let song = parts.slice(1).join(" - ") || parts[0] || streamTitle;
 
-      currentSong = song;
+      // avoid ads/jingles
+      if (isCommercialText(artist) || isCommercialText(song)) {
+        return;
+      }
+
+      // if same as currently shown, ignore
+      if (artist === currentArtist && song === currentSong) return;
+
       currentArtist = artist;
+      currentSong = song;
+      currentTitleEl.textContent = `${artist} — ${song}`;
+      statusEl.textContent = `LIVE • Now Playing`;
 
-      currentTitleEl.textContent = `${artist} - ${song}`;
-      statusText.textContent = `LIVE • Now Playing: ${artist} - ${song}`;
+      // fetch cover art
+      const coverUrl = await fetchCover(artist, song);
+      const valid = await isCoverValid(coverUrl);
+      coverImg.src = valid ? coverUrl : STREAM_LOGO;
 
-      fetchCover(artist, song);
-    } catch (e) {
-      console.log("Metadata error:", e);
+      // animate a short progress to indicate new track (visual only)
+      progressBar.style.width = "0%";
+      setTimeout(()=> progressBar.style.width = "30%", 120);
+      setTimeout(()=> progressBar.style.width = "60%", 700);
+
+      // add to history if unique
+      addToHistory(artist, song, valid ? coverUrl : STREAM_LOGO);
+
+    } catch (err) {
+      console.warn("NowPlaying parse error:", err);
     }
   };
 
   es.onerror = () => {
+    retryCount++;
+    statusEl.textContent = "Connection lost — reconnecting…";
     es.close();
-    setTimeout(setupNowPlaying, 5000);
+    if (retryCount < MAX_RETRIES) {
+      setTimeout(setupNowPlaying, 5000);
+    } else {
+      statusEl.textContent = "Connection failed. Please refresh.";
+    }
   };
-}
-
-/* --- BUSCAR CAPA NO LASTFM --- */
-async function fetchCover(artist, song) {
-  try {
-    const r = await fetch(
-      `https://ws.audioscrobbler.com/2.0/?method=track.getInfo&artist=${encodeURIComponent(
-        artist
-      )}&track=${encodeURIComponent(
-        song
-      )}&api_key=7744c8f90ee053fc761e6a2f7e45f409&format=json`
-    );
-
-    const json = await r.json();
-    const img =
-      json?.track?.album?.image?.pop()?.["#text"] || STREAM_LOGO_URL;
-
-    coverImage.src = img;
-    addToHistory(song, artist, img);
-  } catch {
-    coverImage.src = STREAM_LOGO_URL;
-  }
 }
 
 setupNowPlaying();
