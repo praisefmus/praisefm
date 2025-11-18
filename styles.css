@@ -2,7 +2,7 @@
   /* Cores */
   --primary-color: #ff527c;
   --secondary-color: #ffffff;
-  --background-color: #ffffff; /* Mudado para branco para mesclar com o container */
+  --background-color: #f0f4f8;
   --text-color: #333;
   --light-text-color: #666;
   --border-color: #eee;
@@ -25,18 +25,18 @@ body {
   background-color: var(--background-color);
   display: flex;
   justify-content: center;
-  align-items: flex-start; /* Alterado para start para evitar centralização vertical em telas altas */
+  align-items: center;
   min-height: 100vh;
-  padding: 0; /* Removido padding para full-screen */
+  padding: 20px;
 }
 
 .container {
   background-color: var(--secondary-color);
-  border-radius: 0; /* Removido radius para full-screen */
-  box-shadow: none; /* Removida sombra para mesclar com o body */
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-main);
   width: 100%;
-  min-height: 100vh; /* Garante que cubra a altura total */
-  padding: 20px;
+  max-width: 380px;
+  padding: 25px;
   text-align: center;
 }
 
@@ -239,7 +239,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #f0f0f0; /* Ajustado para não contrastar */
+  background-color: var(--background-color);
 }
 
 .history-img img {
@@ -314,19 +314,12 @@ body {
     --light-text-color: #aaa;
     --border-color: #333;
   }
-
-  .show-image {
-    background-color: #333;
-  }
-
-  .history-img {
-    background-color: #333;
-  }
 }
 
 /* Media queries para responsividade */
 @media (min-width: 480px) {
   .container {
+    max-width: 450px;
     padding: 30px;
   }
 
@@ -355,6 +348,7 @@ body {
 
 @media (min-width: 768px) {
   .container {
+    max-width: 600px;
     padding: 40px;
   }
 
@@ -421,6 +415,7 @@ body {
 
 @media (min-width: 1024px) {
   .container {
+    max-width: 700px;
     padding: 50px;
   }
 
