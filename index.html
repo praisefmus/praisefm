@@ -1,47 +1,50 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Praise FM U.S. — Live Player</title>
+    <title>Praise FM</title>
 
-    <!-- Favicons -->
-    <link rel="icon" type="image/png" href="./image/favicon.png" />
-    <link rel="apple-touch-icon" href="./image/apple-touch-icon.png" />
-
-    <link rel="stylesheet" href="styles.css" />
+    <!-- Estilos -->
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    <div class="player-container">
 
-        <header class="header">
-            <h1>Praise FM U.S.</h1>
-            <p class="tagline">Praise & Worship</p>
-        </header>
+    <!-- CONTAINER PRINCIPAL -->
+    <div class="app">
 
-        <div class="cover-wrapper">
-            <img id="coverArt" src="./image/logopraisefm.webp" alt="Cover" class="cover" />
+        <!-- CAPA NO CENTRO DA TELA -->
+        <div class="cover-container">
+            <img id="cover" src="image/logopraisefm.webp" alt="Cover Image">
         </div>
 
-        <div class="nowplaying">
-            <span id="statusText">LIVE • Connecting...</span>
-            <h2 id="currentTitle">Loading...</h2>
+        <!-- TÍTULO DA MÚSICA -->
+        <h2 id="track-title">Loading...</h2>
+
+        <!-- PLAYER ESTILO SPOTIFY -->
+        <div class="player-bar">
+            <button id="playBtn" class="play-button">►</button>
+
+            <input 
+                type="range" 
+                id="volumeSlider" 
+                min="0" 
+                max="1" 
+                step="0.01" 
+                value="0.7"
+            />
         </div>
 
-        <div class="controls">
-            <button id="playButton" class="btn">Play</button>
-            <input id="volumeControl" type="range" min="0" max="1" step="0.01" value="0.7" />
-        </div>
-
-        <section class="history">
+        <!-- RECENTLY PLAYED (APENAS UMA VEZ) -->
+        <div class="recent-container">
             <h3>Recently Played</h3>
-            <ul id="historyList"></ul>
-        </section>
-
-        <footer class="footer">
-            LIVE • Audio Connected
-        </footer>
+            <ul id="recentList"></ul>
+        </div>
     </div>
+
+    <!-- STREAM -->
+    <audio id="audio" src="https://stream.zeno.fm/hvwifp8ezc6tv"></audio>
 
     <script src="script.js"></script>
 </body>
