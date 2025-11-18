@@ -1,16 +1,16 @@
 :root {
-  /* Cores */
+  /* Cores - agora fundo rosa em tudo! */
   --primary-color: #ff527c;
   --secondary-color: #ffffff;
-  --background-color: #ffffff; /* Mantido branco para full-screen */
-  --text-color: #333;
-  --light-text-color: #666;
-  --border-color: #eee;
+  --background-color: #ff527c;     /* Fundo rosa igual ao celular */
+  --text-color: #ffffff;           /* Texto principal branco */
+  --light-text-color: #ffd0e0;     /* Texto secundário rosa claro */
+  --border-color: rgba(255, 255, 255, 0.3);
 
   /* Outros tokens */
   --radius-lg: 12px;
-  --shadow-main: 0 10px 30px rgba(0, 0, 0, 0.1);
-  --shadow-btn: 0 4px 10px rgba(255, 82, 124, 0.4);
+  --shadow-main: 0 10px 30px rgba(0, 0, 0, 0.2);
+  --shadow-btn: 0 4px 15px rgba(255, 82, 124, 0.6);
 }
 
 /* Reset + base */
@@ -28,10 +28,11 @@ body {
   align-items: flex-start;
   min-height: 100vh;
   padding: 0;
+  color: var(--text-color);
 }
 
 .container {
-  background-color: var(--secondary-color);
+  background-color: var(--background-color);
   border-radius: 0;
   box-shadow: none;
   width: 100%;
@@ -71,8 +72,9 @@ body {
 .station-title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--primary-color);
+  color: var(--secondary-color);
   margin-bottom: 5px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .station-desc {
@@ -87,12 +89,13 @@ body {
   border-radius: 50%;
   overflow: hidden;
   margin-bottom: 25px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
   transition: transform 0.3s ease-out, border 0.3s ease-out;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #f0f0f0;
+  background-color: rgba(255,255,255,0.1);
+  border: 4px solid rgba(255,255,255,0.2);
 }
 
 .show-image img {
@@ -104,33 +107,31 @@ body {
 }
 
 .show-image.favorited-cover {
-  border: 3px solid #ffb300;
-  transform: scale(1.02);
+  border: 4px solid #ffb300;
+  transform: scale(1.05);
 }
 
 .show-info {
   margin-bottom: 25px;
   width: 100%;
-  max-width: 100%; /* Garante que não overflow */
 }
 
 .live-indicator {
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--primary-color);
+  color: var(--secondary-color);
   text-transform: uppercase;
   margin-bottom: 5px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
 }
 
 .show-title {
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--text-color);
+  color: var(--secondary-color);
   margin-bottom: 2px;
   word-wrap: break-word;
   white-space: normal;
-  overflow-wrap: break-word; /* Adicionado para quebrar palavras longas */
-  hyphens: auto; /* Adicionado para hifenização automática */
 }
 
 .show-date {
@@ -139,63 +140,66 @@ body {
 }
 
 .play-button {
-  background-color: var(--primary-color);
-  color: var(--secondary-color);
+  background-color: var(--secondary-color);
+  color: var(--primary-color);
   border: none;
   border-radius: 50px;
-  padding: 12px 30px;
-  font-size: 1.2rem;
+  padding: 14px 30px;
+  font-size: 1.3rem;
   font-weight: 700;
   cursor: pointer;
   width: 100%;
-  transition: background-color 0.2s, box-shadow 0.2s;
+  max-width: 300px;
+  transition: all 0.3s;
   margin-bottom: 30px;
   box-shadow: var(--shadow-btn);
 }
 
 .play-button:hover {
-  background-color: #e5476d;
-  box-shadow: 0 6px 15px rgba(255, 82, 124, 0.6);
+  background-color: #f0f0f0;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
 
 .volume-control {
   display: flex;
   align-items: center;
   width: 100%;
-  margin-bottom: 30px;
+  max-width: 400px;
+  margin: 0 auto 30px;
   padding: 0 10px;
 }
 
 .volume-control i {
-  color: var(--light-text-color);
+  color: var(--secondary-color);
   margin-right: 10px;
-  font-size: 1.1rem;
+  font-size: 1.3rem;
 }
 
 .volume-slider {
   flex-grow: 1;
   -webkit-appearance: none;
   appearance: none;
-  height: 4px;
-  background: var(--border-color);
+  height: 6px;
+  background: rgba(255,255,255,0.3);
   border-radius: 5px;
   outline: none;
 }
 
 .volume-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
-  appearance: none;
-  width: 14px;
-  height: 14px;
-  background: var(--primary-color);
+  width: 18px;
+  height: 18px;
+  background: var(--secondary-color);
   border-radius: 50%;
   cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
 }
 
 .volume-slider::-moz-range-thumb {
-  width: 14px;
-  height: 14px;
-  background: var(--primary-color);
+  width: 18px;
+  height: 18px;
+  background: var(--secondary-color);
   border: none;
   border-radius: 50%;
   cursor: pointer;
@@ -203,30 +207,33 @@ body {
 
 .history-section {
   width: 100%;
-  text-align: left;
-  margin-top: 10px;
+  max-width: 500px;
+  margin: 20px auto 0;
 }
 
 .history-title {
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 600;
-  color: var(--text-color);
+  color: var(--secondary-color);
   margin-bottom: 10px;
-  border-bottom: 1px solid var(--border-color);
-  padding-bottom: 5px;
+  border-bottom: 1px solid rgba(255,255,255,0.3);
+  padding-bottom: 8px;
 }
 
 .history-list {
-  max-height: 200px;
+  max-height: 300px;
   overflow-y: auto;
   list-style: none;
+  background: rgba(255,255,255,0.1);
+  border-radius: 12px;
+  padding: 10px;
 }
 
 .history-item {
   display: flex;
   align-items: center;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--border-color);
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
 }
 
 .history-item:last-child {
@@ -234,44 +241,41 @@ body {
 }
 
 .history-img {
-  width: 40px;
-  height: 40px;
-  border-radius: 4px;
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
   overflow: hidden;
-  margin-right: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #f0f0f0;
-  flex-shrink: 0; /* Evita encolhimento */
+  margin-right: 12px;
+  background: rgba(255,255,255,0.2);
+  flex-shrink: 0;
 }
 
 .history-img img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: opacity 0.25s ease-in-out;
 }
 
 .history-text {
   flex-grow: 1;
+  text-align: left;
   min-width: 0;
-  overflow: hidden; /* Adicionado para conter overflow */
 }
 
 .history-title-item {
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 500;
-  color: var(--text-color);
+  color: var(--secondary-color);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 .history-artist {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--light-text-color);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -280,11 +284,10 @@ body {
 
 .favorite-history {
   cursor: pointer;
-  font-size: 1.1rem;
-  margin-left: 5px;
+  font-size: 1.3rem;
+  margin-left: 8px;
   color: var(--light-text-color);
   transition: color 0.2s;
-  flex-shrink: 0; /* Evita encolhimento */
 }
 
 .favorite-history[data-key*="★"] {
@@ -292,11 +295,12 @@ body {
 }
 
 .status {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--light-text-color);
-  padding-top: 20px;
-  border-top: 1px solid var(--border-color);
+  padding-top: 25px;
   margin-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.3);
+  opacity: 0.9;
 }
 
 .sr-only {
@@ -310,232 +314,30 @@ body {
   border: 0;
 }
 
-/* Adição para dark mode */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --primary-color: #ff527c;
-    --secondary-color: #1a1a1a;
-    --background-color: #121212;
-    --text-color: #eee;
-    --light-text-color: #aaa;
-    --border-color: #333;
-  }
-
-  .show-image {
-    background-color: #333;
-  }
-
-  .history-img {
-    background-color: #333;
-  }
-}
-
-/* Media queries para responsividade - Ajustes para telas menores primeiro */
-@media (max-width: 480px) {
-  .container {
-    padding: 15px;
-  }
-
-  .show-image {
-    width: 150px;
-    height: 150px;
-    margin-bottom: 15px;
-  }
-
-  .station-title {
-    font-size: 1.2rem;
-  }
-
-  .station-desc {
-    font-size: 0.8rem;
-  }
-
-  .live-indicator {
-    font-size: 0.65rem;
-  }
-
-  .show-title {
-    font-size: 0.95rem;
-  }
-
-  .show-date {
-    font-size: 0.7rem;
-  }
-
-  .play-button {
-    padding: 10px 20px;
-    font-size: 1rem;
-    margin-bottom: 20px;
-  }
-
-  .volume-control {
-    padding: 0 5px;
-  }
-
-  .volume-control i {
-    font-size: 1rem;
-    margin-right: 5px;
-  }
-
-  .history-title {
-    font-size: 0.9rem;
-  }
-
-  .history-item {
-    padding: 6px 0;
-  }
-
-  .history-img {
-    width: 35px;
-    height: 35px;
-    margin-right: 8px;
-  }
-
-  .history-title-item {
-    font-size: 0.8rem;
-  }
-
-  .history-artist {
-    font-size: 0.7rem;
-  }
-
-  .favorite-history {
-    font-size: 1rem;
-    margin-left: 3px;
-  }
-
-  .status {
-    font-size: 0.7rem;
-    padding-top: 15px;
-    margin-top: 15px;
-  }
-}
-
-@media (max-width: 320px) {
-  .show-image {
-    width: 120px;
-    height: 120px;
-  }
-
-  .station-title {
-    font-size: 1rem;
-  }
-
-  .play-button {
-    font-size: 0.9rem;
-  }
-}
-
-/* Media queries para telas maiores */
-@media (min-width: 481px) {
-  .container {
-    padding: 30px;
-  }
-
-  .show-image {
-    width: 250px;
-    height: 250px;
-  }
-
-  .station-title {
-    font-size: 1.8rem;
-  }
-
-  .show-title {
-    font-size: 1.3rem;
-  }
-
-  .play-button {
-    padding: 15px 40px;
-    font-size: 1.4rem;
-  }
-
-  .history-list {
-    max-height: 250px;
-  }
+/* Responsividade */
+@media (min-width: 480px) {
+  .container { padding: 30px; }
+  .show-image { width: 250px; height: 250px; }
+  .station-title { font-size: 2rem; }
+  .show-title { font-size: 1.3rem; }
 }
 
 @media (min-width: 768px) {
-  .container {
-    padding: 40px;
-  }
-
-  .show-image {
-    width: 300px;
-    height: 300px;
-  }
-
-  .station-title {
-    font-size: 2rem;
-  }
-
-  .station-desc {
-    font-size: 1rem;
-  }
-
-  .show-title {
-    font-size: 1.4rem;
-  }
-
-  .show-date {
-    font-size: 0.9rem;
-  }
-
-  .play-button {
-    width: auto;
-    min-width: 200px;
-  }
-
-  .volume-control {
-    max-width: 400px;
-    margin: 0 auto 30px;
-  }
-
-  .history-section {
-    margin-top: 20px;
-  }
-
-  .history-title {
-    font-size: 1.2rem;
-  }
-
-  .history-item {
-    padding: 12px 0;
-  }
-
-  .history-img {
-    width: 50px;
-    height: 50px;
-  }
-
-  .history-title-item {
-    font-size: 1rem;
-  }
-
-  .history-artist {
-    font-size: 0.9rem;
-  }
-
-  .status {
-    font-size: 0.9rem;
-  }
+  .container { padding: 50px; }
+  .show-image { width: 320px; height: 320px; }
+  .station-title { font-size: 2.5rem; }
+  .play-button { font-size: 1.5rem; padding: 18px 40px; }
 }
 
 @media (min-width: 1024px) {
-  .container {
-    padding: 50px;
-  }
+  .container { padding: 60px; }
+  .show-image { width: 380px; height: 380px; }
+}
 
-  .show-image {
-    width: 350px;
-    height: 350px;
-  }
-
-  .play-button {
-    min-width: 250px;
-  }
-
-  .history-list {
-    max-height: 300px;
+/* Dark mode (caso alguém use) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-color: #e03e65;
+    --light-text-color: #ff99b4;
   }
 }
