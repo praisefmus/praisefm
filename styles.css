@@ -1,18 +1,18 @@
 :root {
-  /* Cores originais - fundo branco */
+  /* Cores originais */
   --primary-color: #ff527c;
   --secondary-color: #ffffff;
-  --background-color: #ffffff;     /* Fundo branco */
+  --background-color: #ffffff;
   --text-color: #333;
   --light-text-color: #666;
   --border-color: #eee;
 
   /* Sombras */
+  --radius-lg: 12px;
   --shadow-main: 0 10px 30px rgba(0, 0, 0, 0.1);
-  --shadow-btn: 0 4px 15px rgba(255, 82, 124, 0.5);
+  --shadow-btn: 0 4px 10px rgba(255, 82, 124, 0.4);
 }
 
-/* Reset + base */
 * {
   margin: 0;
   padding: 0;
@@ -24,19 +24,18 @@ body {
   background-color: var(--background-color);
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   min-height: 100vh;
-  padding: 0;
-  color: var(--text-color);
+  padding: 20px;
 }
 
 .container {
   background-color: var(--secondary-color);
-  border-radius: 0;
-  box-shadow: none;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-main);
   width: 100%;
-  min-height: 100vh;
-  padding: 20px;
+  max-width: 380px;
+  padding: 25px;
   text-align: center;
 }
 
@@ -236,9 +235,6 @@ body {
   border-radius: 4px;
   overflow: hidden;
   margin-right: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   background-color: var(--background-color);
 }
 
@@ -246,7 +242,6 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: opacity 0.25s ease-in-out;
 }
 
 .history-text {
@@ -304,37 +299,23 @@ body {
   border: 0;
 }
 
-/* Responsividade (mantida) */
+/* Responsividade (igual ao que já funcionava antes) */
 @media (min-width: 480px) {
-  .container { padding: 30px; }
+  .container { max-width: 450px; padding: 30px; }
   .show-image { width: 250px; height: 250px; }
   .station-title { font-size: 1.8rem; }
   .show-title { font-size: 1.3rem; }
   .play-button { padding: 15px 40px; font-size: 1.4rem; }
-  .history-list { max-height: 250px; }
 }
 
 @media (min-width: 768px) {
-  .container { padding: 40px; }
+  .container { max-width: 600px; padding: 40px; }
   .show-image { width: 300px; height: 300px; }
   .station-title { font-size: 2rem; }
-  .station-desc { font-size: 1rem; }
-  .show-title { font-size: 1.4rem; }
-  .show-date { font-size: 0.9rem; }
   .play-button { width: auto; min-width: 200px; }
-  .volume-control { max-width: 400px; margin: 0 auto 30px; }
-  .history-section { margin-top: 20px; }
-  .history-title { font-size: 1.2rem; }
-  .history-item { padding: 12px 0; }
-  .history-img { width: 50px; height: 50px; }
-  .history-title-item { font-size: 1rem; }
-  .history-artist { font-size: 0.9rem; }
-  .status { font-size: 0.9rem; }
 }
 
 @media (min-width: 1024px) {
-  .container { padding: 50px; }
+  .container { max-width: 700px; padding: 50px; }
   .show-image { width: 350px; height: 350px; }
-  .play-button { min-width: 250px; }
-  .history-list { max-height: 300px; }
 }
