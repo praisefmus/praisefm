@@ -2,7 +2,7 @@
   /* Cores */
   --primary-color: #ff527c;
   --secondary-color: #ffffff;
-  --background-color: #ffffff; /* Mantido branco para full-screen */
+  --background-color: #f0f4f8;
   --text-color: #333;
   --light-text-color: #666;
   --border-color: #eee;
@@ -25,18 +25,18 @@ body {
   background-color: var(--background-color);
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   min-height: 100vh;
-  padding: 0;
+  padding: 20px;
 }
 
 .container {
   background-color: var(--secondary-color);
-  border-radius: 0;
-  box-shadow: none;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-main);
   width: 100%;
-  min-height: 100vh;
-  padding: 20px;
+  max-width: 380px;
+  padding: 25px;
   text-align: center;
 }
 
@@ -111,7 +111,6 @@ body {
 .show-info {
   margin-bottom: 25px;
   width: 100%;
-  max-width: 100%; /* Garante que não overflow */
 }
 
 .live-indicator {
@@ -129,8 +128,6 @@ body {
   margin-bottom: 2px;
   word-wrap: break-word;
   white-space: normal;
-  overflow-wrap: break-word; /* Adicionado para quebrar palavras longas */
-  hyphens: auto; /* Adicionado para hifenização automática */
 }
 
 .show-date {
@@ -242,8 +239,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #f0f0f0;
-  flex-shrink: 0; /* Evita encolhimento */
+  background-color: var(--background-color);
 }
 
 .history-img img {
@@ -256,7 +252,6 @@ body {
 .history-text {
   flex-grow: 1;
   min-width: 0;
-  overflow: hidden; /* Adicionado para conter overflow */
 }
 
 .history-title-item {
@@ -284,7 +279,6 @@ body {
   margin-left: 5px;
   color: var(--light-text-color);
   transition: color 0.2s;
-  flex-shrink: 0; /* Evita encolhimento */
 }
 
 .favorite-history[data-key*="★"] {
@@ -310,232 +304,37 @@ body {
   border: 0;
 }
 
-/* Adição para dark mode */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --primary-color: #ff527c;
-    --secondary-color: #1a1a1a;
-    --background-color: #121212;
-    --text-color: #eee;
-    --light-text-color: #aaa;
-    --border-color: #333;
-  }
-
-  .show-image {
-    background-color: #333;
-  }
-
-  .history-img {
-    background-color: #333;
-  }
-}
-
-/* Media queries para responsividade - Ajustes para telas menores primeiro */
-@media (max-width: 480px) {
-  .container {
-    padding: 15px;
-  }
-
-  .show-image {
-    width: 150px;
-    height: 150px;
-    margin-bottom: 15px;
-  }
-
-  .station-title {
-    font-size: 1.2rem;
-  }
-
-  .station-desc {
-    font-size: 0.8rem;
-  }
-
-  .live-indicator {
-    font-size: 0.65rem;
-  }
-
-  .show-title {
-    font-size: 0.95rem;
-  }
-
-  .show-date {
-    font-size: 0.7rem;
-  }
-
-  .play-button {
-    padding: 10px 20px;
-    font-size: 1rem;
-    margin-bottom: 20px;
-  }
-
-  .volume-control {
-    padding: 0 5px;
-  }
-
-  .volume-control i {
-    font-size: 1rem;
-    margin-right: 5px;
-  }
-
-  .history-title {
-    font-size: 0.9rem;
-  }
-
-  .history-item {
-    padding: 6px 0;
-  }
-
-  .history-img {
-    width: 35px;
-    height: 35px;
-    margin-right: 8px;
-  }
-
-  .history-title-item {
-    font-size: 0.8rem;
-  }
-
-  .history-artist {
-    font-size: 0.7rem;
-  }
-
-  .favorite-history {
-    font-size: 1rem;
-    margin-left: 3px;
-  }
-
-  .status {
-    font-size: 0.7rem;
-    padding-top: 15px;
-    margin-top: 15px;
-  }
-}
-
-@media (max-width: 320px) {
-  .show-image {
-    width: 120px;
-    height: 120px;
-  }
-
-  .station-title {
-    font-size: 1rem;
-  }
-
-  .play-button {
-    font-size: 0.9rem;
-  }
-}
-
-/* Media queries para telas maiores */
-@media (min-width: 481px) {
-  .container {
-    padding: 30px;
-  }
-
-  .show-image {
-    width: 250px;
-    height: 250px;
-  }
-
-  .station-title {
-    font-size: 1.8rem;
-  }
-
-  .show-title {
-    font-size: 1.3rem;
-  }
-
-  .play-button {
-    padding: 15px 40px;
-    font-size: 1.4rem;
-  }
-
-  .history-list {
-    max-height: 250px;
-  }
+/* Responsividade */
+@media (min-width: 480px) {
+  .container { max-width: 450px; padding: 30px; }
+  .show-image { width: 250px; height: 250px; }
+  .station-title { font-size: 1.8rem; }
+  .show-title { font-size: 1.3rem; }
+  .play-button { padding: 15px 40px; font-size: 1.4rem; }
+  .history-list { max-height: 250px; }
 }
 
 @media (min-width: 768px) {
-  .container {
-    padding: 40px;
-  }
-
-  .show-image {
-    width: 300px;
-    height: 300px;
-  }
-
-  .station-title {
-    font-size: 2rem;
-  }
-
-  .station-desc {
-    font-size: 1rem;
-  }
-
-  .show-title {
-    font-size: 1.4rem;
-  }
-
-  .show-date {
-    font-size: 0.9rem;
-  }
-
-  .play-button {
-    width: auto;
-    min-width: 200px;
-  }
-
-  .volume-control {
-    max-width: 400px;
-    margin: 0 auto 30px;
-  }
-
-  .history-section {
-    margin-top: 20px;
-  }
-
-  .history-title {
-    font-size: 1.2rem;
-  }
-
-  .history-item {
-    padding: 12px 0;
-  }
-
-  .history-img {
-    width: 50px;
-    height: 50px;
-  }
-
-  .history-title-item {
-    font-size: 1rem;
-  }
-
-  .history-artist {
-    font-size: 0.9rem;
-  }
-
-  .status {
-    font-size: 0.9rem;
-  }
+  .container { max-width: 600px; padding: 40px; }
+  .show-image { width: 300px; height: 300px; }
+  .station-title { font-size: 2rem; }
+  .station-desc { font-size: 1rem; }
+  .show-title { font-size: 1.4rem; }
+  .show-date { font-size: 0.9rem; }
+  .play-button { width: auto; min-width: 200px; }
+  .volume-control { max-width: 400px; margin: 0 auto 30px; }
+  .history-section { margin-top: 20px; }
+  .history-title { font-size: 1.2rem; }
+  .history-item { padding: 12px 0; }
+  .history-img { width: 50px; height: 50px; }
+  .history-title-item { font-size: 1rem; }
+  .history-artist { font-size: 0.9rem; }
+  .status { font-size: 0.9rem; }
 }
 
 @media (min-width: 1024px) {
-  .container {
-    padding: 50px;
-  }
-
-  .show-image {
-    width: 350px;
-    height: 350px;
-  }
-
-  .play-button {
-    min-width: 250px;
-  }
-
-  .history-list {
-    max-height: 300px;
-  }
+  .container { max-width: 700px; padding: 50px; }
+  .show-image { width: 350px; height: 350px; }
+  .play-button { min-width: 250px; }
+  .history-list { max-height: 300px; }
 }
