@@ -1,27 +1,181 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Praise FM Player</title>
-<link rel="stylesheet" href="style.css">
+<title>Praise FM U.S. — Live</title>
+<style>
+    /* Reset básico */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body, html {
+        height: 100%;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background-color: #121212;
+        color: #fff;
+    }
+
+    /* Container principal */
+    #player {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+    }
+
+    /* Background blur da capa */
+    #bg {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background-size: cover;
+        background-position: center;
+        filter: blur(30px) brightness(0.3);
+        z-index: 0;
+        transition: background-image 0.5s ease-in-out;
+    }
+
+    /* Conteúdo do player */
+    #content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        max-width: 400px;
+        width: 90%;
+    }
+
+    #cover-container {
+        width: 100%;
+        padding-top: 100%;
+        position: relative;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        margin-bottom: 20px;
+    }
+
+    #cover {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        object-fit: cover;
+    }
+
+    #title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+
+    #play-button {
+        background: #ff9500;
+        border: none;
+        border-radius: 50%;
+        width: 70px; height: 70px;
+        font-size: 1.5rem;
+        color: #fff;
+        cursor: pointer;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        margin-bottom: 25px;
+        transition: transform 0.2s;
+    }
+
+    #play-button:active {
+        transform: scale(0.95);
+    }
+
+    #recently-played {
+        width: 100%;
+        text-align: left;
+    }
+
+    #recently-played h3 {
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+    }
+
+    #recently-played ul {
+        list-style: none;
+    }
+
+    #recently-played li {
+        padding: 6px 0;
+        border-bottom: 1px solid rgba(255,255,255,0.2);
+        font-size: 0.95rem;
+    }
+
+    /* Responsividade */
+    @media (max-width: 500px) {
+        #title { font-size: 1.2rem; }
+        #play-button { width: 60px; height: 60px; font-size: 1.2rem; }
+    }
+</style>
 </head>
 <body>
 
 <div id="player">
-  <div id="cover-container">
-    <img id="cover" src="/image/logopraisefm.webp" alt="Capa ou logo">
-    <div id="blur-background"></div>
-  </div>
-  <div id="song-info">
-    <span id="artist">Artista</span> - <span id="track">Música</span>
-  </div>
-  <audio id="audio" controls autoplay>
-    <source src="https://stream.zeno.fm/hvwifp8ezc6tv" type="audio/mpeg">
-    Seu navegador não suporta o player de áudio.
-  </audio>
+    <div id="bg"></div>
+    <div id="content">
+        <div id="cover-container">
+            <img id="cover" src="image/logopraisefm.webp" alt="Cover">
+        </div>
+        <div id="title">Praise FM U.S. — Live</div>
+        <button id="play-button">▶️</button>
+        <div id="recently-played">
+            <h3>Recently Played</h3>
+            <ul id="track-list">
+                <!-- Tracks populated via JS -->
+            </ul>
+        </div>
+    </div>
 </div>
 
-<script src="player.js"></script>
+<audio id="audio" src="https://stream.zeno.fm/hvwifp8ezc6tv"></audio>
+
+<script>
+const audio = document.getElementById('audio');
+const playButton = document.getElementById('play-button');
+const cover = document.getElementById('cover');
+const bg = document.getElementById('bg');
+const trackList = document.getElementById('track-list');
+
+// Botão play/pause
+playButton.addEventListener('click', () => {
+    if(audio.paused) {
+        audio.play();
+        playButton.textContent = '⏸️';
+    } else {
+        audio.pause();
+        playButton.textContent = '▶️';
+    }
+});
+
+// Atualiza background para a capa
+function updateBackground(src) {
+    bg.style.backgroundImage = `url('${src}')`;
+}
+updateBackground(cover.src);
+
+// Lista de músicas recentes (simulada)
+const recentTracks = [
+    "Song 1 - Artist A",
+    "Song 2 - Artist B",
+    "Song 3 - Artist C",
+    "Song 4 - Artist D"
+];
+
+recentTracks.forEach(track => {
+    const li = document.createElement('li');
+    li.textContent = track;
+    trackList.appendChild(li);
+});
+</script>
+
 </body>
 </html>
