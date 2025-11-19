@@ -7,21 +7,74 @@ const LASTFM_API_KEY = "7744c8f90ee053fc761e0e23bfa00b89"; // sua API
 /* ====== DOM ====== */
 const audio = document.getElementById("radioPlayer");
 const playBtn = document.getElementById("playBtn");
+const playIcon = document.getElementById("playIcon");
 const coverMain = document.getElementById("coverMain");
 const bg = document.getElementById("bg");
 const currentTitleEl = document.getElementById("currentTitle");
 const currentArtistEl = document.getElementById("currentArtist");
-const statusEl = document.getElementById("status"); // (not visible in UI but kept)
 const historyList = document.getElementById("historyList");
 const volumeSlider = document.getElementById("volumeSlider");
 const progressFill = document.getElementById("progressFill");
 const timeLeftEl = document.getElementById("timeLeft");
 const timeRightEl = document.getElementById("timeRight");
 
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+const muteBtn = document.getElementById("muteBtn");
+const airBtn = document.getElementById("airBtn");
+const queueBtn = document.getElementById("queueBtn");
+
 /* internal state */
 let currentArtist = "";
 let currentSong = "";
 let recentSet = new Set();
+
+/* ====== WHITELISTED PROGRAMS (NEVER DETECT AS COMMERCIAL) ====== */
+const PROGRAM_WHITELIST = [
+  "the living the message",
+  "the living message",
+  "the living the message -",
+  "the living the message:",
+  "acoustic worship",
+  "louvor acústico",
+  "praise fm carpool",
+  "carpool",
+  "the living",
+  // add more program identifiers here if needed
+].map(s => s.toLowerCase());
+
+/* ====== HELPER: isCommercialStrict ====== */
+function isCommercialStrict(raw){
+  if (!raw) return false;
+  const lowered = raw.toLowerCase();
+
+  // exact commercial phrases we consider real commercials
+  const commercialPatterns = [
+    "commercial break",
+    "commercial",
+    "ad break",
+    "spot break",
+    "intervalo comercial",
+    "commercials",
+    "ad",
+    "spot",
+    "break"
+  ];
+
+  // if whitelist matches, don't treat as commercial
+  for (const w of PROGRAM_WHITELIST){
+    if (lowered.includes(w)) return false;
+  }
+
+  // Only consider commercial if raw exactly matches or contains one of the strict phrases
+  for (const p of commercialPatterns){
+    // require either the phrase as a whole word or common separators
+    if (lowered === p) return true;
+    if (lowered.includes(p + " ") || lowered.includes(" " + p) || lowered.includes(" - " + p) || lowered.includes(p + " - ")) return true;
+  }
+
+  return false;
+}
 
 /* ====== TIME (Chicago) ====== */
 const currentTimeLabel = document.getElementById("timeRight");
@@ -37,21 +90,38 @@ playBtn.addEventListener("click", () => {
   if (audio.paused) {
     audio.src = STREAM_URL + "?_=" + Date.now();
     audio.play().catch(()=>{ /* autoplay blocked */ });
-    playBtn.textContent = "⏸";
+    setPlayUI(true);
   } else {
     audio.pause();
-    playBtn.textContent = "▶";
+    setPlayUI(false);
   }
 });
+
+function setPlayUI(isPlaying){
+  if (isPlaying){
+    // set play icon to pause (replace svg path with pause)
+    playIcon.innerHTML = `<path d="M6 5h4v14H6V5zm8 0h4v14h-4V5z" fill="currentColor"/>`;
+    playBtn.setAttribute('aria-pressed','true');
+  } else {
+    playIcon.innerHTML = `<path d="M5 3.5v17l14-8.5L5 3.5z" fill="currentColor"/>`;
+    playBtn.setAttribute('aria-pressed','false');
+  }
+}
+
+// initial UI
+setPlayUI(false);
 
 /* volume */
 audio.volume = Number(volumeSlider.value);
 volumeSlider.addEventListener("input", () => audio.volume = Number(volumeSlider.value));
+muteBtn.addEventListener("click", () => {
+  audio.muted = !audio.muted;
+  muteBtn.classList.toggle('accented', audio.muted);
+});
 
-/* progress (fake—stream has no duration). We'll show a pulsing indicator instead */
-function setProgressPulse(pct){
-  progressFill.style.width = `${pct}%`;
-}
+/* small prev/next UX (no actual skip for stream) */
+prevBtn.addEventListener("click", ()=> { /* placeholder: could trigger jump in history UI */ });
+nextBtn.addEventListener("click", ()=> { /* placeholder */ });
 
 /* ====== HISTORY UI ====== */
 function addToHistory(artist, song, cover) {
@@ -72,11 +142,11 @@ function addToHistory(artist, song, cover) {
 
   historyList.prepend(li);
 
-  // remove overflow older than 40 items to keep list light
+  // trim to 40 items
   if (historyList.children.length > 40) historyList.removeChild(historyList.lastChild);
 }
 
-/* ====== LAST.FM COVER FETCH (with robust checks) ====== */
+/* ====== LAST.FM COVER FETCH (robust) ====== */
 async function fetchCover(artist, song) {
   try {
     if (!artist && !song) return STREAM_LOGO;
@@ -86,10 +156,7 @@ async function fetchCover(artist, song) {
     if (!res.ok) return STREAM_LOGO;
     const json = await res.json();
 
-    // try different locations for album image
-    let img = json?.track?.album?.image?.pop()?.["#text"] || json?.track?.album?.image?.slice(-1)?.[0]?.["#text"] || null;
-
-    // Some responses return empty string; check length and http scheme
+    let img = json?.track?.album?.image?.pop()?.["#text"] || null;
     if (!img || typeof img !== "string" || img.trim() === "") return STREAM_LOGO;
     if (img.startsWith("//")) img = "https:" + img;
     return img;
@@ -98,76 +165,71 @@ async function fetchCover(artist, song) {
   }
 }
 
-/* ====== Dominant color extraction (for accent). Best-effort; falls back to CSS var. ====== */
-function extractColorFromImage(imgEl){
+/* ====== color extraction (best-effort with CORS fallback) ====== */
+function extractColorFromImageUrl(url){
   return new Promise((resolve) => {
     try {
       const img = new Image();
       img.crossOrigin = "anonymous";
-      img.src = imgEl.src || imgEl.getAttribute('src');
-
+      img.src = url;
       img.onload = () => {
         try {
           const canvas = document.createElement('canvas');
           const ctx = canvas.getContext('2d');
-          const w = Math.min(200, img.width);
-          const h = Math.min(200, img.height);
-          canvas.width = w;
-          canvas.height = h;
+          const w = Math.min(120, img.width);
+          const h = Math.min(120, img.height);
+          canvas.width = w; canvas.height = h;
           ctx.drawImage(img, 0, 0, w, h);
           const data = ctx.getImageData(0,0,w,h).data;
           const count = {};
           for (let i=0;i<data.length;i+=4){
-            const r = data[i], g=data[i+1], b=data[i+2];
-            // ignore near-white and near-black pixels for better accent
+            const r=data[i], g=data[i+1], b=data[i+2];
             if (r>240 && g>240 && b>240) continue;
             if (r<12 && g<12 && b<12) continue;
-            const key = `${Math.round(r/8)*8},${Math.round(g/8)*8},${Math.round(b/8)*8}`;
+            const key = `${Math.round(r/16)*16},${Math.round(g/16)*16},${Math.round(b/16)*16}`;
             count[key] = (count[key]||0) + 1;
           }
-          let top = null, topCount = 0;
-          for (const k in count){
-            if (count[k] > topCount){ top = k; topCount = count[k]; }
-          }
+          let top=null, topCount=0;
+          for (const k in count) if (count[k] > topCount){ top=k; topCount=count[k]; }
           if (!top) return resolve(null);
-          const parts = top.split(",").map(Number);
+          const parts = top.split(',').map(Number);
           resolve(`rgb(${parts[0]},${parts[1]},${parts[2]})`);
-        } catch (e){
-          resolve(null);
-        }
+        } catch(e){ resolve(null); }
       };
-
       img.onerror = () => resolve(null);
-    } catch (e) {
-      resolve(null);
-    }
+    } catch(e){ resolve(null); }
   });
 }
 
 async function applyAccentFromImage(url){
   try {
-    // set background blur
     bg.style.backgroundImage = `url("${url}")`;
-
-    // try to extract color
-    const tmp = document.createElement('img');
-    tmp.crossOrigin = "anonymous";
-    tmp.src = url;
-    await new Promise((r)=>{ tmp.onload=r; tmp.onerror=r; });
-
-    const color = await extractColorFromImage(tmp);
+    const color = await extractColorFromImageUrl(url);
     if (color) {
-      // compute accent as slightly brightened color
       document.documentElement.style.setProperty('--accent', color);
+      // add accent class to icons so they change color
+      setIconsAccented(true);
     } else {
-      // fallback accent
       document.documentElement.style.setProperty('--accent', '#ff2d85');
+      setIconsAccented(false);
     }
-  } catch (e) {
+  } catch(e){
     document.documentElement.style.setProperty('--accent', '#ff2d85');
+    setIconsAccented(false);
     bg.style.backgroundImage = `url("${STREAM_LOGO}")`;
   }
 }
+
+function setIconsAccented(on){
+  const controls = document.querySelectorAll('.control, .mini-icon, .icon-btn');
+  controls.forEach(el => {
+    if (on) el.classList.add('accented');
+    else el.classList.remove('accented');
+  });
+}
+
+/* ====== Progress pulse for stream (visual only) ====== */
+function setProgressPulse(pct){ progressFill.style.width = `${pct}%`; }
 
 /* ====== Now Playing (EventSource) ====== */
 function setupNowPlaying(){
@@ -177,10 +239,10 @@ function setupNowPlaying(){
     try {
       const data = JSON.parse(e.data);
       const raw = (data.streamTitle||"").trim();
-
-      // COMMERCIAL DETECTION (several keywords)
       const lowered = raw.toLowerCase();
-      if (!raw || lowered.includes("commercial") || lowered.includes("spot") || lowered.includes("ad") || lowered.includes("intervalo") || lowered.includes("break")) {
+
+      // Commercial detection using strict function + whitelist
+      if (isCommercialStrict(raw)) {
         currentTitleEl.textContent = "Commercial Break";
         currentArtistEl.textContent = "";
         const commercialImg = "/image/commercial break.png";
@@ -189,13 +251,12 @@ function setupNowPlaying(){
         return;
       }
 
-      // format artist — song
+      // parse artist and song
       const parts = raw.split(" - ");
       const artist = parts[0] ? parts[0].trim() : "";
       const song = parts[1] ? parts[1].trim() : (parts[0] || "").trim();
 
       if (!artist && !song) return;
-
       if (artist === currentArtist && song === currentSong) return;
 
       currentArtist = artist;
@@ -204,7 +265,7 @@ function setupNowPlaying(){
       currentTitleEl.textContent = song || "Untitled";
       currentArtistEl.textContent = artist || "";
 
-      // fetch cover image
+      // fetch cover
       const cover = await fetchCover(artist, song);
       coverMain.src = cover;
       await applyAccentFromImage(cover);
@@ -212,13 +273,13 @@ function setupNowPlaying(){
       // add to history
       addToHistory(artist, song, cover);
 
-      // set subtle "progress" pulse for live stream (simulate)
+      // progress pulse simulation
       let pct = 0;
       const interval = setInterval(()=> {
-        pct = (pct + Math.random()*8) % 100;
+        pct = Math.min(100, pct + (6 + Math.random()*10));
         setProgressPulse(pct);
-      }, 900);
-      setTimeout(()=> clearInterval(interval), 9000);
+      }, 700);
+      setTimeout(()=> { clearInterval(interval); setProgressPulse(0); }, 9000);
 
     } catch (err) {
       console.warn("NowPlaying parse error", err);
@@ -226,19 +287,18 @@ function setupNowPlaying(){
   };
 
   es.onerror = () => {
-    // try reconnect UI hint
-    // console.log("NowPlaying SSE error — reconnecting...");
     setTimeout(setupNowPlaying, 4000);
   };
 }
 
 setupNowPlaying();
 
-/* ====== Small UX: show visual play state when audio plays/pauses ====== */
-audio.addEventListener('play', ()=> playBtn.textContent = '⏸');
-audio.addEventListener('pause', ()=> playBtn.textContent = '▶');
+/* ====== Keep play/pause button in sync with audio events ====== */
+audio.addEventListener('play', ()=> setPlayUI(true));
+audio.addEventListener('pause', ()=> setPlayUI(false));
 
 /* ====== initial bg & cover ====== */
 coverMain.src = STREAM_LOGO;
 bg.style.backgroundImage = `url("${STREAM_LOGO}")`;
 document.documentElement.style.setProperty('--accent', '#ff2d85');
+setIconsAccented(false);
