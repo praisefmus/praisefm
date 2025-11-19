@@ -15,25 +15,6 @@ html, body {
     text-align: center;
 }
 
-/* HEADER */
-.top-header {
-    width: 100%;
-    text-align: center;
-    padding-top: 20px;
-}
-
-.header-logo {
-    width: 70px;
-    height: 70px;
-    object-fit: contain;
-}
-
-.header-title {
-    margin: 10px 0 20px;
-    font-size: 22px;
-    font-weight: 700;
-}
-
 /* COVER */
 .cover-wrapper {
     width: 100%;
@@ -70,23 +51,26 @@ html, body {
     margin: 10px 0 18px;
 }
 
-/* PLAY BUTTON (APPLE STYLE) */
+/* MINIMAL APPLE-STYLE PLAY BUTTON */
 .play-btn {
-    width: 88px;
-    height: 88px;
+    width: 70px;
+    height: 70px;
+    background: #ffffff;
+    border: 2px solid #ff2d85;
+    color: #ff2d85;
+    font-size: 33px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform .12s ease, background .2s ease;
+}
+
+.play-btn:hover {
     background: #ff2d85;
     color: #fff;
-    font-size: 33px;
-    font-weight: bold;
-    border-radius: 50%;
-    border: none;
-    cursor: pointer;
-    box-shadow: 0 15px 30px rgba(255,0,120,0.35);
-    transition: transform .12s ease;
 }
 
 .play-btn:active {
-    transform: scale(0.94);
+    transform: scale(0.92);
 }
 
 /* VOLUME */
