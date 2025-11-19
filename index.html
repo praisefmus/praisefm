@@ -285,13 +285,16 @@
 
         // Ouve quando a imagem do álbum termina de carregar para atualizar o fundo
         albumArtEl.onload = () => {
-            if (isLive) {
-                 // Apenas atualiza o fundo se não for um dos casos específicos (commercial/spot)
-                if (!(albumArtEl.src.includes(encodeURI(IMG_COMMERCIAL)) || albumArtEl.src.includes(encodeURI(IMG_SPOT)))) {
-                    updateBlurredBackground(albumArtEl.src);
+            // Verifica se o caminho atual já está sendo processado
+            const currentSrc = albumArtEl.src;
+            if (currentSrc) {
+                // Se for Live, a função updateBlurredBackground vai checar o tipo
+                if (isLive) {
+                    updateBlurredBackground(currentSrc);
+                } else { 
+                    // Para On Demand (sempre dinâmico ou usa fallback)
+                    updateBlurredBackground(currentSrc);
                 }
-            } else { // Para On Demand
-                updateBlurredBackground(albumArtEl.src);
             }
         };
 
@@ -321,40 +324,19 @@
         });
 
         // --- LÓGICA DE FUNDO (BLUR) ---
-        // Função principal para atualizar o fundo borrado
-        function updateBlurredBackground(imgSrc) {
-            // Se for um link de imagem padrão ou comercial/spot, usa cores fixas
-            if (imgSrc.includes(encodeURI(IMG_DEFAULT)) || imgSrc.includes(encodeURI(IMG_SPOT))) {
-                bgBlur.style.background = `radial-gradient(circle at 50% 30%, #8b0000, #000)`; // Vermelho padrão
-            } else if (imgSrc.includes(encodeURI(IMG_COMMERCIAL))) {
-                 bgBlur.style.background = `radial-gradient(circle at 50% 30%, #333, #000)`; // Cinza para comercial
-            } else {
-                // Tenta pegar a cor da capa se for uma música
-                getColorFromImage(imgSrc).then(color => {
-                    if (color) {
-                        bgBlur.style.background = `radial-gradient(circle at 50% 30%, ${color}, #000)`;
-                    } else {
-                        // Fallback se não conseguir pegar a cor
-                        bgBlur.style.background = `radial-gradient(circle at 50% 30%, #5a1e1e, #000)`; // Cor de fallback para músicas
-                    }
-                }).catch(() => {
-                    bgBlur.style.background = `radial-gradient(circle at 50% 30%, #5a1e1e, #000)`; // Fallback em erro
-                });
-            }
-        }
-
+        
         // Função para extrair a cor dominante de uma imagem
         async function getColorFromImage(imgUrl) {
             return new Promise((resolve, reject) => {
                 const img = new Image();
-                img.crossOrigin = "Anonymous"; // Importante para imagens de outras origens
+                img.crossOrigin = "Anonymous"; // Importante para imagens de outras origens (CORS)
                 img.src = imgUrl;
 
                 img.onload = () => {
                     try {
-                        colorCanvas.width = 1; // Pega uma amostra de 1x1 pixel
+                        colorCanvas.width = 1; 
                         colorCanvas.height = 1;
-                        ctx.drawImage(img, 0, 0, 1, 1);
+                        ctx.drawImage(img, 0, 0, 1, 1); // Pega a amostra de 1x1
                         const pixelData = ctx.getImageData(0, 0, 1, 1).data;
                         const color = `rgb(${pixelData[0]}, ${pixelData[1]}, ${pixelData[2]})`;
                         resolve(color);
@@ -366,6 +348,32 @@
                 img.onerror = () => reject(null);
             });
         }
+        
+        // Função principal para atualizar o fundo borrado
+        function updateBlurredBackground(imgSrc) {
+            // Verifica se é uma das imagens LOCAIS (Commercial ou Logo Padrão)
+            if (imgSrc.includes(encodeURI(IMG_COMMERCIAL))) {
+                 // Fundo Cinza para Comercial
+                 bgBlur.style.background = `radial-gradient(circle at 50% 30%, #333, #000)`; 
+            } else if (imgSrc.includes(encodeURI(IMG_DEFAULT)) || imgSrc.includes(encodeURI(IMG_SPOT))) {
+                 // Fundo Vermelho Padrão para Logo e Spot
+                 bgBlur.style.background = `radial-gradient(circle at 50% 30%, #8b0000, #000)`; 
+            } else {
+                // Tenta pegar a cor da capa se for uma música (Dynamic Color)
+                getColorFromImage(imgSrc).then(color => {
+                    if (color) {
+                        // Aplica a cor dominante suavizada
+                        bgBlur.style.background = `radial-gradient(circle at 50% 30%, ${color}, #000)`;
+                    } else {
+                        // Fallback se falhar na leitura da cor
+                        bgBlur.style.background = `radial-gradient(circle at 50% 30%, #5a1e1e, #000)`; 
+                    }
+                }).catch(() => {
+                    // Fallback em erro de CORS ou API
+                    bgBlur.style.background = `radial-gradient(circle at 50% 30%, #5a1e1e, #000)`; 
+                });
+            }
+        }
 
 
         // --- LÓGICA LIVE VS ON DEMAND ---
@@ -374,14 +382,18 @@
         function setMedia(imageUrl, trackTitle, artistName, audioSource = STREAM_URL) {
             trackNameEl.innerText = trackTitle;
             artistNameEl.innerText = artistName;
-            albumArtEl.src = imageUrl; // O 'onload' do albumArtEl cuidará do background
+            
+            // Só muda a source se for diferente, para evitar que o .onload seja chamado desnecessariamente
+            if (albumArtEl.src !== imageUrl) {
+                albumArtEl.src = imageUrl; 
+            } else {
+                // Se o SRC for o mesmo (ex: fallback), força a atualização do fundo
+                updateBlurredBackground(imageUrl);
+            }
 
             if (audio.src !== audioSource) {
                 audio.src = audioSource;
             }
-            
-            // Garante que o background seja atualizado
-            updateBlurredBackground(imageUrl);
         }
 
         // 1. Voltar para LIVE
@@ -394,7 +406,6 @@
             timeDisplay.style.display = 'none';
             seekSlider.style.display = 'none';
             
-            audio.src = STREAM_URL;
             audio.play();
             isPlaying = true;
             updateUIState(true);
@@ -538,4 +549,43 @@
             }
 
             // --- REGRA 2: SPOTS / JINGLES (FUNDO VERMELHO) ---
-            if (trackLow.includes("spot") || artistLow
+            if (trackLow.includes("spot") || artistLow.includes("spot") || trackLow.includes("station id") || artist === "Praise FM") {
+                setMedia(IMG_SPOT, track, artist);
+                return;
+            }
+
+            // --- REGRA 3: BUSCA NO LAST.FM (MÚSICA) ---
+            // Se o artista for o nome da rádio, tenta pegar o nome da música se o Last.fm falhar.
+            if (artist === "Praise FM" && track !== "Praise FM") { 
+                // Se a info é Praise FM - Music Title, continua tentando o Last.fm
+            }
+            
+            const url = `https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${LASTFM_API_KEY}&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}&format=json`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.track && data.track.album && data.track.album.image) {
+                    const images = data.track.album.image;
+                    // Pega a imagem de maior qualidade
+                    const foundImg = images[images.length - 1]['#text'];
+                    
+                    if(foundImg) {
+                        // Sucesso: Música com capa. setMedia chama updateBlurredBackground no onload.
+                        setMedia(foundImg, track, artist);
+                        return;
+                    }
+                }
+                
+                // --- FALLBACK FINAL: SE FALHAR NO LAST.FM ---
+                setMedia(IMG_DEFAULT, track, artist);
+
+            } catch (e) { 
+                // Erro total da API ou de conexão
+                setMedia(IMG_DEFAULT, track, artist);
+            }
+        }
+    </script>
+</body>
+</html>
