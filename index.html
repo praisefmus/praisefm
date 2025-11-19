@@ -12,9 +12,10 @@
         :root {
             --primary-color: #fff;
             --secondary-color: rgba(255, 255, 255, 0.6);
-            --accent-color: #ff3b30; /* Vermelho/Accent */
+            --accent-color: #ff3b30; /* Vermelho/Accent (mantido para LIVE e barra de progresso) */
             --bg-dark: #1c1c1e;
-            --bg-gradient-2: #8b0000; /* Cor padrão para o fundo, será sobrescrita */
+            /* Cor padrão para o fundo, agora um cinza escuro, conforme solicitado */
+            --bg-gradient-2: #282828; 
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; }
@@ -31,7 +32,7 @@
 
         .background-blur {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            /* Cor inicial, será definida por JS */
+            /* Usa a variável --bg-gradient-2 */
             background: radial-gradient(circle at 50% 30%, var(--bg-gradient-2), #000);
             filter: blur(60px); 
             opacity: 0.8; 
@@ -360,8 +361,8 @@
                  // Fundo Cinza para Comercial
                  bgBlur.style.background = `radial-gradient(circle at 50% 30%, #333, #000)`; 
             } else if (imgSrc.includes(encodeURI(IMG_DEFAULT)) || imgSrc.includes(encodeURI(IMG_SPOT))) {
-                 // Fundo Vermelho Padrão para Logo e Spot
-                 bgBlur.style.background = `radial-gradient(circle at 50% 30%, #8b0000, #000)`; 
+                 // Fundo Cinza/Preto Padrão para Logo e Spot (usando a nova variável)
+                 bgBlur.style.background = `radial-gradient(circle at 50% 30%, var(--bg-gradient-2), #000)`; 
             } else {
                 // Tenta pegar a cor da capa se for uma música (Dynamic Color)
                 getColorFromImage(imgSrc).then(color => {
@@ -369,12 +370,12 @@
                         // Sucesso: Aplica a cor dominante suavizada
                         bgBlur.style.background = `radial-gradient(circle at 50% 30%, ${color}, #000)`;
                     } else {
-                        // Fallback 1: Falha no CORS. Usa uma cor suave genérica para a música
-                        bgBlur.style.background = `radial-gradient(circle at 50% 30%, #5a1e1e, #000)`; 
+                        // Fallback 1: Falha no CORS. Usa a cor #282828 (cinza escuro)
+                        bgBlur.style.background = `radial-gradient(circle at 50% 30%, #282828, #000)`; 
                     }
                 }).catch(() => {
-                    // Fallback 2: Erro de API/conexão. Usa a mesma cor suave.
-                    bgBlur.style.background = `radial-gradient(circle at 50% 30%, #5a1e1e, #000)`; 
+                    // Fallback 2: Erro de API/conexão. Usa a mesma cor.
+                    bgBlur.style.background = `radial-gradient(circle at 50% 30%, #282828, #000)`; 
                 });
             }
         }
@@ -574,7 +575,7 @@
                 return; 
             }
 
-            // --- REGRA 2: SPOTS / JINGLES (FUNDO VERMELHO) ---
+            // --- REGRA 2: SPOTS / JINGLES (FUNDO CINZA/PRETO) ---
             if (trackLow.includes("spot") || artistLow.includes("spot") || trackLow.includes("station id") || artist === "Praise FM") {
                 setMedia(IMG_SPOT, track, artist);
                 return;
