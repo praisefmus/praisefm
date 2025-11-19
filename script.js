@@ -62,15 +62,24 @@ function addToHistory(artist, song, cover) {
     historyList.prepend(li);
 }
 
-/* FETCH COVER FROM LASTFM */
+/* FETCH COVER FROM LASTFM — UPDATED WITH YOUR API KEY */
 async function fetchCover(artist, song) {
     try {
-        const apiKey = "7744c8f90ee053fc761e6a2f7e45f409";
-        const url = `https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${apiKey}&artist=${artist}&track=${song}&format=json`;
+        const apiKey = "7744c8f90ee053fc761e0e23bfa00b89"; // SUA API KEY CORRETA
+        const url = `https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${apiKey}&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(song)}&format=json`;
+
         const res = await fetch(url);
         const json = await res.json();
-        const img = json?.track?.album?.image?.pop()?.["#text"];
-        return img || STREAM_LOGO;
+
+        let img = json?.track?.album?.image?.pop()?.["#text"];
+
+        // FIX: capa vazia ou inexistente → usa o logo
+        if (!img || img.trim() === "") {
+            return STREAM_LOGO;
+        }
+
+        return img;
+
     } catch {
         return STREAM_LOGO;
     }
