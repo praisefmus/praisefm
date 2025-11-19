@@ -520,9 +520,9 @@
                 return;
             }
 
-            // Cria um URL de busca no Last.fm para as letras
-            const baseUrl = "https://www.last.fm/music/";
-            const searchUrl = `${baseUrl}${encodeURIComponent(artist)}/_/${encodeURIComponent(track)}/+lyrics`;
+            // MUDANÇA: Agora usa o Genius para pesquisa direta
+            const query = `${artist} ${track}`;
+            const searchUrl = `https://genius.com/search?q=${encodeURIComponent(query)}`;
 
             // Abre o link em uma nova aba
             window.open(searchUrl, '_blank');
