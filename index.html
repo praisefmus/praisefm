@@ -34,7 +34,7 @@
             color: var(--primary-color);
         }
 
-        /* Fundo com Blur Dinâmico */
+        /* Background Blur */
         .background-blur {
             position: absolute;
             top: 0;
@@ -73,7 +73,7 @@
             border-radius: 10px;
         }
 
-        /* Arte do Álbum */
+        /* Album Art */
         .artwork-container {
             width: 100%;
             aspect-ratio: 1/1;
@@ -84,6 +84,7 @@
             transform: scale(1);
             transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
             background-color: #1a1a1a;
+            position: relative;
         }
         
         .artwork-container.paused {
@@ -95,9 +96,10 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: opacity 0.5s ease;
         }
 
-        /* Informações da Faixa */
+        /* Track Info */
         .track-info {
             display: flex;
             justify-content: space-between;
@@ -138,7 +140,7 @@
             font-size: 20px;
         }
 
-        /* Barra de Progresso e Tempo */
+        /* Progress & Time */
         .progress-area {
             margin-bottom: 10px;
         }
@@ -168,7 +170,7 @@
             font-weight: 600;
         }
 
-        /* Efeito LIVE Pulsando */
+        /* Live Pulsing Effect */
         @keyframes pulse-red {
             0% { opacity: 1; text-shadow: 0 0 5px var(--accent-color); }
             50% { opacity: 0.5; text-shadow: none; }
@@ -195,7 +197,7 @@
             font-variant-numeric: tabular-nums;
         }
 
-        /* Controles */
+        /* Controls */
         .controls {
             display: flex;
             justify-content: space-around;
@@ -252,7 +254,7 @@
             cursor:pointer;
         }
 
-        /* Rodapé */
+        /* Footer */
         .bottom-icons {
             display: flex;
             justify-content: space-around;
@@ -272,7 +274,7 @@
         </div>
 
         <div class="artwork-container paused" id="artContainer">
-            <img src="imagem/logo.png" alt="Album Art" class="artwork-img" id="albumArt" onerror="this.src='imagem/logo.png'">
+            <img src="imagem/logopraisefm.webp" alt="Album Art" class="artwork-img" id="albumArt" onerror="this.src='imagem/logopraisefm.webp'">
         </div>
 
         <div class="track-info">
@@ -336,9 +338,13 @@
     <script>
         // --- CONFIGURAÇÕES ---
         const STREAM_URL = "https://stream.zeno.fm/hvwifp8ezc6tv";
-        const ZENO_ID = "hvwifp8ezc6tv"; // ID extraído da URL
+        const ZENO_ID = "hvwifp8ezc6tv"; 
         const LASTFM_API_KEY = "7744c8f90ee053fc761e0e23bfa00b89";
-        const DEFAULT_IMAGE = "imagem/logo.png"; // Sua logo local
+        
+        // --- IMAGENS LOCAIS ---
+        const IMG_DEFAULT = "imagem/logopraisefm.webp"; 
+        const IMG_COMMERCIAL = "imagem/commercial break.png";
+        const IMG_SPOT = "imagem/spot.webp";
 
         // --- DOM ELEMENTS ---
         const audio = new Audio(STREAM_URL);
@@ -356,7 +362,7 @@
 
         let isPlaying = false;
 
-        // 1. Play/Pause
+        // 1. Play/Pause Logic
         playPauseBtn.addEventListener('click', () => {
             if (isPlaying) {
                 audio.pause();
@@ -380,7 +386,7 @@
             volFill.style.width = (val * 100) + '%';
         });
 
-        // 3. Relógio Chicago
+        // 3. Chicago Clock
         function updateChicagoTime() {
             const now = new Date();
             const options = { timeZone: 'America/Chicago', hour: 'numeric', minute: '2-digit', hour12: true };
@@ -389,9 +395,8 @@
         setInterval(updateChicagoTime, 1000);
         updateChicagoTime();
 
-        // 4. CONEXÃO ZENO FM (Recuperar Metadados)
+        // 4. ZENO FM LISTENER
         function setupZenoMetadata() {
-            // URL oficial da Zeno para updates via SSE
             const zenoUrl = `https://api.zeno.fm/mounts/metadata/subscribe/${ZENO_ID}`;
             const eventSource = new EventSource(zenoUrl);
 
@@ -399,7 +404,6 @@
                 try {
                     const data = JSON.parse(e.data);
                     if (data.streamTitle) {
-                        // Zeno envia "Artista - Musica"
                         const fullTitle = data.streamTitle;
                         const parts = fullTitle.split(' - ');
                         
@@ -410,63 +414,84 @@
                             artist = parts[0].trim();
                             song = parts[1].trim();
                         }
-
-                        // Atualiza Last.FM e Tela
                         updateTrackInfo(artist, song);
                     }
                 } catch (error) {
-                    console.log("Aguardando metadados...");
+                    console.log("Waiting for metadata...");
                 }
             };
         }
 
-        // 5. Last.fm API
+        // 5. LOGIC: SELECT IMAGE (LOCAL OR LAST.FM)
         async function updateTrackInfo(artist, track) {
-            // Atualiza texto na tela
+            // Update Text
             trackNameEl.innerText = track;
             artistNameEl.innerText = artist;
 
-            if(artist === "Praise FM") {
-                albumArtEl.src = DEFAULT_IMAGE;
+            const artistLow = artist.toLowerCase();
+            const trackLow = track.toLowerCase();
+
+            // --- REGRA 1: COMMERCIAL BREAK ---
+            if (trackLow.includes("commercial") || artistLow.includes("commercial") || trackLow.includes("ad break")) {
+                setLocalImage(IMG_COMMERCIAL);
+                bgBlur.style.background = `radial-gradient(circle at 50% 30%, #444, #000)`; // Fundo cinza escuro
+                return; 
+            }
+
+            // --- REGRA 2: SPOTS / JINGLES ---
+            if (trackLow.includes("spot") || artistLow.includes("spot") || trackLow.includes("station id")) {
+                setLocalImage(IMG_SPOT);
+                bgBlur.style.background = `radial-gradient(circle at 50% 30%, #8b0000, #000)`; // Fundo vermelho
                 return;
             }
 
+            // --- REGRA 3: PRAISE FM (PADRÃO) ---
+            if(artist === "Praise FM" || track === "Praise FM") {
+                setLocalImage(IMG_DEFAULT);
+                bgBlur.style.background = `radial-gradient(circle at 50% 30%, #8b0000, #000)`;
+                return;
+            }
+
+            // --- REGRA 4: BUSCA NO LAST.FM (MÚSICA) ---
             const url = `https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${LASTFM_API_KEY}&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}&format=json`;
 
             try {
                 const response = await fetch(url);
                 const data = await response.json();
                 
-                let imgUrl = DEFAULT_IMAGE;
-
                 if (data.track && data.track.album && data.track.album.image) {
                     const images = data.track.album.image;
                     const foundImg = images[images.length - 1]['#text'];
-                    if(foundImg) imgUrl = foundImg;
+                    
+                    if(foundImg) {
+                        // Sucesso: Música com capa
+                        if(albumArtEl.src !== foundImg) {
+                            albumArtEl.src = foundImg;
+                        }
+                        bgBlur.style.background = `radial-gradient(circle at 50% 30%, #5a1e1e, #000)`;
+                        return;
+                    }
                 }
-
-                // Evita recarregar se for a mesma imagem
-                if(albumArtEl.src !== imgUrl) {
-                    albumArtEl.src = imgUrl;
-                }
-                
-                // Cor de fundo
-                if(imgUrl !== DEFAULT_IMAGE) {
-                     bgBlur.style.background = `radial-gradient(circle at 50% 30%, #5a1e1e, #000)`;
-                } else {
-                     bgBlur.style.background = `radial-gradient(circle at 50% 30%, #8b0000, #000)`;
-                }
+                // Se falhar no Last.fm, usa padrão
+                setLocalImage(IMG_DEFAULT);
 
             } catch (e) { 
-                albumArtEl.src = DEFAULT_IMAGE;
+                setLocalImage(IMG_DEFAULT);
             }
         }
 
-        // Iniciar ouvinte da Zeno
+        function setLocalImage(path) {
+            // Só troca se for diferente para não piscar
+            // O encodeURI ajuda caso tenha espaços (ex: commercial break)
+            const encodedPath = encodeURI(path); 
+            if (!albumArtEl.src.includes(encodedPath)) {
+                albumArtEl.src = path;
+            }
+        }
+
+        // Inicialização
         setupZenoMetadata();
-        
-        // Setar imagem inicial
-        albumArtEl.src = DEFAULT_IMAGE;
+        setLocalImage(IMG_DEFAULT);
 
     </script>
 </body>
