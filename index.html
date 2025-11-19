@@ -60,7 +60,10 @@
         .text-area { flex: 1; padding-right: 10px; }
         .song-title { font-size: 22px; font-weight: 700; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .artist-name { font-size: 18px; color: var(--secondary-color); font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .more-btn { background: none; border: none; cursor: pointer; color: var(--primary-color); padding: 5px; font-size: 20px; }
+        /* Adicionando cor e ajuste para o botão de letras */
+        .more-btn { background: none; border: none; cursor: pointer; color: var(--primary-color); padding: 5px; font-size: 20px; transition: color 0.3s; }
+        .more-btn:hover { color: var(--accent-color); }
+
 
         /* PROGRESS */
         .progress-area { margin-bottom: 10px; position: relative; }
@@ -157,7 +160,7 @@
                 <div class="artist-name" id="artistName">Live from Chicago</div>
                 <button id="btnBackLive" class="back-to-live">Return to Live</button>
             </div>
-            <button class="more-btn">•••</button>
+            <button class="more-btn" id="lyricsBtn">•••</button>
         </div>
 
         <div class="progress-area">
@@ -264,6 +267,9 @@
         const seekSlider = document.getElementById('seekSlider');
         const progressFill = document.getElementById('progressFill');
         const btnBackLive = document.getElementById('btnBackLive');
+        
+        // NOVO: Botão de Letras
+        const lyricsBtn = document.getElementById('lyricsBtn');
 
         // Canvas para pegar cores
         const colorCanvas = document.getElementById('colorCanvas');
@@ -375,11 +381,9 @@
             trackNameEl.innerText = trackTitle;
             artistNameEl.innerText = artistName;
             
-            // Só muda a source se for diferente, para que o .onload seja chamado
             if (albumArtEl.src !== imageUrl) {
                 albumArtEl.src = imageUrl; 
             } else {
-                // Se o SRC for o mesmo, força a atualização do fundo (caso de fallback)
                 updateBlurredBackground(imageUrl);
             }
 
@@ -419,7 +423,6 @@
                 eventSource = null;
             }
 
-            // Atualiza UI usando setMedia para lidar com a imagem e fundo
             setMedia(ep.img || IMG_DEFAULT, ep.title, ep.artist, ep.url);
             
             btnBackLive.style.display = 'inline-block';
@@ -495,6 +498,28 @@
                 episodeList.appendChild(div);
             });
         }
+        
+        // --- FUNÇÃO PARA LETRAS (LYRICS) ---
+        lyricsBtn.addEventListener('click', openLyrics);
+
+        function openLyrics() {
+            // Pega o nome do artista e da música atual
+            const artist = artistNameEl.innerText.trim();
+            const track = trackNameEl.innerText.trim();
+            
+            // Bloqueia se estiver em 'Praise FM - Live from Chicago' ou comercial/spot
+            if (artist.includes("Praise FM") || track.toLowerCase().includes("commercial") || track.toLowerCase().includes("spot")) {
+                alert("Letras não disponíveis para o Live Stream ou Jingle/Comercial.");
+                return;
+            }
+
+            // Cria um URL de busca no Last.fm para as letras
+            const baseUrl = "https://www.last.fm/music/";
+            const searchUrl = `${baseUrl}${encodeURIComponent(artist)}/_/${encodeURIComponent(track)}/+lyrics`;
+
+            // Abre o link em uma nova aba
+            window.open(searchUrl, '_blank');
+        }
 
         // --- RELÓGIO CHICAGO ---
         function updateChicagoTime() {
@@ -535,7 +560,6 @@
             const artistLow = artist.toLowerCase();
             const trackLow = track.toLowerCase();
             
-            // A imagem padrão é o logo, que fará o fundo ficar vermelho (fallback)
             let fallbackImage = IMG_DEFAULT; 
 
             // --- REGRA 1: COMMERCIAL BREAK (FUNDO CINZA) ---
@@ -560,23 +584,18 @@
                 
                 if (data.track && data.track.album && data.track.album.image) {
                     const images = data.track.album.image;
-                    // Pega a imagem de maior qualidade
                     const foundImg = images[images.length - 1]['#text'];
                     
                     if(foundImg) {
-                        // Sucesso: Música com capa. setMedia chama updateBlurredBackground no onload.
                         setMedia(foundImg, track, artist);
                         return;
                     }
                 }
                 
                 // --- FALLBACK FINAL: SE FALHAR NO LAST.FM ---
-                // Se falhou ou não tem capa, usa a imagem padrão (IMG_DEFAULT ou IMG_SPOT).
-                // O updateBlurredBackground irá cair na cor de fallback (#5a1e1e) para ter a transição suave.
                 setMedia(fallbackImage, track, artist);
 
             } catch (e) { 
-                // Erro total da API ou de conexão
                 setMedia(fallbackImage, track, artist);
             }
         }
