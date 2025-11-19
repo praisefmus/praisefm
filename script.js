@@ -62,10 +62,10 @@ function addToHistory(artist, song, cover) {
     historyList.prepend(li);
 }
 
-/* FETCH COVER FROM LASTFM — UPDATED WITH YOUR API KEY */
+/* FETCH COVER FROM LASTFM */
 async function fetchCover(artist, song) {
     try {
-        const apiKey = "7744c8f90ee053fc761e0e23bfa00b89"; // SUA API KEY CORRETA
+        const apiKey = "7744c8f90ee053fc761e0e23bfa00b89"; // sua API
         const url = `https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${apiKey}&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(song)}&format=json`;
 
         const res = await fetch(url);
@@ -73,14 +73,13 @@ async function fetchCover(artist, song) {
 
         let img = json?.track?.album?.image?.pop()?.["#text"];
 
-        // FIX: capa vazia ou inexistente → usa o logo
         if (!img || img.trim() === "") {
             return STREAM_LOGO;
         }
 
         return img;
 
-    } catch {
+    } catch (err) {
         return STREAM_LOGO;
     }
 }
@@ -94,9 +93,10 @@ function setupNowPlaying() {
             const data = JSON.parse(e.data);
             const raw = (data.streamTitle || "").trim();
 
+            /* COMMERCIAL BREAK DETECTADO */
             if (!raw || raw.toLowerCase().includes("commercial")) {
-                currentTitleEl.textContent = "Praise FM U.S.";
-                coverImg.src = STREAM_LOGO;
+                currentTitleEl.textContent = "Commercial Break";
+                coverImg.src = "/image/commercial break.png";
                 return;
             }
 
