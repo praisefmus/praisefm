@@ -1,549 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Praise FM U.S. - Listen Live</title>
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, sans-serif;
-        }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Praise FM — Apple Music Style Player</title>
 
-        body {
-            background: linear-gradient(135deg, #1a1a1a, #0d0d0d);
-            color: #ffffff;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
+  <!-- FAVICONS (coloque os arquivos na pasta /image/) -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/image/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/image/favicon-16x16.png">
+  <link rel="apple-touch-icon" href="/image/apple-touch-icon.png">
 
-        .player-container {
-            width: 100vw;
-            height: 100vh;
-            background: rgba(30, 30, 30, 0.95);
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Capa do álbum */
-        .cover-container {
-            position: relative;
-            width: 100%;
-            flex-grow: 1;
-            min-height: 0;
-            overflow: hidden;
-        }
-
-        .cover-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: brightness(0.7);
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-
-        .cover-placeholder {
-            position: absolute;
-            inset: 0;
-            background: rgba(20, 20, 20, 0.9);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-
-        .cover-placeholder i {
-            font-size: 3rem;
-            margin-bottom: 10px;
-        }
-
-        /* Informações da música */
-        .song-info-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            max-width: 600px;
-            padding: 30px 20px 120px;
-            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-            z-index: 2;
-            text-align: center;
-        }
-
-        .song-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            line-height: 1.2;
-        }
-
-        .artist-name {
-            font-size: 1.5rem;
-            color: #a0a0a0;
-            font-weight: 500;
-            line-height: 1.2;
-        }
-
-        /* Controles principais */
-        .controls-container {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 20px 25px 30px;
-            background: rgba(30, 30, 30, 0.95);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            z-index: 3;
-        }
-
-        /* Barra de progresso */
-        .progress-container {
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
-        .time-info {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.8rem;
-            color: #a0a0a0;
-            margin-bottom: 5px;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 4px;
-            background: #555;
-            border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .progress {
-            height: 100%;
-            background: #ffffff;
-            width: 0%;
-            border-radius: 2px;
-            position: relative;
-        }
-
-        .progress::after {
-            content: '';
-            position: absolute;
-            right: -4px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 10px;
-            height: 10px;
-            background: white;
-            border-radius: 50%;
-        }
-
-        /* Botões de controle */
-        .main-controls {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 30px;
-            margin-bottom: 25px;
-        }
-
-        .control-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.2s;
-        }
-
-        .control-btn:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .play-btn {
-            width: 60px;
-            height: 60px;
-            background: white;
-            color: black;
-            font-size: 2rem;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .play-btn:hover {
-            background: #f0f0f0;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Controles adicionais */
-        .additional-controls {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            align-items: center;
-        }
-
-        .additional-btn {
-            background: none;
-            border: none;
-            color: #a0a0a0;
-            font-size: 1.2rem;
-            cursor: pointer;
-            padding: 5px;
-            border-radius: 5px;
-        }
-
-        .additional-btn:hover,
-        .additional-btn.active {
-            color: white;
-        }
-
-        .volume-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            width: 100px;
-        }
-
-        #volumeSlider {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 4px;
-            background: #555;
-            border-radius: 2px;
-            outline: none;
-        }
-
-        #volumeSlider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 12px;
-            height: 12px;
-            background: white;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        /* Status LIVE + Hora de Chicago */
-        .bottom-status {
-            position: absolute;
-            bottom: 60px;
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            padding: 5px 10px;
-            background: rgba(20, 20, 20, 0.9);
-            z-index: 4;
-            font-size: 1rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .live-indicator {
-            color: #ff0000;
-            font-weight: bold;
-            animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-
-        .chicago-time {
-            color: white;
-            font-weight: 500;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        /* Responsivo */
-        @media (max-width: 600px) {
-            .song-info-overlay {
-                width: 95%;
-                padding: 20px 15px 100px;
-            }
-            .song-title { font-size: 1.8rem; margin-bottom: 8px; }
-            .artist-name { font-size: 1.2rem; }
-            .main-controls { gap: 20px; }
-            .control-btn { width: 45px; height: 45px; font-size: 1.3rem; }
-            .play-btn { width: 55px; height: 55px; font-size: 1.8rem; }
-            .bottom-status { flex-direction: column; gap: 5px; }
-        }
-    </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="player-container">
-        <!-- Capa e informações da música -->
-        <div class="cover-container">
-            <img id="coverImage" class="cover-image" src="" alt="Current track artwork" style="display: none;">
-            
-            <div id="coverPlaceholder" class="cover-placeholder">
-                <i class="fas fa-music"></i>
-                <div>Praise FM U.S.</div>
-            </div>
+  <!-- dynamic blurred background taken from the cover -->
+  <div id="bg" class="backdrop" aria-hidden="true"></div>
 
-            <div class="song-info-overlay">
-                <div class="song-title" id="songTitle">Streaming Live</div>
-                <div class="artist-name" id="artistName">Praise & Worship</div>
-            </div>
+  <main class="page-wrap">
+    <div class="player-card" role="region" aria-label="Praise FM Player">
+      <div class="cover-area">
+        <img id="coverMain" class="cover-main" src="/image/logopraisefm.webp" alt="Now Playing">
+      </div>
+
+      <div class="meta-area">
+        <div class="meta-top">
+          <div class="track-info">
+            <div id="currentTitle" class="title">Praise FM U.S.</div>
+            <div id="currentArtist" class="artist">Live Radio</div>
+          </div>
+
+          <div class="meta-actions">
+            <!-- removed star and three-dots per request -->
+          </div>
         </div>
 
-        <!-- Indicador LIVE + Hora de Chicago -->
-        <div class="bottom-status">
-            <span class="live-indicator">LIVE</span>
-            <span class="chicago-time" id="chicagoTime">Loading...</span>
+        <div class="progress-wrap" aria-hidden="true">
+          <div id="progressBar" class="progress">
+            <div id="progressFill" class="progress-fill" style="width:0%"></div>
+          </div>
+          <div class="progress-time">
+            <span id="timeLeft">—:—</span>
+            <span id="timeRight">—:—</span>
+          </div>
         </div>
 
-        <!-- Controles -->
-        <div class="controls-container">
-            <div class="progress-container">
-                <div class="time-info">
-                    <span id="currentTime">0:00</span>
-                    <span id="remainingTime">-0:00</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress" id="progressBar"></div>
-                </div>
-            </div>
+        <div class="controls-row">
+          <button id="prevBtn" class="control small" aria-label="Previous">
+            <!-- SVG prev -->
+            <svg class="icon icon-prev" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M11.5 12L20 18V6L11.5 12Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M4 6H6V18H4V6Z" fill="currentColor"/></svg>
+          </button>
 
-            <div class="main-controls">
-                <button class="control-btn" id="rewindBtn" title="Rewind">
-                    <i class="fas fa-step-backward"></i>
-                </button>
-                <button class="control-btn play-btn" id="playPauseBtn" title="Play/Pause">
-                    <i class="fas fa-play"></i>
-                </button>
-                <button class="control-btn" id="forwardBtn" title="Forward">
-                    <i class="fas fa-step-forward"></i>
-                </button>
-            </div>
+          <button id="playBtn" class="control big" aria-label="Play">
+            <!-- SVG play / pause — we'll toggle text content too for accessibility -->
+            <svg id="playIcon" class="icon icon-play" width="36" height="36" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 3.5v17l14-8.5L5 3.5z" fill="currentColor"/></svg>
+          </button>
 
-            <div class="additional-controls">
-                <button class="additional-btn" id="favoriteBtn" title="Favorite">
-                    <i class="far fa-star"></i>
-                </button>
-
-                <div class="volume-container">
-                    <i class="fas fa-volume-up" style="color:white;font-size:1rem;"></i>
-                    <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.7">
-                </div>
-
-                <button class="additional-btn" id="commentsBtn" title="Comments">
-                    <i class="fas fa-comment"></i>
-                </button>
-
-                <button class="additional-btn" id="optionsBtn" title="Options">
-                    <i class="fas fa-ellipsis-h"></i>
-                </button>
-            </div>
+          <button id="nextBtn" class="control small" aria-label="Next">
+            <!-- SVG next -->
+            <svg class="icon icon-next" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 6v12l8.5-6L3 6z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M16 6H18V18H16V6Z" fill="currentColor"/></svg>
+          </button>
         </div>
+
+        <div class="lower-row">
+          <div class="volume-group">
+            <button id="muteBtn" class="mini-icon" aria-label="Mute">
+              <!-- SVG speaker -->
+              <svg class="icon icon-speaker" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 9v6h4l5 5V4L9 9H5z" fill="currentColor"/></svg>
+            </button>
+            <input id="volumeSlider" type="range" min="0" max="1" step="0.01" value="0.7" aria-label="Volume">
+          </div>
+
+          <div class="misc-icons">
+            <button id="airBtn" class="mini-icon" aria-label="AirPlay">
+              <!-- SVG AirPlay-like -->
+              <svg class="icon icon-air" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 17h14V5H5v12z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M12 21l4-4H8l4 4z" fill="currentColor"/></svg>
+            </button>
+            <button id="queueBtn" class="mini-icon" aria-label="Queue">
+              <!-- SVG queue -->
+              <svg class="icon icon-queue" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- Player de áudio -->
-    <audio id="radioPlayer" preload="metadata">
-        <source src="https://stream.zeno.fm/tobnzqsvykzvv" type="audio/mpeg">
-    </audio>
+    <section class="recent-section">
+      <h3>Recently Played</h3>
+      <ul id="historyList" class="history-list" aria-live="polite"></ul>
+    </section>
+  </main>
 
-    <script>
-        // Configurações
-        const STREAM_URL = 'https://stream.zeno.fm/tobnzqsvykzvv';
-        const STREAM_LOGO_URL = 'https://raw.githubusercontent.com/praisefmus/praisefm/main/image/logopraisefm.webp';
-        const LASTFM_API_KEY = '3ce134e4f02accfff4367ada927e6dcd';
-
-        // Elementos DOM
-        const player = document.getElementById('radioPlayer');
-        const coverImg = document.getElementById('coverImage');
-        const coverPlaceholder = document.getElementById('coverPlaceholder');
-        const songTitleEl = document.getElementById('songTitle');
-        const artistNameEl = document.getElementById('artistName');
-        const playPauseBtn = document.getElementById('playPauseBtn');
-        const volumeSlider = document.getElementById('volumeSlider');
-        const progressBar = document.getElementById('progressBar');
-        const currentTimeEl = document.getElementById('currentTime');
-        const remainingTimeEl = document.getElementById('remainingTime');
-        const favoriteBtn = document.getElementById('favoriteBtn');
-        const rewindBtn = document.getElementById('rewindBtn');
-        const forwardBtn = document.getElementById('forwardBtn');
-        const commentsBtn = document.getElementById('commentsBtn');
-        const optionsBtn = document.getElementById('optionsBtn');
-        const chicagoTimeEl = document.getElementById('chicagoTime');
-
-        // Estado
-        let isPlaying = false;
-        let currentSong = '';
-        let currentArtist = '';
-        let currentCoverUrl = '';
-        let currentTrackKey = '';
-        let isSeeking = false;
-        const totalDuration = 180; // Simulação para stream
-
-        // Atualiza hora de Chicago
-        function updateChicagoTime() {
-            const now = new Date();
-            const chicagoTime = now.toLocaleString('en-US', {
-                timeZone: 'America/Chicago',
-                hour12: false,
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            });
-            chicagoTimeEl.textContent = chicagoTime;
-        }
-        setInterval(updateChicagoTime, 1000);
-        updateChicagoTime();
-
-        // Exibe capa
-        function showCover(url) {
-            if (url && url !== STREAM_LOGO_URL) {
-                coverImg.src = url;
-                coverImg.style.display = 'block';
-                coverPlaceholder.style.display = 'none';
-            } else {
-                coverImg.style.display = 'none';
-                coverPlaceholder.style.display = 'flex';
-            }
-        }
-
-        // Busca capa no Last.fm
-        async function fetchCoverFromLastFm(artist, track) {
-            if (!artist || !track) return null;
-            try {
-                const response = await fetch(
-                    `https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${LASTFM_API_KEY}&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}&format=json`
-                );
-                const data = await response.json();
-                const images = data.track?.album?.image;
-                if (images && images.length > 0) {
-                    const cover = images.find(img => img.size === 'extralarge') || images[images.length - 1];
-                    const url = cover?.['#text']?.trim();
-                    if (url && !url.includes('2a96cbd8b46e442fc41c2b86b821562f4c259d77.png') && !url.includes('6673a968842267b0b62b371850f88c6d6d8c0c3e.png')) {
-                        return url;
-                    }
-                }
-            } catch (error) {
-                console.error("Error fetching cover from Last.fm:", error);
-            }
-            return null;
-        }
-
-        // Atualiza informações da faixa
-        async function updateTrackInfo(song, artist) {
-            if (!song || !artist || `${artist} - ${song}` === currentTrackKey) return;
-
-            currentTrackKey = `${artist} - ${song}`;
-            songTitleEl.textContent = song;
-            artistNameEl.textContent = artist;
-
-            let coverUrl = await fetchCoverFromLastFm(artist, song);
-            currentCoverUrl = coverUrl || STREAM_LOGO_URL;
-            showCover(currentCoverUrl);
-        }
-
-        // Simulação de metadados (substituir por Icecast/Shoutcast real quando disponível)
-        async function checkStreamMetadata() {
-            const simulatedSongs = [
-                { title: "What A Beautiful Name", artist: "Hillsong Worship" },
-                { title: "Reckless Love", artist: "Cory Asbury" },
-                { title: "O Come To The Altar", artist: "Elevation Worship" },
-                { title: "Good Good Father", artist: "Chris Tomlin" }
-            ];
-            const randomSong = simulatedSongs[Math.floor(Math.random() * simulatedSongs.length)];
-            await updateTrackInfo(randomSong.title, randomSong.artist);
-        }
-
-        // Inicialização
-        player.src = STREAM_URL;
-        player.volume = volumeSlider.value;
-        showCover(STREAM_LOGO_URL);
-
-        player.play().then(() => {
-            isPlaying = true;
-            playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-            setInterval(checkStreamMetadata, 30000);
-        }).catch(err => {
-            console.warn("Autoplay bloqueado. Aguardando interação do usuário.");
-        });
-
-        // Controles
-        playPauseBtn.addEventListener('click', () => {
-            if (isPlaying) player.pause();
-            else player.play();
-
-            isPlaying = !isPlaying;
-            playPauseBtn.innerHTML = isPlaying ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play"></i>';
-        });
-
-        volumeSlider.addEventListener('input', () => {
-            player.volume = volumeSlider.value;
-        });
-
-        player.addEventListener('timeupdate', () => {
-            if (isSeeking) return;
-            const currentTime = player.currentTime;
-            const progressPercent = (currentTime % totalDuration) / totalDuration * 100;
-            progressBar.style.width = `${progressPercent}%`;
-            currentTimeEl.textContent = formatTime(currentTime % totalDuration);
-            remainingTimeEl.textContent = `-${formatTime(totalDuration - (currentTime % totalDuration))}`;
-        });
-
-        function formatTime(seconds) {
-            const min = Math.floor(seconds / 60);
-            const sec = Math.floor(seconds % 60);
-            return `${min}:${sec < 10 ? '0' : ''}${sec}`;
-        }
-
-        favoriteBtn.addEventListener('click', () => {
-            const icon = favoriteBtn.querySelector('i');
-            icon.classList.toggle('far');
-            icon.classList.toggle('fas');
-        });
-
-        forwardBtn.addEventListener('click', checkStreamMetadata);
-        rewindBtn.addEventListener('click', () => console.log("Rewind não disponível em stream ao vivo"));
-        commentsBtn.addEventListener('click', () => alert("Funcionalidade de comentários em breve!"));
-        optionsBtn.addEventListener('click', () => alert("Menu de opções em desenvolvimento"));
-
-        // Seek (simulado)
-        progressBar.parentElement.addEventListener('mousedown', (e) => {
-            isSeeking = true;
-            updateSeek(e);
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (isSeeking) updateSeek(e);
-        });
-
-        document.addEventListener('mouseup', () => { isSeeking = false; });
-
-        function updateSeek(e) {
-            const rect = progressBar.parentElement.getBoundingClientRect();
-            const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-            progressBar.style.width = `${percent * 100}%`;
-        }
-    </script>
+  <audio id="radioPlayer" preload="auto"></audio>
+  <script src="script.js" defer></script>
 </body>
 </html>
