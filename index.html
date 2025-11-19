@@ -20,26 +20,30 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
-            background-attachment: fixed;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
         }
 
         .player-container {
-            width: 90%;
-            max-width: 600px;
-            min-width: 300px;
+            width: 100vw;
+            height: 100vh;
+            max-width: 100%;
+            max-height: 100%;
             background: rgba(30, 30, 30, 0.95);
-            border-radius: 24px;
+            border-radius: 0;
             overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            box-shadow: none;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
         .cover-container {
             position: relative;
             width: 100%;
-            aspect-ratio: 1 / 1;
+            flex-grow: 1;
+            min-height: 0;
             overflow: hidden;
         }
 
@@ -48,7 +52,9 @@
             height: 100%;
             object-fit: cover;
             filter: brightness(0.7);
-            border-radius: 24px 24px 0 0;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
 
         .cover-placeholder {
@@ -57,7 +63,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #2a7a2a, #1a4a1a);
+            background: rgba(20, 20, 20, 0.9);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -78,22 +84,23 @@
             bottom: 0;
             left: 0;
             right: 0;
-            padding: 30px 20px 60px;
+            padding: 30px 20px 120px;
             background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
             z-index: 2;
+            text-align: center;
         }
 
         .song-title {
-            font-size: 1.8rem;
+            font-size: 2.5rem;
             font-weight: 700;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
         .artist-name {
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             color: #a0a0a0;
             font-weight: 500;
         }
@@ -104,6 +111,11 @@
             flex-direction: column;
             align-items: center;
             background: rgba(30, 30, 30, 0.95);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 3;
         }
 
         .progress-container {
@@ -129,7 +141,7 @@
 
         .progress {
             height: 100%;
-            background: #00ff9d;
+            background: #ffffff;
             width: 0%;
             border-radius: 2px;
             position: relative;
@@ -236,35 +248,36 @@
             cursor: pointer;
         }
 
-        /* --- NOVO: Informações da Rádio --- */
-        .station-footer {
+        /* --- NOVO: Rodapé com apenas LIVE e Hora --- */
+        .status-footer {
             background: rgba(20, 20, 20, 0.9);
-            padding: 15px 20px;
+            padding: 10px 20px; /* Menor padding */
             display: flex;
-            justify-content: space-between;
+            justify-content: center; /* Centraliza o conteúdo */
             align-items: center;
-            font-size: 0.9rem;
-            color: #ccc;
-            border-top: 1px solid rgba(255, 255, 255, 0.1); /* Linha sutil separando */
-        }
-
-        .station-status {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .station-name {
-            font-weight: 600;
-            color: white; /* Nome da rádio em branco */
+            font-size: 1rem; /* Tamanho da fonte do status */
+            color: white; /* Cor padrão do texto */
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: absolute;
+            bottom: 60px; /* Ajuste para posicionar acima dos controles */
+            left: 0;
+            right: 0;
+            z-index: 3;
+            gap: 15px; /* Espaçamento entre LIVE e a hora */
         }
 
         .live-indicator {
             color: #ff0000; /* Vermelho */
             font-weight: bold;
-            animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; /* Efeito pulsante */
+            animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
 
+        .chicago-time {
+            font-weight: 500;
+            color: white; /* Hora em branco */
+        }
+
+        /* Mantém a animação pulse */
         @keyframes pulse {
             0% {
                 opacity: 1;
@@ -275,11 +288,6 @@
             100% {
                 opacity: 1;
             }
-        }
-
-        .chicago-time {
-            font-weight: 500;
-            color: #a0a0a0;
         }
 
         .social-icons a {
@@ -295,33 +303,21 @@
         }
 
         .cover-image {
-            box-shadow: 0 0 20px rgba(0, 255, 157, 0.3);
             transition: box-shadow 0.3s ease;
         }
 
         .cover-image.glow {
-            box-shadow: 0 0 30px rgba(0, 255, 157, 0.6);
         }
 
         @media (max-width: 600px) {
-            .player-container {
-                width: 95%;
-                max-width: 400px;
-            }
-            .song-title { font-size: 1.6rem; }
-            .artist-name { font-size: 1.1rem; }
+            .song-title { font-size: 1.8rem; }
+            .artist-name { font-size: 1.2rem; }
             .main-controls { gap: 20px; }
             .control-btn { width: 45px; height: 45px; font-size: 1.3rem; }
             .play-btn { width: 55px; height: 55px; font-size: 1.8rem; }
-        }
-
-        @media (min-width: 1024px) {
-            .player-container {
-                width: 80%;
-                max-width: 600px;
-            }
-            .song-title { font-size: 2rem; }
-            .artist-name { font-size: 1.3rem; }
+            /* Ajuste para o rodapé em telas menores */
+            .status-footer { flex-direction: column; gap: 5px; }
+            .social-icons { display: none; } /* Oculta redes sociais no rodapé principal se necessário */
         }
 
     </style>
@@ -339,6 +335,12 @@
                 <div class="song-title" id="songTitle">Streaming Live</div>
                 <div class="artist-name" id="artistName">Praise & Worship</div>
             </div>
+        </div>
+
+        <!-- NOVO: Rodapé com apenas LIVE e Hora -->
+        <div class="status-footer">
+            <span class="live-indicator">LIVE</span>
+            <span class="chicago-time" id="chicagoTime">Loading...</span>
         </div>
 
         <div class="controls-container">
@@ -380,19 +382,6 @@
                 </button>
             </div>
         </div>
-
-        <!-- --- NOVO: Rodapé com Status e Hora --- -->
-        <div class="station-footer">
-            <div class="station-status">
-                <span class="station-name">Praise FM U.S.</span>
-                <span class="live-indicator">LIVE</span>
-            </div>
-            <div class="chicago-time" id="chicagoTime">Loading...</div>
-            <div class="social-icons">
-                <a href="https://www.facebook.com/praisefm.usa/" target="_blank" rel="noopener"><i class="fab fa-facebook-f"></i></a>
-                <a href="https://www.instagram.com/fmpraise.usa/" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
-            </div>
-        </div>
     </div>
 
     <audio id="radioPlayer" preload="metadata">
@@ -429,16 +418,30 @@
         let isSeeking = false;
         let totalDuration = 0;
 
+        function updateChicagoTime() {
+            const now = new Date();
+            const chicagoTime = now.toLocaleString('en-US', {
+                timeZone: 'America/Chicago',
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            chicagoTimeEl.textContent = chicagoTime; // Apenas a hora, sem o prefixo "Chicago:"
+        }
+
+        setInterval(updateChicagoTime, 1000);
+        updateChicagoTime();
+
+
         function showCover(url) {
             if (url && url !== STREAM_LOGO_URL) {
                 coverImg.src = url;
                 coverImg.style.display = 'block';
                 coverPlaceholder.style.display = 'none';
-                coverImg.classList.add('glow');
             } else {
                 coverImg.style.display = 'none';
                 coverPlaceholder.style.display = 'flex';
-                coverImg.classList.remove('glow');
             }
         }
 
@@ -494,24 +497,6 @@
             await updateTrackInfo(randomSong.title, randomSong.artist);
         }
 
-        // --- Função para atualizar a hora de Chicago ---
-        function updateChicagoTime() {
-            const now = new Date();
-            // Formata a hora no fuso horário de Chicago (CST/CDT)
-            const chicagoTime = now.toLocaleString('en-US', {
-                timeZone: 'America/Chicago',
-                hour12: false, // Formato 24h
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            });
-            chicagoTimeEl.textContent = `Chicago: ${chicagoTime}`;
-        }
-
-        // Atualiza a hora a cada segundo
-        setInterval(updateChicagoTime, 1000);
-        // Atualiza imediatamente ao carregar
-        updateChicagoTime();
 
         player.src = STREAM_URL;
         player.volume = volumeSlider.value;
@@ -544,14 +529,14 @@
         player.addEventListener('timeupdate', () => {
             if (!isSeeking) {
                 const currentTime = player.currentTime;
-                totalDuration = 180;
-                const progressPercent = (currentTime % totalDuration) / totalDuration * 100;
-                progressBar.style.width = `${progressPercent}%`;
+                 totalDuration = 180;
+                 const progressPercent = (currentTime % totalDuration) / totalDuration * 100;
+                 progressBar.style.width = `${progressPercent}%`;
 
-                const displayCurrent = formatTime(currentTime % totalDuration);
-                const displayTotal = formatTime(totalDuration);
-                currentTimeEl.textContent = displayCurrent;
-                remainingTimeEl.textContent = `-${formatTime(totalDuration - (currentTime % totalDuration))}`;
+                 const displayCurrent = formatTime(currentTime % totalDuration);
+                 const displayTotal = formatTime(totalDuration);
+                 currentTimeEl.textContent = displayCurrent;
+                 remainingTimeEl.textContent = `-${formatTime(totalDuration - (currentTime % totalDuration))}`;
             }
         });
 
