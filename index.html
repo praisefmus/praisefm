@@ -1,48 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Praise FM U.S. — Live</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Praise FM — Apple Music Style Player</title>
 
-    <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <!-- dynamic blurred background taken from the cover -->
+  <div id="bg" class="backdrop" aria-hidden="true"></div>
 
-<main class="container">
+  <main class="page-wrap">
+    <div class="player-card" role="region" aria-label="Praise FM Player">
+      <div class="cover-area">
+        <img id="coverMain" class="cover-main" src="/image/logopraisefm.webp" alt="Now Playing">
+      </div>
 
-    <!-- COVER -->
-    <div class="cover-wrapper">
-        <img id="coverImg" src="/image/logopraisefm.webp" class="cover-img" alt="Now Playing">
+      <div class="meta-area">
+        <div class="meta-top">
+          <div class="track-info">
+            <div id="currentTitle" class="title">Praise FM U.S.</div>
+            <div id="currentArtist" class="artist">Live Radio</div>
+          </div>
+
+          <div class="meta-actions">
+            <button id="favBtn" class="icon-btn" aria-label="Favorite">☆</button>
+            <button id="moreBtn" class="icon-btn" aria-label="More">⋯</button>
+          </div>
+        </div>
+
+        <div class="progress-wrap">
+          <div id="progressBar" class="progress">
+            <div id="progressFill" class="progress-fill" style="width:0%"></div>
+          </div>
+          <div class="progress-time">
+            <span id="timeLeft">—:—</span>
+            <span id="timeRight">—:—</span>
+          </div>
+        </div>
+
+        <div class="controls-row">
+          <button id="prevBtn" class="control small">⏮</button>
+          <button id="playBtn" class="control big" aria-label="Play">▶</button>
+          <button id="nextBtn" class="control small">⏭</button>
+        </div>
+
+        <div class="lower-row">
+          <div class="volume-group">
+            <button id="muteBtn" class="mini-icon">🔈</button>
+            <input id="volumeSlider" type="range" min="0" max="1" step="0.01" value="0.7">
+          </div>
+
+          <div class="misc-icons">
+            <button id="airBtn" class="mini-icon" aria-label="AirPlay">📶</button>
+            <button id="queueBtn" class="mini-icon" aria-label="Queue">≡</button>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- NOW PLAYING TEXT -->
-    <div class="now-playing">
-        <span class="live-dot"></span> LIVE • <span id="currentTime"></span>
-    </div>
-
-    <h2 id="currentTitle" class="track-title">Praise FM U.S.</h2>
-
-    <!-- PLAYER BUTTON -->
-    <button id="playBtn" class="play-btn" aria-label="Play">▶</button>
-
-    <!-- VOLUME -->
-    <div class="vol-box">
-        <input id="volumeSlider" type="range" min="0" max="1" step="0.01" value="0.7" />
-    </div>
-
-    <!-- STATUS -->
-    <div id="status" class="status">Connecting…</div>
-
-    <!-- RECENTLY PLAYED -->
     <section class="recent-section">
-        <h3>Recently Played</h3>
-        <ul id="historyList" class="history-list"></ul>
+      <h3>Recently Played</h3>
+      <ul id="historyList" class="history-list"></ul>
     </section>
+  </main>
 
-</main>
-
-<audio id="radioPlayer" preload="auto"></audio>
-<script src="script.js" defer></script>
+  <audio id="radioPlayer" preload="auto"></audio>
+  <script src="script.js" defer></script>
 </body>
 </html>
