@@ -285,16 +285,9 @@
 
         // Ouve quando a imagem do álbum termina de carregar para atualizar o fundo
         albumArtEl.onload = () => {
-            // Verifica se o caminho atual já está sendo processado
             const currentSrc = albumArtEl.src;
             if (currentSrc) {
-                // Se for Live, a função updateBlurredBackground vai checar o tipo
-                if (isLive) {
-                    updateBlurredBackground(currentSrc);
-                } else { 
-                    // Para On Demand (sempre dinâmico ou usa fallback)
-                    updateBlurredBackground(currentSrc);
-                }
+                updateBlurredBackground(currentSrc);
             }
         };
 
@@ -329,20 +322,19 @@
         async function getColorFromImage(imgUrl) {
             return new Promise((resolve, reject) => {
                 const img = new Image();
-                img.crossOrigin = "Anonymous"; // Importante para imagens de outras origens (CORS)
+                img.crossOrigin = "Anonymous"; // Tenta resolver CORS
                 img.src = imgUrl;
 
                 img.onload = () => {
                     try {
                         colorCanvas.width = 1; 
                         colorCanvas.height = 1;
-                        ctx.drawImage(img, 0, 0, 1, 1); // Pega a amostra de 1x1
+                        ctx.drawImage(img, 0, 0, 1, 1); 
                         const pixelData = ctx.getImageData(0, 0, 1, 1).data;
                         const color = `rgb(${pixelData[0]}, ${pixelData[1]}, ${pixelData[2]})`;
                         resolve(color);
                     } catch (e) {
-                        console.error("Could not get color from image:", e);
-                        reject(null);
+                        reject(null); // Falha na leitura (Provável CORS Block)
                     }
                 };
                 img.onerror = () => reject(null);
@@ -362,14 +354,14 @@
                 // Tenta pegar a cor da capa se for uma música (Dynamic Color)
                 getColorFromImage(imgSrc).then(color => {
                     if (color) {
-                        // Aplica a cor dominante suavizada
+                        // Sucesso: Aplica a cor dominante suavizada
                         bgBlur.style.background = `radial-gradient(circle at 50% 30%, ${color}, #000)`;
                     } else {
-                        // Fallback se falhar na leitura da cor
+                        // Fallback 1: Falha no CORS. Usa uma cor suave genérica para a música
                         bgBlur.style.background = `radial-gradient(circle at 50% 30%, #5a1e1e, #000)`; 
                     }
                 }).catch(() => {
-                    // Fallback em erro de CORS ou API
+                    // Fallback 2: Erro de API/conexão. Usa a mesma cor suave.
                     bgBlur.style.background = `radial-gradient(circle at 50% 30%, #5a1e1e, #000)`; 
                 });
             }
@@ -383,11 +375,11 @@
             trackNameEl.innerText = trackTitle;
             artistNameEl.innerText = artistName;
             
-            // Só muda a source se for diferente, para evitar que o .onload seja chamado desnecessariamente
+            // Só muda a source se for diferente, para que o .onload seja chamado
             if (albumArtEl.src !== imageUrl) {
                 albumArtEl.src = imageUrl; 
             } else {
-                // Se o SRC for o mesmo (ex: fallback), força a atualização do fundo
+                // Se o SRC for o mesmo, força a atualização do fundo (caso de fallback)
                 updateBlurredBackground(imageUrl);
             }
 
@@ -406,6 +398,7 @@
             timeDisplay.style.display = 'none';
             seekSlider.style.display = 'none';
             
+            audio.src = STREAM_URL;
             audio.play();
             isPlaying = true;
             updateUIState(true);
@@ -541,6 +534,9 @@
 
             const artistLow = artist.toLowerCase();
             const trackLow = track.toLowerCase();
+            
+            // A imagem padrão é o logo, que fará o fundo ficar vermelho (fallback)
+            let fallbackImage = IMG_DEFAULT; 
 
             // --- REGRA 1: COMMERCIAL BREAK (FUNDO CINZA) ---
             if (trackLow.includes("commercial") || artistLow.includes("commercial") || trackLow.includes("ad break")) {
@@ -555,10 +551,6 @@
             }
 
             // --- REGRA 3: BUSCA NO LAST.FM (MÚSICA) ---
-            // Se o artista for o nome da rádio, tenta pegar o nome da música se o Last.fm falhar.
-            if (artist === "Praise FM" && track !== "Praise FM") { 
-                // Se a info é Praise FM - Music Title, continua tentando o Last.fm
-            }
             
             const url = `https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${LASTFM_API_KEY}&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}&format=json`;
 
@@ -579,11 +571,13 @@
                 }
                 
                 // --- FALLBACK FINAL: SE FALHAR NO LAST.FM ---
-                setMedia(IMG_DEFAULT, track, artist);
+                // Se falhou ou não tem capa, usa a imagem padrão (IMG_DEFAULT ou IMG_SPOT).
+                // O updateBlurredBackground irá cair na cor de fallback (#5a1e1e) para ter a transição suave.
+                setMedia(fallbackImage, track, artist);
 
             } catch (e) { 
                 // Erro total da API ou de conexão
-                setMedia(IMG_DEFAULT, track, artist);
+                setMedia(fallbackImage, track, artist);
             }
         }
     </script>
