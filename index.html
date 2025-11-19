@@ -14,7 +14,7 @@
             --secondary-color: rgba(255, 255, 255, 0.6);
             --accent-color: #ff3b30;
             --bg-dark: #1c1c1e;
-            --bg-gradient-2: #8b0000;
+            --bg-gradient-2: #8b0000; /* Cor padrão para o fundo, será sobrescrita */
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; }
@@ -31,6 +31,7 @@
 
         .background-blur {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            /* Cor inicial, será definida por JS */
             background: radial-gradient(circle at 50% 30%, var(--bg-gradient-2), #000);
             filter: blur(60px); opacity: 0.8; transition: background 1s ease;
         }
@@ -65,7 +66,6 @@
         .progress-area { margin-bottom: 10px; position: relative; }
         .progress-bar-bg { width: 100%; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; }
         .progress-bar-fill { width: 0%; height: 100%; background: var(--secondary-color); border-radius: 2px; transition: width 0.1s linear; }
-        /* Slider invisível para controle On Demand */
         .seek-slider { position: absolute; top: -5px; width: 100%; height: 15px; opacity: 0; cursor: pointer; }
         
         .time-info { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--secondary-color); margin-top: 8px; font-weight: 600; }
@@ -121,9 +121,8 @@
         .ep-title { font-size: 16px; font-weight: 600; margin-bottom: 2px; }
         .ep-desc { font-size: 12px; color: var(--secondary-color); }
 
-        /* Botão voltar ao vivo */
         .back-to-live {
-            display: none; /* Oculto por padrão */
+            display: none;
             margin-top: 5px;
             background-color: rgba(255, 59, 48, 0.2);
             color: var(--accent-color);
@@ -149,7 +148,7 @@
         </div>
 
         <div class="artwork-container paused" id="artContainer">
-            <img src="image/logopraisefm.webp" alt="Album Art" class="artwork-img" id="albumArt" onerror="this.src='image/logopraisefm.webp'">
+            <img src="image/logopraisefm.webp" alt="Album Art" class="artwork-img" id="albumArt">
         </div>
 
         <div class="track-info">
@@ -211,6 +210,8 @@
                 </div>
         </div>
     </div>
+    
+    <canvas id="colorCanvas" style="display:none;"></canvas>
 
     <script>
         // --- CONFIGURAÇÕES ---
@@ -218,7 +219,7 @@
         const ZENO_ID = "hvwifp8ezc6tv"; 
         const LASTFM_API_KEY = "7744c8f90ee053fc761e0e23bfa00b89";
         
-        // --- IMAGENS LOCAIS (CORRIGIDO PARA "image/") ---
+        // --- IMAGENS LOCAIS ---
         const IMG_DEFAULT = "image/logopraisefm.webp"; 
         const IMG_COMMERCIAL = "image/commercial break.png";
         const IMG_SPOT = "image/spot.webp";
@@ -264,6 +265,10 @@
         const progressFill = document.getElementById('progressFill');
         const btnBackLive = document.getElementById('btnBackLive');
 
+        // Canvas para pegar cores
+        const colorCanvas = document.getElementById('colorCanvas');
+        const ctx = colorCanvas.getContext('2d', { willReadFrequently: true });
+
         let isPlaying = false;
         let isLive = true;
         let eventSource = null;
@@ -274,7 +279,21 @@
         updateChicagoTime();
         setInterval(updateChicagoTime, 1000);
         // Garante que o estado inicial é LIVE com o logo padrão
-        setLocalImage(IMG_DEFAULT);
+        setMedia(IMG_DEFAULT, "Praise FM", "Live from Chicago");
+
+        // --- LISTENERS E FUNÇÕES AUXILIARES ---
+
+        // Ouve quando a imagem do álbum termina de carregar para atualizar o fundo
+        albumArtEl.onload = () => {
+            if (isLive) {
+                 // Apenas atualiza o fundo se não for um dos casos específicos (commercial/spot)
+                if (!(albumArtEl.src.includes(encodeURI(IMG_COMMERCIAL)) || albumArtEl.src.includes(encodeURI(IMG_SPOT)))) {
+                    updateBlurredBackground(albumArtEl.src);
+                }
+            } else { // Para On Demand
+                updateBlurredBackground(albumArtEl.src);
+            }
+        };
 
         // --- CONTROLES PRINCIPAIS ---
         playPauseBtn.addEventListener('click', togglePlay);
@@ -301,7 +320,69 @@
             volFill.style.width = (e.target.value * 100) + '%';
         });
 
-        // --- LOGICA LIVE VS ON DEMAND ---
+        // --- LÓGICA DE FUNDO (BLUR) ---
+        // Função principal para atualizar o fundo borrado
+        function updateBlurredBackground(imgSrc) {
+            // Se for um link de imagem padrão ou comercial/spot, usa cores fixas
+            if (imgSrc.includes(encodeURI(IMG_DEFAULT)) || imgSrc.includes(encodeURI(IMG_SPOT))) {
+                bgBlur.style.background = `radial-gradient(circle at 50% 30%, #8b0000, #000)`; // Vermelho padrão
+            } else if (imgSrc.includes(encodeURI(IMG_COMMERCIAL))) {
+                 bgBlur.style.background = `radial-gradient(circle at 50% 30%, #333, #000)`; // Cinza para comercial
+            } else {
+                // Tenta pegar a cor da capa se for uma música
+                getColorFromImage(imgSrc).then(color => {
+                    if (color) {
+                        bgBlur.style.background = `radial-gradient(circle at 50% 30%, ${color}, #000)`;
+                    } else {
+                        // Fallback se não conseguir pegar a cor
+                        bgBlur.style.background = `radial-gradient(circle at 50% 30%, #5a1e1e, #000)`; // Cor de fallback para músicas
+                    }
+                }).catch(() => {
+                    bgBlur.style.background = `radial-gradient(circle at 50% 30%, #5a1e1e, #000)`; // Fallback em erro
+                });
+            }
+        }
+
+        // Função para extrair a cor dominante de uma imagem
+        async function getColorFromImage(imgUrl) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.crossOrigin = "Anonymous"; // Importante para imagens de outras origens
+                img.src = imgUrl;
+
+                img.onload = () => {
+                    try {
+                        colorCanvas.width = 1; // Pega uma amostra de 1x1 pixel
+                        colorCanvas.height = 1;
+                        ctx.drawImage(img, 0, 0, 1, 1);
+                        const pixelData = ctx.getImageData(0, 0, 1, 1).data;
+                        const color = `rgb(${pixelData[0]}, ${pixelData[1]}, ${pixelData[2]})`;
+                        resolve(color);
+                    } catch (e) {
+                        console.error("Could not get color from image:", e);
+                        reject(null);
+                    }
+                };
+                img.onerror = () => reject(null);
+            });
+        }
+
+
+        // --- LÓGICA LIVE VS ON DEMAND ---
+
+        // Função unificada para definir o estado da mídia (Live ou On Demand)
+        function setMedia(imageUrl, trackTitle, artistName, audioSource = STREAM_URL) {
+            trackNameEl.innerText = trackTitle;
+            artistNameEl.innerText = artistName;
+            albumArtEl.src = imageUrl; // O 'onload' do albumArtEl cuidará do background
+
+            if (audio.src !== audioSource) {
+                audio.src = audioSource;
+            }
+            
+            // Garante que o background seja atualizado
+            updateBlurredBackground(imageUrl);
+        }
 
         // 1. Voltar para LIVE
         btnBackLive.addEventListener('click', goLive);
@@ -320,9 +401,8 @@
             
             if(!eventSource) setupZenoMetadata();
             
-            trackNameEl.innerText = "Praise FM";
-            artistNameEl.innerText = "Live from Chicago";
-            setLocalImage(IMG_DEFAULT);
+            // Define o estado inicial do live com a imagem padrão
+            setMedia(IMG_DEFAULT, "Praise FM", "Live from Chicago");
         }
 
         // 2. Tocar Episódio On Demand
@@ -335,20 +415,14 @@
                 eventSource = null;
             }
 
-            // Atualiza UI
-            trackNameEl.innerText = ep.title;
-            artistNameEl.innerText = ep.artist;
-            albumArtEl.src = ep.img || IMG_DEFAULT;
-            
-            // Fundo neutro para podcasts/on demand
-            bgBlur.style.background = `radial-gradient(circle at 50% 30%, #333, #000)`;
+            // Atualiza UI usando setMedia para lidar com a imagem e fundo
+            setMedia(ep.img || IMG_DEFAULT, ep.title, ep.artist, ep.url);
             
             btnBackLive.style.display = 'inline-block';
             liveBadge.style.display = 'none';
             timeDisplay.style.display = 'block';
             seekSlider.style.display = 'block';
             
-            audio.src = ep.url;
             audio.play();
             isPlaying = true;
             updateUIState(true);
@@ -380,7 +454,6 @@
         }
         
         function skip(sec) {
-            // Apenas funciona no modo On Demand
             if (!isLive && audio.duration) {
                 audio.currentTime += sec;
             }
@@ -451,73 +524,18 @@
             };
         }
         
-        // CORRIGIDA: Lógica de Imagem e Fundo Centralizada
-        function setLocalImage(path) {
-            const encodedPath = encodeURI(path); 
-            if (!albumArtEl.src.includes(encodedPath)) {
-                albumArtEl.src = path;
-            }
-            
-            let bgGradientColor = '#8b0000'; // Padrão Vermelho
-
-            if (path === IMG_COMMERCIAL) {
-                bgGradientColor = '#333'; // Fundo Cinza para Comercial
-            } else if (path === IMG_DEFAULT) {
-                bgGradientColor = '#8b0000'; // Fundo Vermelho para Logo
-            }
-            
-            bgBlur.style.background = `radial-gradient(circle at 50% 30%, ${bgGradientColor}, #000)`;
-        }
-
-        // CORRIGIDA: Lógica de Busca de Metadados
+        // --- LÓGICA DE BUSCA DE METADADOS (APLICANDO FUNDO DINÂMICO) ---
         async function updateTrackInfo(artist, track) {
             if(!isLive) return;
-
-            trackNameEl.innerText = track;
-            artistNameEl.innerText = artist;
 
             const artistLow = artist.toLowerCase();
             const trackLow = track.toLowerCase();
 
             // --- REGRA 1: COMMERCIAL BREAK (FUNDO CINZA) ---
             if (trackLow.includes("commercial") || artistLow.includes("commercial") || trackLow.includes("ad break")) {
-                setLocalImage(IMG_COMMERCIAL);
+                setMedia(IMG_COMMERCIAL, track, artist);
                 return; 
             }
 
             // --- REGRA 2: SPOTS / JINGLES (FUNDO VERMELHO) ---
-            if (trackLow.includes("spot") || artistLow.includes("spot") || trackLow.includes("station id") || artist === "Praise FM") {
-                setLocalImage(IMG_SPOT);
-                return;
-            }
-
-            // --- REGRA 3: BUSCA NO LAST.FM (MÚSICA) ---
-            const url = `https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${LASTFM_API_KEY}&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}&format=json`;
-
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
-                
-                if (data.track && data.track.album && data.track.album.image) {
-                    const images = data.track.album.image;
-                    const foundImg = images[images.length - 1]['#text'];
-                    
-                    if(foundImg) {
-                        // Sucesso: Música com capa
-                        if(albumArtEl.src !== foundImg) albumArtEl.src = foundImg;
-                        // Fundo escuro/vermelho para capas de música
-                        bgBlur.style.background = `radial-gradient(circle at 50% 30%, #5a1e1e, #000)`; 
-                        return;
-                    }
-                }
-                
-                // --- FALLBACK FINAL: SE FALHAR NO LAST.FM ---
-                setLocalImage(IMG_DEFAULT);
-
-            } catch (e) { 
-                setLocalImage(IMG_DEFAULT);
-            }
-        }
-    </script>
-</body>
-</html>
+            if (trackLow.includes("spot") || artistLow
