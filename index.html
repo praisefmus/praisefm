@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Praise FM - Live & On Demand</title>
     
-    <link rel="icon" type="image/png" href="./image/favicon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./image/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./image/favicon-16x16.png">
+    <link rel="shortcut icon" type="image/x-icon" href="./image/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="./image/apple-touch-icon.png">
 
     <style>
         /* --- CSS (DESIGN) --- */
@@ -121,7 +124,6 @@
             display: flex; align-items: center; padding: 15px 0;
             border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer;
         }
-        /* CORREÇÃO: Adicionaremos o 'alt' via JS para estas imagens */
         .ep-img { width: 50px; height: 50px; border-radius: 6px; object-fit: cover; margin-right: 15px; }
         .ep-info { flex: 1; }
         .ep-title { font-size: 16px; font-weight: 600; margin-bottom: 2px; }
@@ -197,7 +199,7 @@
         </div>
 
         <div class="volume-area">
-            <svg width="18" height="18" viewBox="0 0 24 24" style="opacity: 0.6;" aria-label="Volume Icon"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" style="opacity: 0.6;" aria-label="Low Volume Icon"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
             <div class="volume-track">
                 <div class="volume-fill" id="volFill"></div>
                 <input type="range" min="0" max="1" step="0.01" value="0.8" id="volumeSlider" class="volume-slider" aria-label="Volume Slider">
@@ -321,7 +323,7 @@
                 iconPause.style.display = 'block';
                 updateUIState(true);
             }
-            // CORREÇÃO: Atualiza o aria-label para refletir o estado atual
+            // Atualiza o aria-label para refletir o estado atual (acessibilidade)
             playPauseBtn.setAttribute('aria-label', isPlaying ? 'Pause' : 'Play');
         }
 
@@ -385,7 +387,7 @@
             } else {
                 updateBlurredBackground(imageUrl);
             }
-            // CORREÇÃO: Atualiza o alt text da capa para acessibilidade
+            // ACESSIBILIDADE: Atualiza o alt text da capa
             albumArtEl.alt = `${trackTitle} by ${artistName} album art`;
 
 
@@ -563,17 +565,17 @@
             
             let fallbackImage = IMG_DEFAULT; 
 
-            // --- REGRA 1: COMMERCIAL BREAK (FUNDO CINZA) ---
+            // --- REGRA 1: COMMERCIAL BREAK (OCULTA BOTÃO) ---
             if (trackLow.includes("commercial") || artistLow.includes("commercial") || trackLow.includes("ad break")) {
                 setMedia(IMG_COMMERCIAL, track, artist);
-                lyricsBtn.style.display = 'none';
+                lyricsBtn.style.display = 'none'; // Oculta botão
                 return; 
             }
 
-            // --- REGRA 2: SPOTS / JINGLES (FUNDO CINZA/PRETO) ---
+            // --- REGRA 2: SPOTS / JINGLES (OCULTA BOTÃO) ---
             if (trackLow.includes("spot") || artistLow.includes("spot") || trackLow.includes("station id") || artist === "Praise FM") {
                 setMedia(IMG_SPOT, track, artist);
-                lyricsBtn.style.display = 'none';
+                lyricsBtn.style.display = 'none'; // Oculta botão
                 return;
             }
 
