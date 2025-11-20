@@ -11,7 +11,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="./image/apple-touch-icon.png">
 
     <style>
-        /* --- CSS (DESIGN) --- */
+        /* --- CSS (DESIGN - DEFAULT) --- */
         :root {
             --primary-color: #fff;
             --secondary-color: rgba(255, 255, 255, 0.6);
@@ -144,6 +144,46 @@
         }
         
         svg { fill: currentColor; }
+
+        /* --- Media Query para Telas de PC (Desktop/Laptops) --- */
+        @media (min-width: 600px) {
+            
+            .player-container {
+                /* Aumenta a largura máxima e adiciona um visual de "vidro" */
+                max-width: 500px; 
+                max-height: 90vh; 
+                padding: 40px; 
+                border-radius: 20px; 
+                background-color: rgba(0, 0, 0, 0.2); 
+                backdrop-filter: blur(15px); 
+            }
+
+            .artwork-container {
+                /* Aumenta a capa */
+                width: 100%;
+                max-width: 400px; 
+                margin: 20px auto 30px auto; 
+            }
+
+            .song-title { 
+                /* Aumenta o título */
+                font-size: 28px; 
+            }
+            
+            .artist-name { 
+                /* Aumenta o nome do artista */
+                font-size: 22px; 
+            }
+
+            .live-badge, .time-info span {
+                /* Aumenta o texto de tempo/live */
+                font-size: 14px;
+            }
+
+            /* Opcional: Aumenta um pouco os controles */
+            .play-btn { width: 80px; height: 80px; }
+            .skip-btn { width: 50px; }
+        }
     </style>
 </head>
 <body>
@@ -288,6 +328,18 @@
         let isLive = true;
         let eventSource = null;
 
+        // --- FUNÇÃO AUXILIAR PARA CORRIGIR CORS (TROCA DE COR DINÂMICA) ---
+        function getProxiedUrl(url) {
+            if (!url || url.includes(window.location.origin) || 
+                url.includes(IMG_DEFAULT) || url.includes(IMG_COMMERCIAL) || url.includes(IMG_SPOT)
+            ) {
+                // Se a URL for local ou for uma das imagens de fallback, não precisa de proxy
+                return url;
+            }
+            // Usa um proxy público para contornar restrições de CORS e permitir a leitura da cor
+            return 'https://corsproxy.io/?' + encodeURIComponent(url);
+        }
+
         // --- INICIALIZAR ---
         setupZenoMetadata();
         renderEpisodes();
@@ -358,15 +410,19 @@
         }
         
         function updateBlurredBackground(imgSrc) {
-            if (imgSrc.includes(encodeURI(IMG_COMMERCIAL))) {
+            // Verifica se a imagem é um de nossos fallbacks locais (que já estão em cinza)
+            const decodedSrc = decodeURIComponent(imgSrc);
+            if (decodedSrc.includes(IMG_COMMERCIAL)) {
                  bgBlur.style.background = `radial-gradient(circle at 50% 30%, #333, #000)`; 
-            } else if (imgSrc.includes(encodeURI(IMG_DEFAULT)) || imgSrc.includes(encodeURI(IMG_SPOT))) {
+            } else if (decodedSrc.includes(IMG_DEFAULT) || decodedSrc.includes(IMG_SPOT)) {
                  bgBlur.style.background = `radial-gradient(circle at 50% 30%, var(--bg-gradient-2), #000)`; 
             } else {
+                // Tenta pegar a cor da capa (agora via proxy)
                 getColorFromImage(imgSrc).then(color => {
                     if (color) {
                         bgBlur.style.background = `radial-gradient(circle at 50% 30%, ${color}, #000)`;
                     } else {
+                        // Fallback em caso de falha de CORS ou do Proxy
                         bgBlur.style.background = `radial-gradient(circle at 50% 30%, #282828, #000)`; 
                     }
                 }).catch(() => {
@@ -382,10 +438,14 @@
             trackNameEl.innerText = trackTitle;
             artistNameEl.innerText = artistName;
             
-            if (albumArtEl.src !== imageUrl) {
-                albumArtEl.src = imageUrl; 
+            // Aplica o proxy APENAS se a imagem for externa e não um fallback local.
+            const finalImageUrl = getProxiedUrl(imageUrl); 
+
+            if (albumArtEl.src !== finalImageUrl) {
+                albumArtEl.src = finalImageUrl; 
             } else {
-                updateBlurredBackground(imageUrl);
+                // Se a URL não mudou, forçamos a atualização do fundo
+                updateBlurredBackground(finalImageUrl);
             }
             // ACESSIBILIDADE: Atualiza o alt text da capa
             albumArtEl.alt = `${trackTitle} by ${artistName} album art`;
@@ -411,7 +471,7 @@
             audio.play();
             isPlaying = true;
             updateUIState(true);
-            playPauseBtn.setAttribute('aria-label', 'Pause'); // Atualiza Play/Pause label
+            playPauseBtn.setAttribute('aria-label', 'Pause'); 
             
             if(!eventSource) setupZenoMetadata();
             
@@ -439,7 +499,7 @@
             audio.play();
             isPlaying = true;
             updateUIState(true);
-            playPauseBtn.setAttribute('aria-label', 'Pause'); // Atualiza Play/Pause label
+            playPauseBtn.setAttribute('aria-label', 'Pause'); 
             
             drawer.classList.remove('open');
         }
