@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Praise FM - Live & On Demand</title>
     
-    <link rel="icon" type="image/png" href="image/favicon.png">
+    <link rel="icon" type="image/png" href="./image/favicon.png">
 
     <style>
         /* --- CSS (DESIGN) --- */
@@ -408,6 +408,7 @@
             liveBadge.style.display = 'flex';
             timeDisplay.style.display = 'none';
             seekSlider.style.display = 'none';
+            lyricsBtn.style.display = 'block'; // Mostra o botão no modo Live (logo padrão)
             
             audio.src = STREAM_URL;
             audio.play();
@@ -436,6 +437,7 @@
             liveBadge.style.display = 'none';
             timeDisplay.style.display = 'block';
             seekSlider.style.display = 'block';
+            lyricsBtn.style.display = 'block'; // Mantém o botão visível em On Demand (assumindo que são músicas)
             
             audio.play();
             isPlaying = true;
@@ -514,13 +516,14 @@
             const artist = artistNameEl.innerText.trim();
             const track = trackNameEl.innerText.trim();
             
-            // Bloqueia se estiver em 'Praise FM - Live from Chicago' ou comercial/spot
-            if (artist.includes("Praise FM") || track.toLowerCase().includes("commercial") || track.toLowerCase().includes("spot")) {
-                alert("Letras não disponíveis para o Live Stream ou Jingle/Comercial.");
-                return;
+            // Esta checagem é redundante se a lógica de detecção abaixo estiver correta, 
+            // mas serve como segurança caso o botão tenha sido mostrado por engano.
+            if (lyricsBtn.style.display === 'none') {
+                 alert("Letras não disponíveis para o item atual.");
+                 return;
             }
 
-            // MUDANÇA: Agora usa o Genius para pesquisa direta
+            // MUDANÇA: Usando o Genius para pesquisa direta
             const query = `${artist} ${track}`;
             const searchUrl = `https://genius.com/search?q=${encodeURIComponent(query)}`;
 
@@ -572,14 +575,19 @@
             // --- REGRA 1: COMMERCIAL BREAK (FUNDO CINZA) ---
             if (trackLow.includes("commercial") || artistLow.includes("commercial") || trackLow.includes("ad break")) {
                 setMedia(IMG_COMMERCIAL, track, artist);
+                lyricsBtn.style.display = 'none'; // OCULTA o botão
                 return; 
             }
 
             // --- REGRA 2: SPOTS / JINGLES (FUNDO CINZA/PRETO) ---
             if (trackLow.includes("spot") || artistLow.includes("spot") || trackLow.includes("station id") || artist === "Praise FM") {
                 setMedia(IMG_SPOT, track, artist);
+                lyricsBtn.style.display = 'none'; // OCULTA o botão
                 return;
             }
+
+            // Garante que o botão esteja visível para MÚSICAS
+            lyricsBtn.style.display = 'block';
 
             // --- REGRA 3: BUSCA NO LAST.FM (MÚSICA) ---
             
