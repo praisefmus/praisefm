@@ -12,9 +12,8 @@
         :root {
             --primary-color: #fff;
             --secondary-color: rgba(255, 255, 255, 0.6);
-            --accent-color: #ff3b30; /* Vermelho/Accent (mantido para LIVE e barra de progresso) */
+            --accent-color: #ff3b30;
             --bg-dark: #1c1c1e;
-            /* Cor padrão para o fundo, agora um cinza escuro, conforme solicitado */
             --bg-gradient-2: #282828; 
         }
 
@@ -32,13 +31,10 @@
 
         .background-blur {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            /* Usa a variável --bg-gradient-2 */
             background: radial-gradient(circle at 50% 30%, var(--bg-gradient-2), #000);
             filter: blur(60px); 
             opacity: 0.8; 
             transition: background 1s ease;
-            
-            /* Efeito de ruído sutil para textura (Apple-like) */
             background-image: linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px);
             background-size: 1px 1px;
         }
@@ -74,7 +70,6 @@
         /* PROGRESS */
         .progress-area { margin-bottom: 10px; position: relative; }
         .progress-bar-bg { width: 100%; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; }
-        /* Cor de preenchimento vermelha (accent) */
         .progress-bar-fill { width: 0%; height: 100%; background: var(--accent-color); border-radius: 2px; transition: width 0.1s linear; }
         .seek-slider { position: absolute; top: -5px; width: 100%; height: 15px; opacity: 0; cursor: pointer; }
         
@@ -126,6 +121,7 @@
             display: flex; align-items: center; padding: 15px 0;
             border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer;
         }
+        /* CORREÇÃO: Adicionaremos o 'alt' via JS para estas imagens */
         .ep-img { width: 50px; height: 50px; border-radius: 6px; object-fit: cover; margin-right: 15px; }
         .ep-info { flex: 1; }
         .ep-title { font-size: 16px; font-weight: 600; margin-bottom: 2px; }
@@ -158,23 +154,23 @@
         </div>
 
         <div class="artwork-container paused" id="artContainer">
-            <img src="image/logopraisefm.webp" alt="Album Art" class="artwork-img" id="albumArt">
+            <img src="image/logopraisefm.webp" alt="Praise FM station logo or current album art" class="artwork-img" id="albumArt">
         </div>
 
         <div class="track-info">
             <div class="text-area">
                 <div class="song-title" id="trackName">Praise FM</div>
                 <div class="artist-name" id="artistName">Live from Chicago</div>
-                <button id="btnBackLive" class="back-to-live">Return to Live</button>
+                <button id="btnBackLive" class="back-to-live" aria-label="Return to Live Stream">Return to Live</button>
             </div>
-            <button class="more-btn" id="lyricsBtn">•••</button>
+            <button class="more-btn" id="lyricsBtn" aria-label="Lyrics and More Options">•••</button>
         </div>
 
         <div class="progress-area">
             <div class="progress-bar-bg">
                 <div class="progress-bar-fill" id="progressFill"></div>
             </div>
-            <input type="range" min="0" max="100" value="0" class="seek-slider" id="seekSlider">
+            <input type="range" min="0" max="100" value="0" class="seek-slider" id="seekSlider" aria-label="Seek Slider">
             
             <div class="time-info">
                 <div class="live-badge" id="liveBadge">
@@ -186,35 +182,39 @@
         </div>
 
         <div class="controls">
-            <button class="control-btn skip-btn" onclick="skip(-15)"><svg width="30" height="30" viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg></button>
+            <button class="control-btn skip-btn" onclick="skip(-15)" aria-label="Skip Back 15 Seconds">
+                <svg width="30" height="30" viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg>
+            </button>
             
-            <button class="control-btn play-btn" id="playPauseBtn">
+            <button class="control-btn play-btn" id="playPauseBtn" aria-label="Play / Pause">
                 <svg id="iconPlay" width="55" height="55" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                 <svg id="iconPause" style="display:none;" width="55" height="55" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
             </button>
 
-            <button class="control-btn skip-btn" onclick="skip(15)"><svg width="30" height="30" viewBox="0 0 24 24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg></button>
+            <button class="control-btn skip-btn" onclick="skip(15)" aria-label="Skip Forward 15 Seconds">
+                <svg width="30" height="30" viewBox="0 0 24 24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg>
+            </button>
         </div>
 
         <div class="volume-area">
-            <svg width="18" height="18" viewBox="0 0 24 24" style="opacity: 0.6;"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" style="opacity: 0.6;" aria-label="Volume Icon"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
             <div class="volume-track">
                 <div class="volume-fill" id="volFill"></div>
-                <input type="range" min="0" max="1" step="0.01" value="0.8" id="volumeSlider" class="volume-slider">
+                <input type="range" min="0" max="1" step="0.01" value="0.8" id="volumeSlider" class="volume-slider" aria-label="Volume Slider">
             </div>
-            <svg width="22" height="22" viewBox="0 0 24 24" style="opacity: 0.6;"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" style="opacity: 0.6;" aria-label="Max Volume Icon"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
         </div>
 
         <div class="bottom-icons">
-            <div class="bottom-icon"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14zM5 10h2v2H5zm0 4h2v2H5z"/></svg></div>
-            <div class="bottom-icon"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14.5c-2.49 0-4.5-2.01-4.5-4.5S9.51 7.5 12 7.5s4.5 2.01 4.5 4.5-2.01 4.5-4.5 4.5zm0-5.5c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"/></svg></div>
-            <div class="bottom-icon" id="menuBtn"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg></div>
+            <div class="bottom-icon" aria-label="Radio Tab"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14zM5 10h2v2H5zm0 4h2v2H5z"/></svg></div>
+            <div class="bottom-icon" aria-label="Queue Tab"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14.5c-2.49 0-4.5-2.01-4.5-4.5S9.51 7.5 12 7.5s4.5 2.01 4.5 4.5-2.01 4.5-4.5 4.5zm0-5.5c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"/></svg></div>
+            <div class="bottom-icon" id="menuBtn" aria-label="Open On Demand Menu"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg></div>
         </div>
 
         <div class="drawer" id="drawer">
             <div class="drawer-header">
                 <span class="drawer-title">On Demand</span>
-                <button class="close-drawer" id="closeDrawer">Done</button>
+                <button class="close-drawer" id="closeDrawer" aria-label="Close On Demand Menu">Done</button>
             </div>
             <div class="episode-list" id="episodeList">
                 </div>
@@ -239,13 +239,13 @@
             {
                 title: "Morning Prayer",
                 artist: "Pastor John",
-                url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", // Link MP3 Exemplo
+                url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", 
                 img: "https://images.unsplash.com/photo-1445445290350-16a3b8541d5c?w=200&fit=crop"
             },
             {
                 title: "Worship Session #42",
                 artist: "Praise Team",
-                url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3", // Link MP3 Exemplo
+                url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3", 
                 img: "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=200&fit=crop"
             }
         ];
@@ -291,12 +291,10 @@
         renderEpisodes();
         updateChicagoTime();
         setInterval(updateChicagoTime, 1000);
-        // Garante que o estado inicial é LIVE com o logo padrão
         setMedia(IMG_DEFAULT, "Praise FM", "Live from Chicago");
 
         // --- LISTENERS E FUNÇÕES AUXILIARES ---
 
-        // Ouve quando a imagem do álbum termina de carregar para atualizar o fundo
         albumArtEl.onload = () => {
             const currentSrc = albumArtEl.src;
             if (currentSrc) {
@@ -314,13 +312,17 @@
                 artContainer.classList.add('paused');
                 iconPlay.style.display = 'block';
                 iconPause.style.display = 'none';
+                updateUIState(false);
             } else {
                 audio.play();
                 isPlaying = true;
                 artContainer.classList.remove('paused');
                 iconPlay.style.display = 'none';
                 iconPause.style.display = 'block';
+                updateUIState(true);
             }
+            // CORREÇÃO: Atualiza o aria-label para refletir o estado atual
+            playPauseBtn.setAttribute('aria-label', isPlaying ? 'Pause' : 'Play');
         }
 
         // Volume
@@ -331,11 +333,10 @@
 
         // --- LÓGICA DE FUNDO (BLUR) ---
         
-        // Função para extrair a cor dominante de uma imagem
         async function getColorFromImage(imgUrl) {
             return new Promise((resolve, reject) => {
                 const img = new Image();
-                img.crossOrigin = "Anonymous"; // Tenta resolver CORS
+                img.crossOrigin = "Anonymous";
                 img.src = imgUrl;
 
                 img.onload = () => {
@@ -347,34 +348,26 @@
                         const color = `rgb(${pixelData[0]}, ${pixelData[1]}, ${pixelData[2]})`;
                         resolve(color);
                     } catch (e) {
-                        reject(null); // Falha na leitura (Provável CORS Block)
+                        reject(null);
                     }
                 };
                 img.onerror = () => reject(null);
             });
         }
         
-        // Função principal para atualizar o fundo borrado
         function updateBlurredBackground(imgSrc) {
-            // Verifica se é uma das imagens LOCAIS (Commercial ou Logo Padrão)
             if (imgSrc.includes(encodeURI(IMG_COMMERCIAL))) {
-                 // Fundo Cinza para Comercial
                  bgBlur.style.background = `radial-gradient(circle at 50% 30%, #333, #000)`; 
             } else if (imgSrc.includes(encodeURI(IMG_DEFAULT)) || imgSrc.includes(encodeURI(IMG_SPOT))) {
-                 // Fundo Cinza/Preto Padrão para Logo e Spot (usando a nova variável)
                  bgBlur.style.background = `radial-gradient(circle at 50% 30%, var(--bg-gradient-2), #000)`; 
             } else {
-                // Tenta pegar a cor da capa se for uma música (Dynamic Color)
                 getColorFromImage(imgSrc).then(color => {
                     if (color) {
-                        // Sucesso: Aplica a cor dominante suavizada
                         bgBlur.style.background = `radial-gradient(circle at 50% 30%, ${color}, #000)`;
                     } else {
-                        // Fallback 1: Falha no CORS. Usa a cor #282828 (cinza escuro)
                         bgBlur.style.background = `radial-gradient(circle at 50% 30%, #282828, #000)`; 
                     }
                 }).catch(() => {
-                    // Fallback 2: Erro de API/conexão. Usa a mesma cor.
                     bgBlur.style.background = `radial-gradient(circle at 50% 30%, #282828, #000)`; 
                 });
             }
@@ -383,7 +376,6 @@
 
         // --- LÓGICA LIVE VS ON DEMAND ---
 
-        // Função unificada para definir o estado da mídia (Live ou On Demand)
         function setMedia(imageUrl, trackTitle, artistName, audioSource = STREAM_URL) {
             trackNameEl.innerText = trackTitle;
             artistNameEl.innerText = artistName;
@@ -393,6 +385,9 @@
             } else {
                 updateBlurredBackground(imageUrl);
             }
+            // CORREÇÃO: Atualiza o alt text da capa para acessibilidade
+            albumArtEl.alt = `${trackTitle} by ${artistName} album art`;
+
 
             if (audio.src !== audioSource) {
                 audio.src = audioSource;
@@ -408,16 +403,16 @@
             liveBadge.style.display = 'flex';
             timeDisplay.style.display = 'none';
             seekSlider.style.display = 'none';
-            lyricsBtn.style.display = 'block'; // Mostra o botão no modo Live (logo padrão)
+            lyricsBtn.style.display = 'block'; 
             
             audio.src = STREAM_URL;
             audio.play();
             isPlaying = true;
             updateUIState(true);
+            playPauseBtn.setAttribute('aria-label', 'Pause'); // Atualiza Play/Pause label
             
             if(!eventSource) setupZenoMetadata();
             
-            // Define o estado inicial do live com a imagem padrão
             setMedia(IMG_DEFAULT, "Praise FM", "Live from Chicago");
         }
 
@@ -437,11 +432,12 @@
             liveBadge.style.display = 'none';
             timeDisplay.style.display = 'block';
             seekSlider.style.display = 'block';
-            lyricsBtn.style.display = 'block'; // Mantém o botão visível em On Demand (assumindo que são músicas)
+            lyricsBtn.style.display = 'block'; 
             
             audio.play();
             isPlaying = true;
             updateUIState(true);
+            playPauseBtn.setAttribute('aria-label', 'Pause'); // Atualiza Play/Pause label
             
             drawer.classList.remove('open');
         }
@@ -498,7 +494,7 @@
                 div.className = "episode-item";
                 div.onclick = () => playEpisode(index);
                 div.innerHTML = `
-                    <img src="${ep.img}" class="ep-img">
+                    <img src="${ep.img}" class="ep-img" alt="Artwork for ${ep.title} by ${ep.artist}">
                     <div class="ep-info">
                         <div class="ep-title">${ep.title}</div>
                         <div class="ep-desc">${ep.artist}</div>
@@ -512,22 +508,17 @@
         lyricsBtn.addEventListener('click', openLyrics);
 
         function openLyrics() {
-            // Pega o nome do artista e da música atual
             const artist = artistNameEl.innerText.trim();
             const track = trackNameEl.innerText.trim();
             
-            // Esta checagem é redundante se a lógica de detecção abaixo estiver correta, 
-            // mas serve como segurança caso o botão tenha sido mostrado por engano.
             if (lyricsBtn.style.display === 'none') {
                  alert("Letras não disponíveis para o item atual.");
                  return;
             }
 
-            // MUDANÇA: Usando o Genius para pesquisa direta
             const query = `${artist} ${track}`;
             const searchUrl = `https://genius.com/search?q=${encodeURIComponent(query)}`;
 
-            // Abre o link em uma nova aba
             window.open(searchUrl, '_blank');
         }
 
@@ -575,14 +566,14 @@
             // --- REGRA 1: COMMERCIAL BREAK (FUNDO CINZA) ---
             if (trackLow.includes("commercial") || artistLow.includes("commercial") || trackLow.includes("ad break")) {
                 setMedia(IMG_COMMERCIAL, track, artist);
-                lyricsBtn.style.display = 'none'; // OCULTA o botão
+                lyricsBtn.style.display = 'none';
                 return; 
             }
 
             // --- REGRA 2: SPOTS / JINGLES (FUNDO CINZA/PRETO) ---
             if (trackLow.includes("spot") || artistLow.includes("spot") || trackLow.includes("station id") || artist === "Praise FM") {
                 setMedia(IMG_SPOT, track, artist);
-                lyricsBtn.style.display = 'none'; // OCULTA o botão
+                lyricsBtn.style.display = 'none';
                 return;
             }
 
