@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Praise FM - Live & On Demand</title>
     
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0RNK6G5WWL"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
 
-      gtag('config', 'G-0RNK6G5WWL'); /* <--- SUBSTITUA PELO SEU ID DE MEDIÇÃO REAL */
+      gtag('config', 'G-XXXXXXXXXX'); /* <--- SUBSTITUA PELO SEU ID DE MEDIÇÃO REAL */
     </script>
     <link rel="icon" type="image/png" sizes="32x32" href="./image/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="./image/favicon-16x16.png">
@@ -283,6 +283,16 @@
         const IMG_DEFAULT = "image/logopraisefm.webp"; 
         const IMG_COMMERCIAL = "image/commercial break.png";
         const IMG_SPOT = "image/spot.webp";
+        
+        // NOVOS LOGOS DE PROGRAMAS (Baseado nos arquivos da sua pasta 'image')
+        const IMG_MIDDAY_GRACE = "image/MIDDAYGRACELOGO.webp";
+        const IMG_MIDNIGHT_GRACE = "image/MIDNIGHTGRACELOGO.webp";
+        const IMG_MORNING_SHOW = "image/MORNINGSHOWLOGO.webp";
+        const IMG_CARPOOL = "image/PRAISEFMCARPOOLLOGO.webp";
+        const IMG_CLASSIC = "image/PRAISEFMCLASSICLOGO.webp";
+        const IMG_FUTURE_ARTISTS = "image/PRAISEFMFUTUREARTISTSLOGO.webp";
+        const IMG_POP = "image/PRAISEFMPOPLOGO.webp";
+        const IMG_SUNDAY_MORNING = "image/SUNDAYMORNINGLOGO.webp";
 
         // --- LISTA ON DEMAND (MANTENHA OS SEUS LINKS MP3/IMG AQUI) ---
         const episodes = [
@@ -689,25 +699,69 @@
             const trackLow = track.toLowerCase();
             
             let fallbackImage = IMG_DEFAULT; 
+            
+            // Assume música por padrão, mas será sobrescrito se for programa ou propaganda.
+            lyricsBtn.style.display = 'block'; 
 
-            // --- REGRA 1: COMMERCIAL BREAK (OCULTA BOTÃO) ---
+            // --- REGRA 1: COMMERCIAL BREAK ---
             if (trackLow.includes("commercial") || artistLow.includes("commercial") || trackLow.includes("ad break")) {
                 setMedia(IMG_COMMERCIAL, track, artist);
-                lyricsBtn.style.display = 'none'; // Oculta botão
+                lyricsBtn.style.display = 'none'; 
                 return; 
             }
 
-            // --- REGRA 2: SPOTS / JINGLES (OCULTA BOTÃO) ---
+            // --- REGRA 2: SPOTS / JINGLES / DEFAULT STATION ID ---
             if (trackLow.includes("spot") || artistLow.includes("spot") || trackLow.includes("station id") || artist === "Praise FM") {
                 setMedia(IMG_SPOT, track, artist);
-                lyricsBtn.style.display = 'none'; // Oculta botão
+                lyricsBtn.style.display = 'none'; 
                 return;
             }
-
-            // Garante que o botão esteja visível para MÚSICAS
-            lyricsBtn.style.display = 'block';
-
-            // --- REGRA 3: BUSCA NO LAST.FM (MÚSICA) ---
+            
+            // --- REGRA 3: PROGRAMAS TEMÁTICOS (NOVOS LOGOS) ---
+            // Se for um programa, oculta o botão de letras e usa o logo específico.
+            if (artistLow.includes("midday grace") || trackLow.includes("midday grace")) {
+                setMedia(IMG_MIDDAY_GRACE, track, artist);
+                lyricsBtn.style.display = 'none'; 
+                return;
+            }
+            if (artistLow.includes("midnight grace") || trackLow.includes("midnight grace")) {
+                setMedia(IMG_MIDNIGHT_GRACE, track, artist);
+                lyricsBtn.style.display = 'none'; 
+                return;
+            }
+            if (artistLow.includes("morning show") || trackLow.includes("morning show")) {
+                setMedia(IMG_MORNING_SHOW, track, artist);
+                lyricsBtn.style.display = 'none'; 
+                return;
+            }
+            if (artistLow.includes("carpool") || trackLow.includes("carpool")) {
+                setMedia(IMG_CARPOOL, track, artist);
+                lyricsBtn.style.display = 'none'; 
+                return;
+            }
+            if (artistLow.includes("classic") || trackLow.includes("classic")) {
+                setMedia(IMG_CLASSIC, track, artist);
+                lyricsBtn.style.display = 'none'; 
+                return;
+            }
+            if (artistLow.includes("future artists") || trackLow.includes("future artists")) {
+                setMedia(IMG_FUTURE_ARTISTS, track, artist);
+                lyricsBtn.style.display = 'none'; 
+                return;
+            }
+            if (artistLow.includes("pop") || trackLow.includes("pop")) {
+                setMedia(IMG_POP, track, artist);
+                lyricsBtn.style.display = 'none'; 
+                return;
+            }
+            if (artistLow.includes("sunday morning") || trackLow.includes("sunday morning")) {
+                setMedia(IMG_SUNDAY_MORNING, track, artist);
+                lyricsBtn.style.display = 'none'; 
+                return;
+            }
+            
+            // --- REGRA 4: BUSCA NO LAST.FM (MÚSICA) ---
+            // Se chegou aqui, é uma música e o botão de letras está 'block'.
             
             const url = `https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${LASTFM_API_KEY}&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}&format=json`;
 
