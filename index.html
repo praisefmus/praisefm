@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Praise FM - Live & On Demand</title>
     
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0RNK6G5WWL"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-0RNK6G5WWL'); /* <--- SUBSTITUA PELO SEU ID DE MEDIÇÃO REAL */
+    </script>
     <link rel="icon" type="image/png" sizes="32x32" href="./image/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="./image/favicon-16x16.png">
     <link rel="shortcut icon" type="image/x-icon" href="./image/favicon.ico">
@@ -95,7 +103,6 @@
         .volume-area { display: flex; align-items: center; gap: 10px; margin-bottom: 30px; }
         .volume-track { flex: 1; height: 5px; background: rgba(255,255,255,0.2); border-radius: 3px; position: relative; }
         .volume-fill { position: absolute; height: 100%; background: #fff; border-radius: 3px; width: 80%; }
-        /* ACESSIBILIDADE: Adicionado aria-label */
         .volume-slider { position: absolute; width: 100%; height: 100%; top:0; opacity:0; cursor:pointer; }
 
         /* FOOTER */
@@ -357,7 +364,7 @@
             }
         };
 
-        // --- CONTROLES PRINCIPAIS ---
+        // --- CONTROLES PRINCIPAIS E RASTREAMENTO GA4 ---
         playPauseBtn.addEventListener('click', togglePlay);
         
         function togglePlay() {
@@ -368,6 +375,18 @@
                 iconPlay.style.display = 'block';
                 iconPause.style.display = 'none';
                 updateUIState(false);
+                
+                // RASTREIO GA4: Evento Pause
+                if (typeof gtag === 'function') {
+                    gtag('event', 'player_control', {
+                        'media_type': isLive ? 'radio_stream' : 'on_demand_episode',
+                        'action': 'pause',
+                        'track_name': trackNameEl.innerText,
+                        'artist_name': artistNameEl.innerText
+                    });
+                }
+
+
             } else {
                 audio.play();
                 isPlaying = true;
@@ -375,6 +394,17 @@
                 iconPlay.style.display = 'none';
                 iconPause.style.display = 'block';
                 updateUIState(true);
+
+                // RASTREIO GA4: Evento Play
+                if (typeof gtag === 'function') {
+                    gtag('event', 'player_control', {
+                        'media_type': isLive ? 'radio_stream' : 'on_demand_episode',
+                        'action': 'play',
+                        'track_name': trackNameEl.innerText,
+                        'artist_name': artistNameEl.innerText
+                    });
+                }
+
             }
             // Atualiza o aria-label para refletir o estado atual (acessibilidade)
             playPauseBtn.setAttribute('aria-label', isPlaying ? 'Pause' : 'Play');
@@ -503,6 +533,14 @@
             playPauseBtn.setAttribute('aria-label', 'Pause'); 
             
             drawer.classList.remove('open');
+
+            // RASTREIO GA4: Evento On Demand Play
+            if (typeof gtag === 'function') {
+                gtag('event', 'on_demand_play', {
+                    'track_name': ep.title,
+                    'artist_name': ep.artist
+                });
+            }
         }
 
         // 3. Barra de Progresso (On Demand)
@@ -531,6 +569,15 @@
         function skip(sec) {
             if (!isLive && audio.duration) {
                 audio.currentTime += sec;
+
+                // RASTREIO GA4: Evento Skip
+                if (typeof gtag === 'function') {
+                    gtag('event', 'media_seek', {
+                        'media_type': isLive ? 'radio_stream' : 'on_demand_episode',
+                        'seek_direction': sec > 0 ? 'forward' : 'backward',
+                        'seek_amount': Math.abs(sec) + 's',
+                    });
+                }
             }
         }
 
@@ -547,7 +594,16 @@
         }
 
         // --- MENU DRAWER ---
-        menuBtn.addEventListener('click', () => drawer.classList.add('open'));
+        menuBtn.addEventListener('click', () => {
+            drawer.classList.add('open');
+            // RASTREIO GA4: Evento Abertura do Menu
+            if (typeof gtag === 'function') {
+                gtag('event', 'menu_open', {
+                    'menu_name': 'on_demand'
+                });
+            }
+        });
+
         closeDrawer.addEventListener('click', () => drawer.classList.remove('open'));
 
         function renderEpisodes() {
@@ -577,6 +633,14 @@
             if (lyricsBtn.style.display === 'none') {
                  alert("Letras não disponíveis para o item atual.");
                  return;
+            }
+
+            // RASTREIO GA4: Evento Letras
+            if (typeof gtag === 'function') {
+                gtag('event', 'lyrics_search', {
+                    'track_name': track,
+                    'artist_name': artist
+                });
             }
 
             const query = `${artist} ${track}`;
