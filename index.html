@@ -23,7 +23,7 @@
         :root {
             --primary-color: #fff;
             --secondary-color: rgba(255, 255, 255, 0.6);
-            --accent-color: #ff3b30; /* Laranja/Vermelho */
+            --accent-color: #ff3b30; /* Laranja/Vermelho (Cor do Anel) */
             --bg-dark: #1c1c1e;
             --bg-gradient-2: #282828; 
         }
@@ -85,7 +85,7 @@
             position: relative; /* ESSENCIAL para o anel */
         }
 
-        /* --- Rotating Ring Indicator (Laranja Rodando) - REFORÇADO --- */
+        /* --- Rotating Ring Indicator (Laranja Rodando) - REFORÇADO E CORRIGIDO --- */
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
@@ -410,12 +410,12 @@
         const ZENO_ID = "hvwifp8ezc6tv"; 
         const LASTFM_API_KEY = "7744c8f90ee053fc761e0e23bfa00b89";
         
-        // --- IMAGENS LOCAIS (USANDO CAMINHO ABSOLUTO /image/ E NOME EM MINÚSCULAS) ---
+        // --- IMAGENS LOCAIS (VERIFICAR CAMINHOS NO SEU REPOSITÓRIO) ---
         const IMG_DEFAULT = "/image/logopraisefm.webp"; 
-        const IMG_COMMERCIAL = "/image/commercial break.png";
+        const IMG_COMMERCIAL = "/image/commercial break.png"; // Tem espaço, CUIDADO
         const IMG_SPOT = "/image/spot.webp";
         
-        // LOGOS DE PROGRAMAS (TUDO EM MINÚSCULA CONFORME SEU REPOSITÓRIO)
+        // LOGOS DE PROGRAMAS 
         const IMG_MIDDAY_GRACE = "/image/middaygracelogo.webp";
         const IMG_MIDNIGHT_GRACE = "/image/midnightgracelogo.webp";
         const IMG_MORNING_SHOW = "/image/morningshowlogo.webp";
@@ -441,7 +441,7 @@
             }
         ];
 
-        // --- DOM ELEMENTS (NOVOS E ANTIGOS) ---
+        // --- DOM ELEMENTS ---
         const audio = new Audio(STREAM_URL);
         const playPauseBtn = document.getElementById('playPauseBtn');
         const iconPlay = document.getElementById('iconPlay');
@@ -449,7 +449,7 @@
 
         // Elementos de Imagem
         const programLogoEl = document.getElementById('programLogo'); 
-        const programLogoContainerEl = document.getElementById('programLogoContainer'); // Novo: para controlar o anel
+        const programLogoContainerEl = document.getElementById('programLogoContainer');
         const artContainer = document.getElementById('artContainer');
         const albumArtEl = document.getElementById('albumArt'); 
 
@@ -483,23 +483,6 @@
         let isLive = true;
         let eventSource = null;
 
-        // --- FUNÇÃO AUXILIAR PARA CORRIGIR CORS (TROCA DE COR DINÂMICA) ---
-        function getProxiedUrl(url) {
-            // Se for imagem local, não usa proxy
-            if (url.startsWith('/image/')) {
-                return url;
-            }
-            return 'https://corsproxy.io/?' + encodeURIComponent(url);
-        }
-
-        // --- INICIALIZAR ---
-        setupZenoMetadata();
-        renderEpisodes();
-        updateChicagoTime();
-        setInterval(updateChicagoTime, 1000);
-        setMedia(IMG_DEFAULT, IMG_DEFAULT, "Praise FM", "Live from Chicago"); 
-
-        
         // --- FUNÇÃO PARA ATIVAR/DESATIVAR O ANEL ROTATIVO ---
         function setProgramLogoActiveState(isActive) {
             if (isActive) {
@@ -509,12 +492,51 @@
             }
         }
         
+        // --- FUNÇÃO CORRIGIDA setMedia (TRATA CAMINHOS LOCAIS VS. EXTERNOS) ---
+        function setMedia(programImageUrl, trackImageUrl, trackTitle, artistName, audioSource = STREAM_URL) {
+            trackNameEl.innerText = trackTitle;
+            artistNameEl.innerText = artistName;
+            
+            // 1. ATUALIZA LOGO DO PROGRAMA (FIXO)
+            if (programLogoEl.src !== programImageUrl) {
+                programLogoEl.src = programImageUrl;
+                programLogoEl.alt = `${trackTitle} by ${artistName} program logo`;
+            }
+            
+            // 2. ATUALIZA CAPA DA MÚSICA (MINIATURA) - CORRIGIDO O TRATAMENTO DE URL
+            let finalTrackImageUrl = trackImageUrl;
+            
+            // Só aplica o proxy se NÃO for uma URL LOCAL (começa com /image/ ou data:)
+            if (!trackImageUrl.startsWith('/image/') && !trackImageUrl.startsWith('data:')) {
+                finalTrackImageUrl = 'https://corsproxy.io/?' + encodeURIComponent(trackImageUrl);
+            }
+            
+            if (albumArtEl.src !== finalTrackImageUrl) {
+                albumArtEl.src = finalTrackImageUrl; 
+            } else {
+                // Se a URL não mudou, força a atualização do fundo caso a capa tenha acabado de carregar
+                updateBlurredBackground(finalTrackImageUrl);
+            }
+            albumArtEl.alt = `${trackTitle} by ${artistName} album art`;
+
+
+            if (audio.src !== audioSource) {
+                audio.src = audioSource;
+            }
+        }
+        
         // --- LISTENERS E FUNÇÕES AUXILIARES ---
 
         albumArtEl.onload = () => {
             const currentSrc = albumArtEl.src;
             if (currentSrc) {
-                updateBlurredBackground(currentSrc);
+                // Se a imagem for local (programa, spot, comercial), mantém o background escuro.
+                if (currentSrc.includes('/image/') && !currentSrc.includes('logopraisefm.webp')) {
+                    bgBlur.style.background = `radial-gradient(circle at 50% 30%, #282828, #000)`; 
+                } else {
+                    // Tenta obter a cor para capas do Last.fm ou logo padrão
+                    updateBlurredBackground(currentSrc);
+                }
             }
         };
 
@@ -593,7 +615,7 @@
         
         function updateBlurredBackground(imgSrc) {
             // Não tenta extrair cor de imagens locais ou imagens de programa (que não são capas de álbum)
-            if (imgSrc.includes('/image/') && !imgSrc.includes('https://lastfm')) {
+            if (imgSrc.includes('/image/')) {
                  bgBlur.style.background = `radial-gradient(circle at 50% 30%, #282828, #000)`; 
                  return;
             }
@@ -610,32 +632,7 @@
         }
 
 
-        // --- LÓGICA LIVE VS ON DEMAND (setMedia REVISADA) ---
-        function setMedia(programImageUrl, trackImageUrl, trackTitle, artistName, audioSource = STREAM_URL) {
-            trackNameEl.innerText = trackTitle;
-            artistNameEl.innerText = artistName;
-            
-            // 1. ATUALIZA LOGO DO PROGRAMA (FIXO)
-            if (programLogoEl.src !== programImageUrl) {
-                programLogoEl.src = programImageUrl;
-                programLogoEl.alt = `${trackTitle} by ${artistName} program logo`;
-            }
-            
-            // 2. ATUALIZA CAPA DA MÚSICA (MINIATURA)
-            const finalTrackImageUrl = getProxiedUrl(trackImageUrl); 
-
-            if (albumArtEl.src !== finalTrackImageUrl) {
-                albumArtEl.src = finalTrackImageUrl; 
-            } else {
-                updateBlurredBackground(finalTrackImageUrl);
-            }
-            albumArtEl.alt = `${trackTitle} by ${artistName} album art`;
-
-
-            if (audio.src !== audioSource) {
-                audio.src = audioSource;
-            }
-        }
+        // --- LÓGICA LIVE VS ON DEMAND ---
 
         // 1. Voltar para LIVE
         btnBackLive.addEventListener('click', goLive);
@@ -830,7 +827,7 @@
             };
         }
         
-        // --- LÓGICA DE BUSCA DE METADADOS (REFORÇADA E CORRIGIDA) ---
+        // --- LÓGICA DE BUSCA DE METADADOS ---
         async function updateTrackInfo(artist, track) {
             if(!isLive) return;
 
@@ -954,6 +951,17 @@
                 setMedia(programLogoUrl, IMG_DEFAULT, track, artist);
             }
         }
+        
+        // --- INICIALIZAÇÃO ---
+        setupZenoMetadata();
+        renderEpisodes();
+        updateChicagoTime();
+        setInterval(updateChicagoTime, 1000);
+        
+        // Define o logo inicial e ativa o anel no início, pois a rádio está em "Live"
+        setMedia(IMG_DEFAULT, IMG_DEFAULT, "Praise FM", "Live from Chicago"); 
+        setProgramLogoActiveState(true); 
+
     </script>
 </body>
 </html>
