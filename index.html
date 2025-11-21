@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Praise FM - Live & On Demand</title>
-    
+
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-0RNK6G5WWL"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -129,7 +129,7 @@
             align-items: center;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
             transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-            
+
             transform: scale(1);
             opacity: 1;
         }
@@ -230,7 +230,7 @@
             box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
         }
         .drawer.open { transform: translateY(0); }
-        
+
         .drawer-header {
             padding: 20px; display: flex; justify-content: space-between; align-items: center;
             border-bottom: 1px solid rgba(255,255,255,0.1);
@@ -263,12 +263,12 @@
             margin-top: 15px; 
             align-self: flex-start;
         }
-        
+
         svg { fill: currentColor; }
 
         /* --- Media Query para Telas de PC (Desktop/Laptops) --- */
         @media (min-width: 600px) {
-            
+
             .player-container {
                 max-width: 500px; 
                 max-height: 90vh; 
@@ -282,7 +282,7 @@
                 width: 250px; 
                 height: 250px;
             }
-            
+
             .program-logo-container.is-song-playing::before {
                 top: -15px; 
                 left: -15px;
@@ -302,7 +302,7 @@
             .song-title-mini { 
                 font-size: 18px; 
             }
-            
+
             .artist-name-mini { 
                 font-size: 16px; 
             }
@@ -326,14 +326,14 @@
         </div>
 
         <div class="media-area">
-            
+
             <div class="program-logo-container" id="programLogoContainer">
                 <img src="/image/logopraisefm.webp" alt="Praise FM station logo" class="program-logo-img" id="programLogo">
             </div>
 
             <div class="artwork-container paused" id="artContainer">
                 <img src="/image/logopraisefm.webp" alt="Praise FM station logo or current album art" class="artwork-img" id="albumArt">
-                
+
                 <div class="track-info-mini">
                     <div class="song-title-mini" id="trackName">Praise FM</div>
                     <div class="artist-name-mini" id="artistName">Live from Chicago</div>
@@ -344,7 +344,7 @@
         </div>
 
         <button id="btnBackLive" class="back-to-live" aria-label="Return to Live Stream">Return to Live</button>
-        
+
         <div class="track-info" style="display:none;"></div> 
 
         <div class="progress-area">
@@ -352,7 +352,7 @@
                 <div class="progress-bar-fill" id="progressFill"></div>
             </div>
             <input type="range" min="0" max="100" value="0" class="seek-slider" id="seekSlider" aria-label="Seek Slider">
-            
+
             <div class="time-info">
                 <div class="live-badge" id="liveBadge">
                     <div class="live-dot"></div> LIVE
@@ -366,7 +366,7 @@
             <button class="control-btn skip-btn" onclick="skip(-15)" aria-label="Skip Back 15 Seconds">
                 <svg width="30" height="30" viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg>
             </button>
-            
+
             <button class="control-btn play-btn" id="playPauseBtn" aria-label="Play / Pause">
                 <svg id="iconPlay" width="55" height="55" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                 <svg id="iconPause" style="display:none;" width="55" height="55" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
@@ -401,7 +401,7 @@
                 </div>
         </div>
     </div>
-    
+
     <canvas id="colorCanvas" style="display:none;"></canvas>
 
     <script>
@@ -409,14 +409,14 @@
         const STREAM_URL = "https://stream.zeno.fm/hvwifp8ezc6tv";
         const ZENO_ID = "hvwifp8ezc6tv"; 
         const LASTFM_API_KEY = "7744c8f90ee053fc761e0e23bfa00b89";
-        
+
         // --- IMAGENS LOCAIS (USANDO CAMINHO ABSOLUTO /image/ E NOMES EM MINÚSCULAS) ---
         const IMG_DEFAULT = "/image/logopraisefm.webp"; 
         const IMG_COMMERCIAL = "/image/commercial break.png"; 
         const IMG_SPOT = "/image/spot.webp";
-        
+
         // LOGOS DE PROGRAMAS 
-        const IMG_MIDDAY_GRACE = "/image/middaygracelogo.webp"; // Confirmação de arquivo no servidor
+        const IMG_MIDDAY_GRACE = "/image/middaygracelogo.webp"; 
         const IMG_MIDNIGHT_GRACE = "/image/midnightgracelogo.webp";
         const IMG_MORNING_SHOW = "/image/morningshowlogo.webp";
         const IMG_CARPOOL = "/image/praisefmcarpoollogo.webp"; 
@@ -460,7 +460,7 @@
         const artistNameEl = document.getElementById('artistName'); 
         const bgBlur = document.getElementById('bgBlur');
         const clockDisplay = document.getElementById('clockDisplay');
-        
+
         // On Demand Elements
         const drawer = document.getElementById('drawer');
         const menuBtn = document.getElementById('menuBtn');
@@ -471,7 +471,7 @@
         const seekSlider = document.getElementById('seekSlider');
         const progressFill = document.getElementById('progressFill');
         const btnBackLive = document.getElementById('btnBackLive');
-        
+
         // Botão de Letras
         const lyricsBtn = document.getElementById('lyricsBtn');
 
@@ -491,29 +491,29 @@
                 programLogoContainerEl.classList.remove('is-song-playing');
             }
         }
-        
+
         // --- FUNÇÃO setMedia ---
         function setMedia(programImageUrl, trackImageUrl, trackTitle, artistName, audioSource = STREAM_URL) {
             trackNameEl.innerText = trackTitle;
             artistNameEl.innerText = artistName;
-            
+
             // 1. ATUALIZA LOGO DO PROGRAMA (CÍRCULO GRANDE) 
             if (programLogoEl.src !== programImageUrl) {
                 programLogoEl.src = programImageUrl;
                 programLogoEl.alt = `${trackTitle} by ${artistName} program logo`;
-                
+
                 // Se a imagem do círculo mudou, precisamos forçar o recálculo do fundo.
                 updateBlurredBackground(programImageUrl);
             }
-            
+
             // 2. ATUALIZA CAPA DA MÚSICA (MINIATURA)
             let finalTrackImageUrl = trackImageUrl;
-            
+
             // Só aplica o proxy se NÃO for uma URL LOCAL
             if (!trackImageUrl.startsWith('/image/') && !trackImageUrl.startsWith('data:')) {
                 finalTrackImageUrl = 'https://corsproxy.io/?' + encodeURIComponent(trackImageUrl);
             }
-            
+
             if (albumArtEl.src !== finalTrackImageUrl) {
                 albumArtEl.src = finalTrackImageUrl; 
             } 
@@ -525,7 +525,7 @@
                 audio.src = audioSource;
             }
         }
-        
+
         // --- LISTENERS E FUNÇÕES AUXILIARES ---
 
         albumArtEl.onload = () => {
@@ -543,7 +543,7 @@
 
         // --- CONTROLES PRINCIPAIS E RASTREAMENTO GA4 ---
         playPauseBtn.addEventListener('click', togglePlay);
-        
+
         function togglePlay() {
             if (isPlaying) {
                 audio.pause();
@@ -552,7 +552,7 @@
                 iconPlay.style.display = 'block';
                 iconPause.style.display = 'none';
                 updateUIState(false);
-                
+
                 if (typeof gtag === 'function') {
                     gtag('event', 'player_control', {
                         'media_type': isLive ? 'radio_stream' : 'on_demand_episode',
@@ -591,7 +591,7 @@
         });
 
         // --- LÓGICA DE FUNDO (BLUR) ---
-        
+
         async function getColorFromImage(imgUrl) {
             return new Promise((resolve, reject) => {
                 const img = new Image();
@@ -613,7 +613,7 @@
                 img.onerror = () => reject(null);
             });
         }
-        
+
         function updateBlurredBackground(imgSrc) {
             // Não tenta extrair cor de imagens locais ou imagens de programa (que não são capas de álbum)
             if (imgSrc.includes('/image/')) {
@@ -645,15 +645,15 @@
             timeDisplay.style.display = 'none';
             seekSlider.style.display = 'none';
             lyricsBtn.style.display = 'block'; 
-            
+
             audio.src = STREAM_URL;
             audio.play();
             isPlaying = true;
             updateUIState(true);
             playPauseBtn.setAttribute('aria-label', 'Pause'); 
-            
+
             if(!eventSource) setupZenoMetadata();
-            
+
             // Ambos Logos (Fixo e Miniatura) voltam para o default da rádio, e anel ATIVO
             setMedia(IMG_DEFAULT, IMG_DEFAULT, "Praise FM", "Live from Chicago");
             setProgramLogoActiveState(true); 
@@ -671,18 +671,18 @@
 
             setMedia(ep.img || IMG_DEFAULT, ep.img || IMG_DEFAULT, ep.title, ep.artist, ep.url);
             setProgramLogoActiveState(false); // On Demand NÃO tem anel rotativo
-            
+
             btnBackLive.style.display = 'inline-block';
             liveBadge.style.display = 'none';
             timeDisplay.style.display = 'block';
             seekSlider.style.display = 'block';
             lyricsBtn.style.display = 'none'; 
-            
+
             audio.play();
             isPlaying = true;
             updateUIState(true);
             playPauseBtn.setAttribute('aria-label', 'Pause'); 
-            
+
             drawer.classList.remove('open');
 
             if (typeof gtag === 'function') {
@@ -715,7 +715,7 @@
             const sec = Math.floor(s % 60);
             return min + ":" + (sec < 10 ? "0" + sec : sec);
         }
-        
+
         function skip(sec) {
             if (!isLive && audio.duration) {
                 audio.currentTime += sec;
@@ -770,14 +770,14 @@
                 episodeList.appendChild(div);
             });
         }
-        
+
         // --- FUNÇÃO PARA LETRAS (LYRICS) ---
         lyricsBtn.addEventListener('click', openLyrics);
 
         function openLyrics() {
             const artist = artistNameEl.innerText.trim();
             const track = trackNameEl.innerText.trim();
-            
+
             if (lyricsBtn.style.display === 'none') {
                  alert("Letras não disponíveis para o item atual.");
                  return;
@@ -827,23 +827,23 @@
                 } catch (error) {}
             };
         }
-        
+
         // --- LÓGICA DE BUSCA DE METADADOS (CORRIGIDA) ---
         async function updateTrackInfo(artist, track) {
             if(!isLive) return;
 
             const artistLow = artist.toLowerCase();
             const trackLow = track.toLowerCase();
-            
+
             // 📣 FERRAMENTA DE DEBBUG: OLHE O CONSOLE DO NAVEGADOR (F12) PARA VER O TEXTO EXATO!
             console.log(`[ZENO] Artista: ${artistLow} | Música: ${trackLow}`); 
-            
+
             // 1. O ESTADO PADRÃO É SEM ANEL (Se for programa, esse será o estado final)
             setProgramLogoActiveState(false); 
 
             let programLogoUrl = IMG_DEFAULT; // Círculo Grande (default é o logo da rádio)
             let trackImageUrl = IMG_DEFAULT;  // Miniatura (default é o logo da rádio)
-            
+
             lyricsBtn.style.display = 'block'; 
 
 
@@ -864,15 +864,17 @@
                 lyricsBtn.style.display = 'none'; 
                 return;
             }
-            
+
             // --- REGRA 3: PROGRAMAS TEMÁTICOS (ULTRA-REFORÇADA) ---
             let isProgram = false;
-            
+
             // Mapeamento de Programas: Adicionado variações e metadados completos conhecidos.
             const programMap = {
                 "midday grace": IMG_MIDDAY_GRACE,
                 "mid-day grace": IMG_MIDDAY_GRACE, 
                 "mid day grace": IMG_MIDDAY_GRACE,
+                "midday": IMG_MIDDAY_GRACE, // <-- NOVO REFORÇO
+                "mid day": IMG_MIDDAY_GRACE, // <-- NOVO REFORÇO
                 "midnight grace": IMG_MIDNIGHT_GRACE,
                 "morning show": IMG_MORNING_SHOW,
                 "the morning show": IMG_MORNING_SHOW, 
@@ -894,7 +896,7 @@
 
             if (isProgram) {
                 trackImageUrl = programLogoUrl; // Miniatura também usa o logo do programa
-                
+
                 // Anel permanece DESATIVADO (false, definido no início).
                 setMedia(programLogoUrl, trackImageUrl, track, artist); 
                 lyricsBtn.style.display = 'none';
@@ -906,7 +908,7 @@
             // Se chegou aqui, é uma MÚSICA.
 
             const lastfmUrl = `https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${LASTFM_API_KEY}&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}&format=json`;
-            
+
             try {
                 const response = await fetch(lastfmUrl);
                 const data = await response.json();
@@ -914,18 +916,18 @@
                 if (data.track && data.track.album && data.track.album.image) {
                     const images = data.track.album.image;
                     const largeImage = images.find(img => img.size === 'extralarge' || img.size === 'large');
-                    
+
                     if (largeImage && largeImage['#text']) {
                         trackImageUrl = largeImage['#text'];
                     }
                 }
-                
+
                 // Círculo Grande: USA o IMG_DEFAULT (logo da rádio).
                 programLogoUrl = IMG_DEFAULT; 
-                
+
                 // 💥 ATIVA O ANEL: É uma música! (Regra 4)
                 setProgramLogoActiveState(true); 
-                
+
                 // programLogoUrl é o logo da rádio (círculo grande), trackImageUrl é a capa (miniatura)
                 setMedia(programLogoUrl, trackImageUrl, track, artist); 
 
@@ -944,7 +946,7 @@
                 setMedia(programLogoUrl, IMG_DEFAULT, track, artist);
             }
         }
-        
+
         // --- FINAL DO CÓDIGO ---
 
         // Inicialização
@@ -952,5 +954,10 @@
         renderEpisodes();
         updateChicagoTime();
         setInterval(updateChicagoTime, 1000);
-        
-        // Define o logo inicial e ativa o anel no início, pois a
+
+        // Define o logo inicial e ativa o anel no início, pois a rádio está em "Live"
+        setProgramLogoActiveState(true); 
+
+    </script>
+</body>
+</html>
