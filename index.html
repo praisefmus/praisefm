@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Praise FM - Live & On Demand</title>
     
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0RNK6G5WWL"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
 
-      gtag('config', 'G-XXXXXXXXXX'); /* <--- SUBSTITUA PELO SEU ID DE MEDIÇÃO REAL */
+      gtag('config', 'G-0RNK6G5WWL'); /* <--- SUBSTITUA PELO SEU ID DE MEDIÇÃO REAL */
     </script>
     <link rel="icon" type="image/png" sizes="32x32" href="./image/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="./image/favicon-16x16.png">
@@ -256,7 +256,7 @@
         </div>
 
         <div class="bottom-icons">
-            <div class="bottom-icon" aria-label="Radio Tab"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14zM5 10h2v2H5zm0 4h2v2H5z"/></svg></div>
+            <div class="bottom-icon" aria-label="Radio Tab"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg></div>
             <div class="bottom-icon" aria-label="Queue Tab"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14.5c-2.49 0-4.5-2.01-4.5-4.5S9.51 7.5 12 7.5s4.5 2.01 4.5 4.5-2.01 4.5-4.5 4.5zm0-5.5c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"/></svg></div>
             <div class="bottom-icon" id="menuBtn" aria-label="Open On Demand Menu"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg></div>
         </div>
@@ -279,20 +279,21 @@
         const ZENO_ID = "hvwifp8ezc6tv"; 
         const LASTFM_API_KEY = "7744c8f90ee053fc761e0e23bfa00b89";
         
-        // --- IMAGENS LOCAIS (USANDO CAMINHO ABSOLUTO /image/ PARA MAIOR COMPATIBILIDADE) ---
+        // --- IMAGENS LOCAIS (USANDO CAMINHO ABSOLUTO /image/ E NOME EM MINÚSCULAS) ---
+        // ATENÇÃO: Seus arquivos em 'image/' DEVEM AGORA estar em minúsculas para funcionar!
         const IMG_DEFAULT = "/image/logopraisefm.webp"; 
         const IMG_COMMERCIAL = "/image/commercial break.png";
         const IMG_SPOT = "/image/spot.webp";
         
-        // NOVOS LOGOS DE PROGRAMAS
-        const IMG_MIDDAY_GRACE = "/image/MIDDAYGRACELOGO.webp";
-        const IMG_MIDNIGHT_GRACE = "/image/MIDNIGHTGRACELOGO.webp";
-        const IMG_MORNING_SHOW = "/image/MORNINGSHOWLOGO.webp";
-        const IMG_CARPOOL = "/image/PRAISEFMCARPOOLLOGO.webp";
-        const IMG_CLASSIC = "/image/PRAISEFMCLASSICLOGO.webp";
-        const IMG_FUTURE_ARTISTS = "/image/PRAISEFMFUTUREARTISTSLOGO.webp";
-        const IMG_POP = "/image/PRAISEFMPOPLOGO.webp";
-        const IMG_SUNDAY_MORNING = "/image/SUNDAYMORNINGLOGO.webp";
+        // NOVOS LOGOS DE PROGRAMAS (TUDO EM MINÚSCULA NO CÓDIGO)
+        const IMG_MIDDAY_GRACE = "/image/middaygracelogo.webp";
+        const IMG_MIDNIGHT_GRACE = "/image/midnightgracelogo.webp";
+        const IMG_MORNING_SHOW = "/image/morningshowlogo.webp";
+        const IMG_CARPOOL = "/image/praisefmcarpoollogo.webp"; 
+        const IMG_CLASSIC = "/image/praisefmclassiclogo.webp";
+        const IMG_FUTURE_ARTISTS = "/image/praisefmfutureartistslogo.webp";
+        const IMG_POP = "/image/praisefmpoplogo.webp";
+        const IMG_SUNDAY_MORNING = "/image/sundaymorninglogo.webp";
 
         // --- LISTA ON DEMAND (MANTENHA OS SEUS LINKS MP3/IMG AQUI) ---
         const episodes = [
@@ -705,12 +706,13 @@
 
             // --- REGRA 1: COMMERCIAL BREAK ---
             if (trackLow.includes("commercial") || artistLow.includes("commercial") || trackLow.includes("ad break")) {
-                setMedia(IMG_COMMERCIAL, track, artist);
+                setMedia(IMG_COMMERCIAL, "Commercial Break", "Praise FM");
                 lyricsBtn.style.display = 'none'; 
                 return; 
             }
 
             // --- REGRA 2: SPOTS / JINGLES / DEFAULT STATION ID ---
+            // A rádio Zeno envia "Praise FM - Praise FM" ou "Praise FM - Station ID"
             if (trackLow.includes("spot") || artistLow.includes("spot") || trackLow.includes("station id") || artist === "Praise FM") {
                 setMedia(IMG_SPOT, track, artist);
                 lyricsBtn.style.display = 'none'; 
