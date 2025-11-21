@@ -23,7 +23,7 @@
         :root {
             --primary-color: #fff;
             --secondary-color: rgba(255, 255, 255, 0.6);
-            --accent-color: #ff3b30;
+            --accent-color: #ff3b30; /* Laranja/Vermelho */
             --bg-dark: #1c1c1e;
             --bg-gradient-2: #282828; 
         }
@@ -53,7 +53,7 @@
         .player-container {
             width: 100%; max-width: 380px; height: 100%; max-height: 800px;
             padding: 20px 24px; display: flex; flex-direction: column;
-            justify-content: flex-start; /* Ajuste para centralizar o novo layout */
+            justify-content: flex-start; 
             position: relative; overflow: hidden;
         }
 
@@ -65,7 +65,7 @@
 
         .media-area {
             width: 100%;
-            margin-top: 30px; /* Espaço do topo */
+            margin-top: 30px; 
             margin-bottom: 20px;
             display: flex;
             flex-direction: column;
@@ -75,39 +75,65 @@
 
         /* 1. LOGO DO PROGRAMA (GRANDE E REDONDO) */
         .program-logo-container {
-            width: 180px; /* Tamanho do círculo */
+            width: 180px; 
             height: 180px;
             border-radius: 50%;
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.4);
             background-color: #1a1a1a;
             margin-bottom: 30px;
+            position: relative; /* Necessário para o anel */
         }
+
+        /* --- Rotating Ring Indicator (Laranja Rodando) --- */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .program-logo-container.is-song-playing::before {
+            content: '';
+            position: absolute;
+            top: -8px; /* Afastamento e espessura da borda */
+            left: -8px;
+            right: -8px;
+            bottom: -8px;
+            border: 8px solid transparent;
+            border-top-color: var(--accent-color); 
+            border-left-color: var(--accent-color);
+            border-radius: 50%;
+            animation: spin 2s linear infinite; /* Rotação contínua */
+            z-index: 0;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+
         .program-logo-img { 
             width: 100%; 
             height: 100%; 
             object-fit: cover; 
+            position: relative; /* Para garantir que o logo fique acima do anel (z-index) */
+            z-index: 1;
             transition: opacity 0.3s ease;
         }
 
+
         /* 2. ARTE DA MÚSICA ATUAL (MINIATURA) */
         .artwork-container {
-            display: flex; /* Para alinhar o texto da música ao lado da capa */
+            display: flex; 
             width: 100%; 
-            height: 60px; /* Altura da miniatura */
+            height: 60px; 
             padding: 10px;
             border-radius: 8px;
-            background-color: rgba(255, 255, 255, 0.05); /* Fundo sutil para destaque */
+            background-color: rgba(255, 255, 255, 0.05); 
             align-items: center;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
             transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
             
-            /* Remove a escala e opacidade para o novo design */
             transform: scale(1);
             opacity: 1;
         }
 
-        .artwork-container.paused { /* Não aplica efeito de pausa neste contêiner */
+        .artwork-container.paused { 
             transform: scale(1);
             opacity: 1;
         }
@@ -159,11 +185,11 @@
 
         /* INFO (ÁREA CENTRAL QUE CONTINUA) */
         .track-info { 
-            display: none; /* ESCONDE O TEXTO GRANDE ANTIGO */
+            display: none; 
         }
 
         /* PROGRESS */
-        .progress-area { margin-bottom: 10px; position: relative; padding-top: 20px; } /* Ajuste de espaço */
+        .progress-area { margin-bottom: 10px; position: relative; padding-top: 20px; } 
         .progress-bar-bg { width: 100%; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; }
         .progress-bar-fill { width: 0%; height: 100%; background: var(--accent-color); border-radius: 2px; transition: width 0.1s linear; }
         .seek-slider { position: absolute; top: 15px; width: 100%; height: 15px; opacity: 0; cursor: pointer; }
@@ -190,7 +216,7 @@
         .volume-slider { position: absolute; width: 100%; height: 100%; top:0; opacity:0; cursor:pointer; }
 
         /* FOOTER */
-        .bottom-icons { display: flex; justify-content: space-around; color: var(--secondary-color); z-index: 10; margin-top: auto; } /* Push to bottom */
+        .bottom-icons { display: flex; justify-content: space-around; color: var(--secondary-color); z-index: 10; margin-top: auto; } 
         .bottom-icon { cursor: pointer; padding: 10px; }
 
         /* --- DRAWER MENU (ON DEMAND) --- */
@@ -233,7 +259,6 @@
             font-weight: 700;
             cursor: pointer;
             text-transform: uppercase;
-            /* Nova posição no layout */
             margin-top: 15px; 
             align-self: flex-start;
         }
@@ -255,6 +280,16 @@
             .program-logo-container {
                 width: 250px; 
                 height: 250px;
+            }
+            
+            .program-logo-container.is-song-playing::before {
+                top: -10px; 
+                left: -10px;
+                right: -10px;
+                bottom: -10px;
+                border: 10px solid transparent;
+                border-top-color: var(--accent-color); 
+                border-left-color: var(--accent-color);
             }
 
             .artwork-container {
@@ -375,7 +410,7 @@
         const LASTFM_API_KEY = "7744c8f90ee053fc761e0e23bfa00b89";
         
         // --- IMAGENS LOCAIS (USANDO CAMINHO ABSOLUTO /image/ E NOME EM MINÚSCULAS) ---
-        const IMG_DEFAULT = "/image/logopraisefm.webp"; // Logo Genérico da Rádio (para o círculo fixo quando toca música)
+        const IMG_DEFAULT = "/image/logopraisefm.webp"; 
         const IMG_COMMERCIAL = "/image/commercial break.png";
         const IMG_SPOT = "/image/spot.webp";
         
@@ -412,15 +447,16 @@
         const iconPause = document.getElementById('iconPause');
 
         // Elementos de Imagem
-        const programLogoEl = document.getElementById('programLogo'); // NOVO: Logo do Programa (Círculo)
+        const programLogoEl = document.getElementById('programLogo'); 
+        const programLogoContainerEl = document.getElementById('programLogoContainer'); // Novo: para controlar o anel
         const artContainer = document.getElementById('artContainer');
-        const albumArtEl = document.getElementById('albumArt'); // Capa da música (miniatura)
+        const albumArtEl = document.getElementById('albumArt'); 
 
         // Elementos de Texto e Barra
         const volumeSlider = document.getElementById('volumeSlider');
         const volFill = document.getElementById('volFill');
-        const trackNameEl = document.getElementById('trackName'); // Título (na miniatura)
-        const artistNameEl = document.getElementById('artistName'); // Artista (na miniatura)
+        const trackNameEl = document.getElementById('trackName'); 
+        const artistNameEl = document.getElementById('artistName'); 
         const bgBlur = document.getElementById('bgBlur');
         const clockDisplay = document.getElementById('clockDisplay');
         
@@ -447,16 +483,10 @@
         let eventSource = null;
 
         // --- FUNÇÃO AUXILIAR PARA CORRIGIR CORS (TROCA DE COR DINÂMICA) ---
-        /**
-         * CORREÇÃO: Garante que as imagens locais (/image/...) não sejam proxied ou codificadas incorretamente.
-         * Apenas URLs externas (Last.fm) são proxied para leitura de cor.
-         */
         function getProxiedUrl(url) {
-            // Se a URL for uma URL local (começa com /image/), retorna a URL pura.
             if (url.startsWith('/image/')) {
                 return url;
             }
-            // Se for uma URL externa (Last.fm, etc), aplica o proxy para leitura de cor.
             return 'https://corsproxy.io/?' + encodeURIComponent(url);
         }
 
@@ -465,15 +495,23 @@
         renderEpisodes();
         updateChicagoTime();
         setInterval(updateChicagoTime, 1000);
-        // Chamada inicial: Logo da Rádio como Fixo e como Miniatura
         setMedia(IMG_DEFAULT, IMG_DEFAULT, "Praise FM", "Live from Chicago"); 
 
+        
+        // --- FUNÇÃO PARA ATIVAR/DESATIVAR O ANEL ROTATIVO ---
+        function setProgramLogoActiveState(isActive) {
+            if (isActive) {
+                programLogoContainerEl.classList.add('is-song-playing');
+            } else {
+                programLogoContainerEl.classList.remove('is-song-playing');
+            }
+        }
+        
         // --- LISTENERS E FUNÇÕES AUXILIARES ---
 
         albumArtEl.onload = () => {
             const currentSrc = albumArtEl.src;
             if (currentSrc) {
-                // Passa a URL pura (local ou proxied) para a função de fundo
                 updateBlurredBackground(currentSrc);
             }
         };
@@ -492,7 +530,6 @@
                 iconPause.style.display = 'none';
                 updateUIState(false);
                 
-                // RASTREIO GA4: Evento Pause
                 if (typeof gtag === 'function') {
                     gtag('event', 'player_control', {
                         'media_type': isLive ? 'radio_stream' : 'on_demand_episode',
@@ -511,7 +548,6 @@
                 iconPause.style.display = 'block';
                 updateUIState(true);
 
-                // RASTREIO GA4: Evento Play
                 if (typeof gtag === 'function') {
                     gtag('event', 'player_control', {
                         'media_type': isLive ? 'radio_stream' : 'on_demand_episode',
@@ -522,7 +558,6 @@
                 }
 
             }
-            // Atualiza o aria-label para refletir o estado atual (acessibilidade)
             playPauseBtn.setAttribute('aria-label', isPlaying ? 'Pause' : 'Play');
         }
 
@@ -538,7 +573,7 @@
             return new Promise((resolve, reject) => {
                 const img = new Image();
                 img.crossOrigin = "Anonymous";
-                img.src = imgUrl; // Esta URL já deve ser o caminho local ou o caminho proxied
+                img.src = imgUrl; 
 
                 img.onload = () => {
                     try {
@@ -557,19 +592,15 @@
         }
         
         function updateBlurredBackground(imgSrc) {
-            // Se a imagem for local (começa com /image/), não tenta ler a cor, pois
-            // as imagens locais não precisam de cor dinâmica (são logos/propaganda).
             if (imgSrc.includes('/image/')) {
                  bgBlur.style.background = `radial-gradient(circle at 50% 30%, #282828, #000)`; 
                  return;
             }
 
-            // Para URLs externas (Last.fm) - que JÁ ESTÃO PROXIED - tenta ler a cor.
             getColorFromImage(imgSrc).then(color => {
                 if (color) {
                     bgBlur.style.background = `radial-gradient(circle at 50% 30%, ${color}, #000)`;
                 } else {
-                    // Fallback em caso de falha de CORS ou do Proxy
                     bgBlur.style.background = `radial-gradient(circle at 50% 30%, #282828, #000)`; 
                 }
             }).catch(() => {
@@ -579,11 +610,6 @@
 
 
         // --- LÓGICA LIVE VS ON DEMAND (setMedia REVISADA) ---
-        /**
-         * Define o logo do programa (programLogo) e a capa da música (albumArt).
-         * @param {string} programImageUrl - URL do logo do programa atual (local: /image/...) - Vai para o círculo fixo.
-         * @param {string} trackImageUrl - URL da capa da música atual (externa: Last.fm ou logo local) - Vai para a miniatura.
-         */
         function setMedia(programImageUrl, trackImageUrl, trackTitle, artistName, audioSource = STREAM_URL) {
             trackNameEl.innerText = trackTitle;
             artistNameEl.innerText = artistName;
@@ -595,16 +621,13 @@
             }
             
             // 2. ATUALIZA CAPA DA MÚSICA (MINIATURA)
-            // SOMENTE APLICA O PROXY SE FOR UMA IMAGEM EXTERNA (Last.fm, não local)
             const finalTrackImageUrl = getProxiedUrl(trackImageUrl); 
 
             if (albumArtEl.src !== finalTrackImageUrl) {
                 albumArtEl.src = finalTrackImageUrl; 
             } else {
-                // Se a URL não mudou, forçamos a atualização do fundo
                 updateBlurredBackground(finalTrackImageUrl);
             }
-            // ACESSIBILIDADE: Atualiza o alt text da capa
             albumArtEl.alt = `${trackTitle} by ${artistName} album art`;
 
 
@@ -634,6 +657,7 @@
             
             // Ambos Logos (Fixo e Miniatura) voltam para o default da rádio
             setMedia(IMG_DEFAULT, IMG_DEFAULT, "Praise FM", "Live from Chicago");
+            setProgramLogoActiveState(true); // Liga o anel por padrão ao voltar para o live
         }
 
         // 2. Tocar Episódio On Demand
@@ -646,8 +670,8 @@
                 eventSource = null;
             }
 
-            // Logo Fixo (programa) usa a imagem do episódio, assim como a miniatura
             setMedia(ep.img || IMG_DEFAULT, ep.img || IMG_DEFAULT, ep.title, ep.artist, ep.url);
+            setProgramLogoActiveState(true); // Anel ativo para conteúdo On Demand
             
             btnBackLive.style.display = 'inline-block';
             liveBadge.style.display = 'none';
@@ -662,7 +686,6 @@
             
             drawer.classList.remove('open');
 
-            // RASTREIO GA4: Evento On Demand Play
             if (typeof gtag === 'function') {
                 gtag('event', 'on_demand_play', {
                     'track_name': ep.title,
@@ -670,8 +693,6 @@
                 });
             }
         }
-
-        // ... (timeupdate, seekSlider, skip, updateUIState, menu drawer, lyrics - Sem alteração)
 
         // 3. Barra de Progresso (On Demand)
         audio.addEventListener('timeupdate', () => {
@@ -700,7 +721,6 @@
             if (!isLive && audio.duration) {
                 audio.currentTime += sec;
 
-                // RASTREIO GA4: Evento Skip
                 if (typeof gtag === 'function') {
                     gtag('event', 'media_seek', {
                         'media_type': isLive ? 'radio_stream' : 'on_demand_episode',
@@ -726,7 +746,6 @@
         // --- MENU DRAWER ---
         menuBtn.addEventListener('click', () => {
             drawer.classList.add('open');
-            // RASTREIO GA4: Evento Abertura do Menu
             if (typeof gtag === 'function') {
                 gtag('event', 'menu_open', {
                     'menu_name': 'on_demand'
@@ -765,7 +784,6 @@
                  return;
             }
 
-            // RASTREIO GA4: Evento Letras
             if (typeof gtag === 'function') {
                 gtag('event', 'lyrics_search', {
                     'track_name': track,
@@ -815,20 +833,20 @@
         async function updateTrackInfo(artist, track) {
             if(!isLive) return;
 
+            // 1. DESATIVA O ANEL POR PADRÃO. SÓ SERÁ ATIVADO SE FOR UMA MÚSICA.
+            setProgramLogoActiveState(false);
+
             const artistLow = artist.toLowerCase();
             const trackLow = track.toLowerCase();
             
-            // Por padrão, se for uma música (Last.fm), o logo fixo é o default da rádio.
             let programLogoUrl = IMG_DEFAULT; 
             let trackImageUrl = IMG_DEFAULT;
             
-            // Assume música por padrão, mas será sobrescrito se for programa ou propaganda.
             lyricsBtn.style.display = 'block'; 
 
 
             // --- REGRA 1: COMMERCIAL BREAK ---
             if (trackLow.includes("commercial") || artistLow.includes("commercial") || trackLow.includes("ad break")) {
-                // Logo Fixo (Círculo) e Miniatura (Música) usam o logo comercial
                 programLogoUrl = IMG_COMMERCIAL;
                 trackImageUrl = IMG_COMMERCIAL;
                 setMedia(programLogoUrl, trackImageUrl, "Commercial Break", "Praise FM");
@@ -838,7 +856,6 @@
 
             // --- REGRA 2: SPOTS / JINGLES / DEFAULT STATION ID ---
             if (trackLow.includes("spot") || artistLow.includes("spot") || trackLow.includes("station id") || artist === "Praise FM") {
-                // Logo Fixo (Círculo) e Miniatura (Música) usam o logo spot
                 programLogoUrl = IMG_SPOT;
                 trackImageUrl = IMG_SPOT;
                 setMedia(programLogoUrl, trackImageUrl, track, artist);
@@ -891,7 +908,6 @@
             }
 
             if (isProgram) {
-                // Se for programa, o Logo Fixo e a Miniatura são o logo do programa
                 trackImageUrl = programLogoUrl; 
                 setMedia(programLogoUrl, trackImageUrl, track, artist);
                 lyricsBtn.style.display = 'none';
@@ -900,7 +916,7 @@
 
 
             // --- REGRA 4: BUSCA NO LAST.FM (MÚSICAS) ---
-            // Se chegou aqui, é uma MÚSICA. O Logo Fixo é o IMG_DEFAULT.
+            // Se chegou aqui, é uma MÚSICA.
             
             const lastfmUrl = `https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${LASTFM_API_KEY}&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}&format=json`;
             
@@ -908,7 +924,6 @@
                 const response = await fetch(lastfmUrl);
                 const data = await response.json();
 
-                // Se houver capa do Last.fm, ela será a capa da MÚSICA (miniatura)
                 if (data.track && data.track.album && data.track.album.image) {
                     const images = data.track.album.image;
                     const largeImage = images.find(img => img.size === 'extralarge' || img.size === 'large');
@@ -918,10 +933,12 @@
                     }
                 }
                 
+                // ATIVA O ANEL: É uma música!
+                setProgramLogoActiveState(true);
+                
                 // Program Logo (Fixo) é o IMG_DEFAULT; Track Image (Miniatura) é o Last.fm
                 setMedia(programLogoUrl, trackImageUrl, track, artist);
 
-                // RASTREIO GA4: Evento Nova Música
                 if (typeof gtag === 'function') {
                     gtag('event', 'now_playing', {
                         'track_name': track,
@@ -931,7 +948,8 @@
                 }
 
             } catch (error) {
-                // Fallback total se o Last.fm falhar
+                // Se o Last.fm falhar, a imagem será a default, mas o anel continua ativo.
+                setProgramLogoActiveState(true);
                 setMedia(programLogoUrl, IMG_DEFAULT, track, artist);
             }
         }
