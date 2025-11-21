@@ -204,7 +204,7 @@
         </div>
 
         <div class="artwork-container paused" id="artContainer">
-            <img src="image/logopraisefm.webp" alt="Praise FM station logo or current album art" class="artwork-img" id="albumArt">
+            <img src="/image/logopraisefm.webp" alt="Praise FM station logo or current album art" class="artwork-img" id="albumArt">
         </div>
 
         <div class="track-info">
@@ -213,7 +213,7 @@
                 <div class="artist-name" id="artistName">Live from Chicago</div>
                 <button id="btnBackLive" class="back-to-live" aria-label="Return to Live Stream">Return to Live</button>
             </div>
-            <button class="more-btn" id="lyricsBtn" aria-label="Lyrics and More Options">•••</button>
+            <button class="more-btn" id="lyricsBtn" aria-label="Search Lyrics">•••</button>
         </div>
 
         <div class="progress-area">
@@ -279,20 +279,20 @@
         const ZENO_ID = "hvwifp8ezc6tv"; 
         const LASTFM_API_KEY = "7744c8f90ee053fc761e0e23bfa00b89";
         
-        // --- IMAGENS LOCAIS ---
-        const IMG_DEFAULT = "image/logopraisefm.webp"; 
-        const IMG_COMMERCIAL = "image/commercial break.png";
-        const IMG_SPOT = "image/spot.webp";
+        // --- IMAGENS LOCAIS (USANDO CAMINHO ABSOLUTO /image/ PARA MAIOR COMPATIBILIDADE) ---
+        const IMG_DEFAULT = "/image/logopraisefm.webp"; 
+        const IMG_COMMERCIAL = "/image/commercial break.png";
+        const IMG_SPOT = "/image/spot.webp";
         
-        // NOVOS LOGOS DE PROGRAMAS (Baseado nos arquivos da sua pasta 'image')
-        const IMG_MIDDAY_GRACE = "image/MIDDAYGRACELOGO.webp";
-        const IMG_MIDNIGHT_GRACE = "image/MIDNIGHTGRACELOGO.webp";
-        const IMG_MORNING_SHOW = "image/MORNINGSHOWLOGO.webp";
-        const IMG_CARPOOL = "image/PRAISEFMCARPOOLLOGO.webp";
-        const IMG_CLASSIC = "image/PRAISEFMCLASSICLOGO.webp";
-        const IMG_FUTURE_ARTISTS = "image/PRAISEFMFUTUREARTISTSLOGO.webp";
-        const IMG_POP = "image/PRAISEFMPOPLOGO.webp";
-        const IMG_SUNDAY_MORNING = "image/SUNDAYMORNINGLOGO.webp";
+        // NOVOS LOGOS DE PROGRAMAS
+        const IMG_MIDDAY_GRACE = "/image/MIDDAYGRACELOGO.webp";
+        const IMG_MIDNIGHT_GRACE = "/image/MIDNIGHTGRACELOGO.webp";
+        const IMG_MORNING_SHOW = "/image/MORNINGSHOWLOGO.webp";
+        const IMG_CARPOOL = "/image/PRAISEFMCARPOOLLOGO.webp";
+        const IMG_CLASSIC = "/image/PRAISEFMCLASSICLOGO.webp";
+        const IMG_FUTURE_ARTISTS = "/image/PRAISEFMFUTUREARTISTSLOGO.webp";
+        const IMG_POP = "/image/PRAISEFMPOPLOGO.webp";
+        const IMG_SUNDAY_MORNING = "/image/SUNDAYMORNINGLOGO.webp";
 
         // --- LISTA ON DEMAND (MANTENHA OS SEUS LINKS MP3/IMG AQUI) ---
         const episodes = [
@@ -717,8 +717,7 @@
                 return;
             }
             
-            // --- REGRA 3: PROGRAMAS TEMÁTICOS (NOVOS LOGOS) ---
-            // Oculta botão de letras para todos os programas
+            // --- REGRA 3: PROGRAMAS TEMÁTICOS (TODAS AS REGRAS REFORÇADAS) ---
             lyricsBtn.style.display = 'none'; 
 
             // Midday Grace
@@ -739,7 +738,7 @@
                 return;
             }
             
-            // Praise FM Carpool
+            // Praise FM Carpool (Fix reforçado)
             if (artistLow.includes("praise fm carpool") || trackLow.includes("praise fm carpool") || trackLow.includes("carpool")) {
                 setMedia(IMG_CARPOOL, track, artist);
                 return;
