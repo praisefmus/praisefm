@@ -410,9 +410,9 @@
         const ZENO_ID = "hvwifp8ezc6tv"; 
         const LASTFM_API_KEY = "7744c8f90ee053fc761e0e23bfa00b89";
         
-        // --- IMAGENS LOCAIS (VERIFICAR CAMINHOS NO SEU REPOSITÓRIO) ---
+        // --- IMAGENS LOCAIS (USANDO CAMINHO ABSOLUTO /image/ E NOMES EM MINÚSCULAS) ---
         const IMG_DEFAULT = "/image/logopraisefm.webp"; 
-        const IMG_COMMERCIAL = "/image/commercial break.png"; // Tem espaço, CUIDADO
+        const IMG_COMMERCIAL = "/image/commercial break.png"; 
         const IMG_SPOT = "/image/spot.webp";
         
         // LOGOS DE PROGRAMAS 
@@ -492,31 +492,32 @@
             }
         }
         
-        // --- FUNÇÃO CORRIGIDA setMedia (TRATA CAMINHOS LOCAIS VS. EXTERNOS) ---
+        // --- FUNÇÃO CORRIGIDA setMedia ---
         function setMedia(programImageUrl, trackImageUrl, trackTitle, artistName, audioSource = STREAM_URL) {
             trackNameEl.innerText = trackTitle;
             artistNameEl.innerText = artistName;
             
-            // 1. ATUALIZA LOGO DO PROGRAMA (FIXO)
+            // 1. ATUALIZA LOGO DO PROGRAMA (CÍRCULO GRANDE) - Deve ser sempre o logo da rádio ou o logo do programa
             if (programLogoEl.src !== programImageUrl) {
                 programLogoEl.src = programImageUrl;
                 programLogoEl.alt = `${trackTitle} by ${artistName} program logo`;
+                
+                // Se a imagem do círculo mudou, precisamos forçar o recálculo do fundo.
+                updateBlurredBackground(programImageUrl);
             }
             
-            // 2. ATUALIZA CAPA DA MÚSICA (MINIATURA) - CORRIGIDO O TRATAMENTO DE URL
+            // 2. ATUALIZA CAPA DA MÚSICA (MINIATURA)
             let finalTrackImageUrl = trackImageUrl;
             
-            // Só aplica o proxy se NÃO for uma URL LOCAL (começa com /image/ ou data:)
+            // Só aplica o proxy se NÃO for uma URL LOCAL
             if (!trackImageUrl.startsWith('/image/') && !trackImageUrl.startsWith('data:')) {
                 finalTrackImageUrl = 'https://corsproxy.io/?' + encodeURIComponent(trackImageUrl);
             }
             
             if (albumArtEl.src !== finalTrackImageUrl) {
                 albumArtEl.src = finalTrackImageUrl; 
-            } else {
-                // Se a URL não mudou, força a atualização do fundo caso a capa tenha acabado de carregar
-                updateBlurredBackground(finalTrackImageUrl);
-            }
+            } 
+
             albumArtEl.alt = `${trackTitle} by ${artistName} album art`;
 
 
@@ -653,9 +654,9 @@
             
             if(!eventSource) setupZenoMetadata();
             
-            // Ambos Logos (Fixo e Miniatura) voltam para o default da rádio
+            // Ambos Logos (Fixo e Miniatura) voltam para o default da rádio, e anel ATIVO
             setMedia(IMG_DEFAULT, IMG_DEFAULT, "Praise FM", "Live from Chicago");
-            setProgramLogoActiveState(true); // Liga o anel por padrão ao voltar para o live (já que é música/streaming)
+            setProgramLogoActiveState(true); 
         }
 
         // 2. Tocar Episódio On Demand
@@ -669,7 +670,7 @@
             }
 
             setMedia(ep.img || IMG_DEFAULT, ep.img || IMG_DEFAULT, ep.title, ep.artist, ep.url);
-            setProgramLogoActiveState(true); // Anel ativo para conteúdo On Demand (que tem duração definida)
+            setProgramLogoActiveState(true); 
             
             btnBackLive.style.display = 'inline-block';
             liveBadge.style.display = 'none';
@@ -827,18 +828,18 @@
             };
         }
         
-        // --- LÓGICA DE BUSCA DE METADADOS ---
+        // --- LÓGICA DE BUSCA DE METADADOS (CORRIGIDA) ---
         async function updateTrackInfo(artist, track) {
             if(!isLive) return;
 
-            // 1. DESATIVA O ANEL POR PADRÃO. SÓ SERÁ ATIVADO SE FOR UMA MÚSICA.
-            setProgramLogoActiveState(false);
+            // 1. DESATIVA O ANEL POR PADRÃO. SÓ SERÁ ATIVADO SE FOR UMA MÚSICA (REGRA 4).
+            setProgramLogoActiveState(false); 
 
             const artistLow = artist.toLowerCase();
             const trackLow = track.toLowerCase();
             
-            let programLogoUrl = IMG_DEFAULT; 
-            let trackImageUrl = IMG_DEFAULT;
+            let programLogoUrl = IMG_DEFAULT; // Círculo Grande (default é o logo da rádio)
+            let trackImageUrl = IMG_DEFAULT;  // Miniatura (default é o logo da rádio)
             
             lyricsBtn.style.display = 'block'; 
 
@@ -906,10 +907,12 @@
             }
 
             if (isProgram) {
-                trackImageUrl = programLogoUrl; 
-                setMedia(programLogoUrl, trackImageUrl, track, artist);
+                trackImageUrl = programLogoUrl; // Miniatura também usa o logo do programa
+                
+                // Círculo Grande e Miniatura usam o logo do programa. Anel permanece DESATIVADO.
+                setMedia(programLogoUrl, trackImageUrl, track, artist); 
                 lyricsBtn.style.display = 'none';
-                return;
+                return; 
             }
 
 
@@ -931,11 +934,14 @@
                     }
                 }
                 
-                // ATIVA O ANEL: É uma música!
-                setProgramLogoActiveState(true);
+                // Círculo Grande: USA o IMG_DEFAULT (logo da rádio).
+                programLogoUrl = IMG_DEFAULT; 
                 
-                // Program Logo (Fixo) é o IMG_DEFAULT; Track Image (Miniatura) é o Last.fm
-                setMedia(programLogoUrl, trackImageUrl, track, artist);
+                // ATIVA O ANEL: É uma música! (Regra 4)
+                setProgramLogoActiveState(true); 
+                
+                // programLogoUrl é o logo da rádio (círculo grande), trackImageUrl é a capa (miniatura)
+                setMedia(programLogoUrl, trackImageUrl, track, artist); 
 
                 if (typeof gtag === 'function') {
                     gtag('event', 'now_playing', {
@@ -946,13 +952,15 @@
                 }
 
             } catch (error) {
-                // Se o Last.fm falhar, a imagem será a default, mas o anel continua ativo.
-                setProgramLogoActiveState(true);
+                // Se o Last.fm falhar: Anel ATIVADO. Imagem é o fallback default.
+                setProgramLogoActiveState(true); 
                 setMedia(programLogoUrl, IMG_DEFAULT, track, artist);
             }
         }
         
-        // --- INICIALIZAÇÃO ---
+        // --- FINAL DO CÓDIGO ---
+
+        // Inicialização
         setupZenoMetadata();
         renderEpisodes();
         updateChicagoTime();
