@@ -75,14 +75,14 @@
 
         /* 1. LOGO DO PROGRAMA (GRANDE E REDONDO) - AGORA TUDO AQUI */
         .program-logo-container {
-            width: 200px; /* Aumenta um pouco o tamanho */
-            height: 200px; /* Aumenta um pouco o tamanho */
+            width: 200px; 
+            height: 200px; 
             border-radius: 50%;
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.4);
             background-color: #1a1a1a;
-            margin-bottom: 25px; /* Ajusta margem para o texto que virá abaixo */
-            position: relative; /* ESSENCIAL para o anel */
+            margin-bottom: 25px; 
+            position: relative; 
         }
 
         /* --- Rotating Ring Indicator (Laranja Rodando) --- */
@@ -93,18 +93,18 @@
         .program-logo-container.is-song-playing::before {
             content: '';
             position: absolute;
-            top: -12px; /* Aumenta o afastamento */
+            top: -12px; 
             left: -12px;
             right: -12px;
             bottom: -12px;
-            border: 12px solid transparent; /* Aumenta a espessura da borda */
+            border: 12px solid transparent; 
             border-top-color: var(--accent-color); 
             border-right-color: var(--accent-color); 
             border-radius: 50%;
-            animation: spin 1.5s linear infinite; /* Rotação mais rápida */
+            animation: spin 1.5s linear infinite; 
             z-index: 0;
-            opacity: 1; /* Garante visibilidade total */
-            box-shadow: 0 0 10px rgba(255, 59, 48, 0.7); /* Adiciona um brilho */
+            opacity: 1; 
+            box-shadow: 0 0 10px rgba(255, 59, 48, 0.7); 
             transition: all 0.3s ease;
         }
 
@@ -117,13 +117,11 @@
             transition: opacity 0.3s ease;
         }
 
-
-        /* Removido artwork-container, artwork-img e track-info-mini */
         /* O texto da música e artista agora será global abaixo do círculo */
         .track-info-main {
             text-align: center;
             margin-bottom: 20px;
-            overflow: hidden; /* Para garantir ellipsis se necessário */
+            overflow: hidden; 
             width: 100%;
         }
 
@@ -157,15 +155,10 @@
             padding: 5px; 
             font-size: 20px; 
             transition: color 0.3s; 
-            margin-top: 10px; /* Ajusta a margem superior */
+            margin-top: 10px; 
         }
         .more-btn:hover { color: var(--accent-color); }
 
-
-        /* INFO (ÁREA CENTRAL QUE CONTINUA) */
-        .track-info { 
-            display: none; /* Mantido como estava */
-        }
 
         /* PROGRESS */
         .progress-area { margin-bottom: 10px; position: relative; padding-top: 20px; } 
@@ -257,7 +250,7 @@
             }
 
             .program-logo-container {
-                width: 280px; /* Aumenta mais para desktop */
+                width: 280px; 
                 height: 280px;
             }
 
@@ -302,6 +295,7 @@
             <div class="program-logo-container" id="programLogoContainer">
                 <img src="/image/logopraisefm.webp" alt="Praise FM station logo" class="program-logo-img" id="programLogo">
             </div>
+            
             
             <div class="track-info-main">
                 <div class="song-title-main" id="trackName">Praise FM</div>
@@ -393,7 +387,7 @@
         const IMG_POP = "/image/praisefmpoplogo.webp";
         const IMG_SUNDAY_MORNING = "/image/sundaymorninglogo.webp";
 
-        // --- LISTA ON DEMAND ---
+        // --- LISTA ON DEMAND (MANTIDA) ---
         const episodes = [
             {
                 title: "Morning Prayer",
@@ -418,14 +412,12 @@
         // Elementos de Imagem
         const programLogoEl = document.getElementById('programLogo'); 
         const programLogoContainerEl = document.getElementById('programLogoContainer');
-        // REMOVIDO: const artContainer = document.getElementById('artContainer');
-        // REMOVIDO: const albumArtEl = document.getElementById('albumArt'); 
 
         // Elementos de Texto e Barra
         const volumeSlider = document.getElementById('volumeSlider');
         const volFill = document.getElementById('volFill');
-        const trackNameEl = document.getElementById('trackName'); // Agora o texto principal
-        const artistNameEl = document.getElementById('artistName'); // Agora o texto principal
+        const trackNameEl = document.getElementById('trackName'); 
+        const artistNameEl = document.getElementById('artistName'); 
         const bgBlur = document.getElementById('bgBlur');
         const clockDisplay = document.getElementById('clockDisplay');
 
@@ -461,7 +453,6 @@
         }
 
         // --- FUNÇÃO setMedia ---
-        // Apenas um parâmetro de imagem agora, que é a imagem principal do círculo
         function setMedia(mainImageUrl, trackTitle, artistName, audioSource = STREAM_URL) {
             trackNameEl.innerText = trackTitle;
             artistNameEl.innerText = artistName;
@@ -479,30 +470,27 @@
                 programLogoEl.alt = `${trackTitle} by ${artistName} artwork`;
             }
 
-            // A lógica de updateBlurredBackground precisa da URL FINAL
-            // Se a imagem for local (programa, spot, comercial), mantém o background escuro.
+            // Lógica de fundo
             if (finalImageUrl.includes('/image/') && !finalImageUrl.includes('logopraisefm.webp')) {
                 bgBlur.style.background = `radial-gradient(circle at 50% 30%, #282828, #000)`; 
             } else {
-                // Tenta obter a cor para capas do Last.fm ou logo padrão
                 updateBlurredBackground(finalImageUrl);
             }
 
+            // ATUALIZA SOURCE APENAS SE FOR DIFERENTE.
             if (audio.src !== audioSource) {
                 audio.src = audioSource;
             }
         }
 
         // --- LISTENERS E FUNÇÕES AUXILIARES ---
-        // O onload agora é do programLogoEl
+
         programLogoEl.onload = () => {
             const currentSrc = programLogoEl.src;
             if (currentSrc) {
-                // se a imagem for local (programa, spot, comercial), mantém o background escuro.
                 if (currentSrc.includes('/image/') && !currentSrc.includes('logopraisefm.webp')) {
                     bgBlur.style.background = `radial-gradient(circle at 50% 30%, #282828, #000)`; 
                 } else {
-                    // tenta obter a cor para capas do last.fm ou logo padrão
                     updateBlurredBackground(currentSrc);
                 }
             }
@@ -516,7 +504,6 @@
             if (isPlaying) {
                 audio.pause();
                 isPlaying = false;
-                // artContainer.classList.add('paused'); // REMOVIDO
                 iconPlay.style.display = 'block';
                 iconPause.style.display = 'none';
                 updateUIState(false);
@@ -529,16 +516,438 @@
                         'artist_name': artistNameEl.innerText
                     });
                 }
-
-
             } else {
-                audio.play();
-                isPlaying = true;
-                // artContainer.classList.remove('paused'); // REMOVIDO
+                // 💥 CORREÇÃO DE ÁUDIO: Se for live, assegura que o source está correto ANTES de tentar tocar.
+                if (isLive && audio.src !== STREAM_URL) {
+                    audio.src = STREAM_URL;
+                }
+                
+                audio.play().catch(error => {
+                    // O catch é essencial para lidar com bloqueios de autoplay.
+                    console.error("Erro ao tentar tocar o áudio:", error);
+                    // O ícone permanece como PLAY, esperando um clique do usuário.
+                });
+
+                isPlaying = true; // Assumimos que vai tocar (o erro de autoplay é tratado pelo catch)
                 iconPlay.style.display = 'none';
                 iconPause.style.display = 'block';
                 updateUIState(true);
 
                 if (typeof gtag === 'function') {
-                    gtag('event', 'player_control',
+                    gtag('event', 'player_control', {
+                        'media_type': isLive ? 'radio_stream' : 'on_demand_episode',
+                        'action': 'play',
+                        'track_name': trackNameEl.innerText,
+                        'artist_name': artistNameEl.innerText
+                    });
+                }
+            }
+            playPauseBtn.setAttribute('aria-label', isPlaying ? 'Pause' : 'Play');
+        }
 
+        // --- ADICIONANDO LISTENERS DE ERRO PARA DEBUG ---
+        audio.addEventListener('error', (e) => {
+            console.error('ERRO DE ÁUDIO DETECTADO. Código:', e.target.error.code);
+            let errorMessage = "Erro ao carregar o stream de áudio. Verifique a URL ou a conexão.";
+            
+            // Códigos de erro do HTMLMediaElement (para referência)
+            if (e.target.error.code === MediaError.MEDIA_ERR_NETWORK) {
+                errorMessage = "Erro de rede ao carregar o áudio. O stream pode estar temporariamente fora do ar.";
+            } else if (e.target.error.code === MediaError.MEDIA_ERR_DECODE) {
+                errorMessage = "Erro de decodificação de mídia. O formato do stream pode não ser suportado pelo navegador.";
+            } else if (e.target.error.code === MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED) {
+                errorMessage = "O navegador não suporta a URL ou o formato do stream. Tente outra URL ou codec.";
+            }
+
+            trackNameEl.innerText = "ERRO NO STREAM";
+            artistNameEl.innerText = errorMessage;
+            
+            isPlaying = false;
+            updateUIState(false);
+            setProgramLogoActiveState(false);
+        });
+
+        audio.addEventListener('stalled', () => {
+            console.warn("Stream parou de carregar dados. Tentando reconectar...");
+            // Opcional: Avisar o usuário se o buffer falhar por muito tempo.
+        });
+
+
+        // Volume
+        volumeSlider.addEventListener('input', (e) => {
+            audio.volume = e.target.value;
+            volFill.style.width = (e.target.value * 100) + '%';
+        });
+
+        // --- LÓGICA DE FUNDO (BLUR) ---
+
+        async function getColorFromImage(imgUrl) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.crossOrigin = "Anonymous";
+                img.src = imgUrl; 
+
+                img.onload = () => {
+                    try {
+                        colorCanvas.width = 1; 
+                        colorCanvas.height = 1;
+                        ctx.drawImage(img, 0, 0, 1, 1); 
+                        const pixelData = ctx.getImageData(0, 0, 1, 1).data;
+                        const color = `rgb(${pixelData[0]}, ${pixelData[1]}, ${pixelData[2]})`;
+                        resolve(color);
+                    } catch (e) {
+                        reject(null);
+                    }
+                };
+                img.onerror = () => reject(null);
+            });
+        }
+
+        function updateBlurredBackground(imgSrc) {
+            // Não tenta extrair cor de imagens locais ou imagens de programa (que não são capas de álbum)
+            if (imgSrc.includes('/image/')) {
+                 bgBlur.style.background = `radial-gradient(circle at 50% 30%, #282828, #000)`; 
+                 return;
+            }
+
+            getColorFromImage(imgSrc).then(color => {
+                if (color) {
+                    bgBlur.style.background = `radial-gradient(circle at 50% 30%, ${color}, #000)`;
+                } else {
+                    bgBlur.style.background = `radial-gradient(circle at 50% 30%, #282828, #000)`; 
+                }
+            }).catch(() => {
+                bgBlur.style.background = `radial-gradient(circle at 50% 30%, #282828, #000)`; 
+            });
+        }
+
+
+        // --- LÓGICA LIVE VS ON DEMAND ---
+
+        // 1. Voltar para LIVE
+        btnBackLive.addEventListener('click', goLive);
+
+        function goLive() {
+            isLive = true;
+            btnBackLive.style.display = 'none';
+            liveBadge.style.display = 'flex';
+            timeDisplay.style.display = 'none';
+            seekSlider.style.display = 'none';
+            lyricsBtn.style.display = 'block'; 
+
+            audio.src = STREAM_URL;
+            audio.play();
+            isPlaying = true;
+            updateUIState(true);
+            playPauseBtn.setAttribute('aria-label', 'Pause'); 
+
+            if(!eventSource) setupZenoMetadata();
+
+            // Logos voltam para o default da rádio, e anel ATIVO
+            setMedia(IMG_DEFAULT, "Praise FM", "Live from Chicago");
+            setProgramLogoActiveState(true); 
+        }
+
+        // 2. Tocar Episódio On Demand
+        function playEpisode(index) {
+            const ep = episodes[index];
+            isLive = false;
+
+            if(eventSource) {
+                eventSource.close();
+                eventSource = null;
+            }
+
+            setMedia(ep.img || IMG_DEFAULT, ep.title, ep.artist, ep.url);
+            setProgramLogoActiveState(false); // On Demand NÃO tem anel rotativo
+
+            btnBackLive.style.display = 'inline-block';
+            liveBadge.style.display = 'none';
+            timeDisplay.style.display = 'block';
+            seekSlider.style.display = 'block';
+            lyricsBtn.style.display = 'none'; 
+
+            audio.play();
+            isPlaying = true;
+            updateUIState(true);
+            playPauseBtn.setAttribute('aria-label', 'Pause'); 
+
+            drawer.classList.remove('open');
+
+            if (typeof gtag === 'function') {
+                gtag('event', 'on_demand_play', {
+                    'track_name': ep.title,
+                    'artist_name': ep.artist
+                });
+            }
+        }
+
+        // 3. Barra de Progresso (On Demand)
+        audio.addEventListener('timeupdate', () => {
+            if (!isLive && audio.duration && isFinite(audio.duration)) {
+                const pct = (audio.currentTime / audio.duration) * 100;
+                seekSlider.value = pct;
+                progressFill.style.width = pct + "%";
+                timeDisplay.innerText = formatTime(audio.currentTime) + " / " + formatTime(audio.duration);
+            }
+        });
+
+        seekSlider.addEventListener('input', (e) => {
+            if (!isLive && audio.duration && isFinite(audio.duration)) {
+                const seekTime = (e.target.value / 100) * audio.duration;
+                audio.currentTime = seekTime;
+            }
+        });
+
+        function formatTime(s) {
+            const min = Math.floor(s / 60);
+            const sec = Math.floor(s % 60);
+            return min + ":" + (sec < 10 ? "0" + sec : sec);
+        }
+
+        function skip(sec) {
+            if (!isLive && audio.duration) {
+                audio.currentTime += sec;
+
+                if (typeof gtag === 'function') {
+                    gtag('event', 'media_seek', {
+                        'media_type': isLive ? 'radio_stream' : 'on_demand_episode',
+                        'seek_direction': sec > 0 ? 'forward' : 'backward',
+                        'seek_amount': Math.abs(sec) + 's',
+                    });
+                }
+            }
+        }
+
+        function updateUIState(playing) {
+            if(playing) {
+                iconPlay.style.display = 'none';
+                iconPause.style.display = 'block';
+            } else {
+                iconPlay.style.display = 'block';
+                iconPause.style.display = 'none';
+            }
+        }
+
+        // --- MENU DRAWER ---
+        menuBtn.addEventListener('click', () => {
+            drawer.classList.add('open');
+            if (typeof gtag === 'function') {
+                gtag('event', 'menu_open', {
+                    'menu_name': 'on_demand'
+                });
+            }
+        });
+
+        closeDrawer.addEventListener('click', () => drawer.classList.remove('open'));
+
+        function renderEpisodes() {
+            episodeList.innerHTML = "";
+            episodes.forEach((ep, index) => {
+                const div = document.createElement('div');
+                div.className = "episode-item";
+                div.onclick = () => playEpisode(index);
+                div.innerHTML = `
+                    <img src="${ep.img}" class="ep-img" alt="Artwork for ${ep.title} by ${ep.artist}">
+                    <div class="ep-info">
+                        <div class="ep-title">${ep.title}</div>
+                        <div class="ep-desc">${ep.artist}</div>
+                    </div>
+                `;
+                episodeList.appendChild(div);
+            });
+        }
+
+        // --- FUNÇÃO PARA LETRAS (LYRICS) ---
+        lyricsBtn.addEventListener('click', openLyrics);
+
+        function openLyrics() {
+            const artist = artistNameEl.innerText.trim();
+            const track = trackNameEl.innerText.trim();
+
+            if (lyricsBtn.style.display === 'none' || artist === "Live from Chicago") { 
+                 alert("Letras não disponíveis para o item atual.");
+                 return;
+            }
+
+            if (typeof gtag === 'function') {
+                gtag('event', 'lyrics_search', {
+                    'track_name': track,
+                    'artist_name': artist
+                });
+            }
+
+            const query = `${artist} ${track}`;
+            const searchUrl = `https://genius.com/search?q=${encodeURIComponent(query)}`;
+
+            window.open(searchUrl, '_blank');
+        }
+
+        // --- RELÓGIO CHICAGO ---
+        function updateChicagoTime() {
+            const now = new Date();
+            const options = { timeZone: 'America/Chicago', hour: 'numeric', minute: '2-digit', hour12: true };
+            clockDisplay.innerText = now.toLocaleTimeString('en-US', options);
+        }
+
+        // --- INTEGRAÇÃO ZENO / LAST.FM ---
+        function setupZenoMetadata() {
+            const zenoUrl = `https://api.zeno.fm/mounts/metadata/subscribe/${ZENO_ID}`;
+            
+            // Fecha a conexão anterior se existir
+            if (eventSource) {
+                eventSource.close();
+            }
+
+            eventSource = new EventSource(zenoUrl);
+
+            eventSource.onmessage = function(e) {
+                if(!isLive) return;
+
+                try {
+                    const data = JSON.parse(e.data);
+                    if (data.streamTitle) {
+                        const fullTitle = data.streamTitle;
+                        const parts = fullTitle.split(' - ');
+                        let artist = "Praise FM";
+                        let song = fullTitle;
+                        if (parts.length >= 2) {
+                            artist = parts[0].trim();
+                            song = parts[1].trim();
+                        }
+                        updateTrackInfo(artist, song);
+                    }
+                } catch (error) {
+                    console.error("Erro ao processar metadados Zeno:", error);
+                }
+            };
+        }
+
+        // --- LÓGICA DE BUSCA DE METADADOS (REFINADA) ---
+        async function updateTrackInfo(artist, track) {
+            if(!isLive) return;
+
+            const artistLow = artist.toLowerCase();
+            const trackLow = track.toLowerCase();
+
+            console.log(`[ZENO] Artista: ${artistLow} | Música: ${trackLow}`); 
+
+            setProgramLogoActiveState(false); 
+
+            let programImageUrl = IMG_DEFAULT; 
+
+            lyricsBtn.style.display = 'block'; 
+
+
+            // --- REGRA 1: COMMERCIAL BREAK ---
+            if (trackLow.includes("commercial") || artistLow.includes("commercial") || trackLow.includes("ad break") || trackLow.includes("break")) {
+                programImageUrl = IMG_COMMERCIAL;
+                setMedia(programImageUrl, "Commercial Break", "Praise FM");
+                lyricsBtn.style.display = 'none'; 
+                return; 
+            }
+
+            // --- REGRA 2: SPOTS / JINGLES / DEFAULT STATION ID ---
+            if (trackLow.includes("spot") || artistLow.includes("spot") || trackLow.includes("station id") || artist === "Praise FM") {
+                programImageUrl = IMG_SPOT;
+                setMedia(programImageUrl, track, artist);
+                lyricsBtn.style.display = 'none'; 
+                return;
+            }
+
+            // --- REGRA 3: PROGRAMAS TEMÁTICOS (ULTRA-REFORÇADA) ---
+            let isProgram = false;
+
+            const programMap = {
+                "midday grace": IMG_MIDDAY_GRACE,
+                "mid-day grace": IMG_MIDDAY_GRACE, 
+                "mid day grace": IMG_MIDDAY_GRACE,
+                "midday": IMG_MIDDAY_GRACE, 
+                "mid day": IMG_MIDDAY_GRACE, 
+                "midnight grace": IMG_MIDNIGHT_GRACE,
+                "morning show": IMG_MORNING_SHOW,
+                "the morning show": IMG_MORNING_SHOW, 
+                "carpool": IMG_CARPOOL,
+                "praise fm carpool": IMG_CARPOOL,
+                "classic": IMG_CLASSIC,
+                "future artists": IMG_FUTURE_ARTISTS,
+                "pop": IMG_POP,
+                "sunday morning": IMG_SUNDAY_MORNING,
+            };
+
+            for (const key in programMap) {
+                if (artistLow.includes(key) || trackLow.includes(key)) {
+                    programImageUrl = programMap[key];
+                    isProgram = true;
+                    break;
+                }
+            }
+
+            if (isProgram) {
+                setMedia(programImageUrl, track, artist); 
+                lyricsBtn.style.display = 'none';
+                return; 
+            }
+
+
+            // --- REGRA 4: BUSCA NO LAST.FM (MÚSICAS) ---
+            // Se chegou aqui, é uma MÚSICA.
+
+            const lastfmUrl = `https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${LASTFM_API_KEY}&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}&format=json`;
+
+            try {
+                const response = await fetch(lastfmUrl);
+                const data = await response.json();
+                let lastFmImage = IMG_DEFAULT;
+
+                if (data.track && data.track.album && data.track.album.image) {
+                    const images = data.track.album.image;
+                    const largeImage = images.find(img => img.size === 'extralarge' || img.size === 'large');
+
+                    if (largeImage && largeImage['#text']) {
+                        lastFmImage = largeImage['#text'];
+                    }
+                }
+
+                programImageUrl = lastFmImage; // O círculo passa a ser a capa da música
+
+                // 💥 ATIVA O ANEL: É uma música! (Regra 4)
+                setProgramLogoActiveState(true); 
+
+                setMedia(programImageUrl, track, artist); 
+
+                if (typeof gtag === 'function') {
+                    gtag('event', 'now_playing', {
+                        'track_name': track,
+                        'artist_name': artist,
+                        'image_source': lastFmImage === IMG_DEFAULT ? 'lastfm_fallback' : 'lastfm'
+                    });
+                }
+
+            } catch (error) {
+                // Se o Last.fm falhar, ainda é uma música.
+                // Anel ATIVADO. Imagem é o fallback default (IMG_DEFAULT).
+                setProgramLogoActiveState(true); 
+                setMedia(IMG_DEFAULT, track, artist);
+            }
+        }
+
+        // --- FINAL DO CÓDIGO ---
+
+        // Inicialização
+        setupZenoMetadata();
+        renderEpisodes();
+        updateChicagoTime();
+        setInterval(updateChicagoTime, 1000);
+
+        // Define o logo inicial e ATIVA o anel no início
+        setProgramLogoActiveState(true); 
+
+        // Define o volume inicial (80%)
+        audio.volume = volumeSlider.value;
+        volFill.style.width = (volumeSlider.value * 100) + '%';
+
+
+    </script>
+</body>
+</html>
