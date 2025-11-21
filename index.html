@@ -19,7 +19,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="./image/apple-touch-icon.png">
 
     <style>
-        /* --- CSS (BIG & RESPONSIVE DESIGN) --- */
+        /* --- CSS (DESIGN RESPONSIVO + BIG CIRCLE) --- */
         :root {
             --primary-color: #fff;
             --secondary-color: #b3b3b3;
@@ -32,7 +32,7 @@
 
         body {
             background-color: #000;
-            height: 100dvh; /* Usa dynamic viewport height para mobile */
+            height: 100dvh;
             width: 100vw;
             display: flex;
             justify-content: center;
@@ -41,7 +41,6 @@
             color: var(--primary-color);
         }
 
-        /* Fundo desfocado */
         .background-blur {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
             background: radial-gradient(circle at 50% 30%, #222, #000);
@@ -50,33 +49,28 @@
             transition: background 1s ease;
         }
 
-        /* --- CONTAINER PRINCIPAL --- */
         .player-container {
-            width: 100%;
-            height: 100%;
-            display: flex; 
-            flex-direction: column;
+            width: 100%; height: 100%;
+            display: flex; flex-direction: column;
             align-items: center;
-            justify-content: space-between; /* Distribui o espaço verticalmente */
+            justify-content: space-between;
             padding: 20px;
             position: relative;
-            /* Limites para mobile */
             max-width: 100%; 
         }
 
-        /* --- 1. CÍRCULO DO PROGRAMA (Responsivo) --- */
+        /* --- 1. CÍRCULO DO PROGRAMA --- */
         .program-area {
-            flex: 1; /* Ocupa o espaço disponível */
+            flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             width: 100%;
-            max-height: 60vh; /* Limita a altura para não esmagar o resto */
+            max-height: 60vh;
         }
 
         .program-circle {
-            /* Tamanho dinâmico: Base 240px, mas cresce com a tela */
             width: min(70vw, 280px); 
             height: min(70vw, 280px);
             border-radius: 50%;
@@ -89,13 +83,11 @@
         }
 
         .program-img {
-            width: 100%;
-            height: 100%;
+            width: 100%; height: 100%;
             border-radius: 50%;
             object-fit: cover;
             border: 4px solid #111; 
-            position: relative;
-            z-index: 2;
+            position: relative; z-index: 2;
         }
 
         /* Anel de Progresso */
@@ -114,43 +106,17 @@
             transition: --progress-deg 1s linear;
         }
 
-        /* Badge LIVE e Nome do Programa */
-        .program-label { 
-            margin-top: 25px; 
-            text-align: center; 
-            opacity: 0; 
-            animation: fadeIn 1s forwards; 
-        }
+        .program-label { margin-top: 25px; text-align: center; opacity: 0; animation: fadeIn 1s forwards; }
         @keyframes fadeIn { to { opacity: 1; } }
 
-        .program-name { 
-            font-size: clamp(18px, 4vw, 24px); /* Fonte escala com a tela */
-            font-weight: 800; 
-            margin-bottom: 6px; 
-            letter-spacing: -0.5px;
-        }
-        .program-status { 
-            font-size: 12px; 
-            color: var(--accent-color); 
-            font-weight: 800; 
-            letter-spacing: 2px; 
-            text-transform: uppercase; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 6px; 
-        }
+        .program-name { font-size: clamp(18px, 4vw, 24px); font-weight: 800; margin-bottom: 6px; letter-spacing: -0.5px; }
+        .program-status { font-size: 12px; color: var(--accent-color); font-weight: 800; letter-spacing: 2px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 6px; }
         .live-dot { width: 8px; height: 8px; background-color: var(--accent-color); border-radius: 50%; box-shadow: 0 0 10px var(--accent-color); animation: pulse 2s infinite; }
         @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
 
         /* --- 2. CONTROLES --- */
         .controls-area {
-            width: 100%; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            gap: 40px; 
-            margin-bottom: 20px;
+            width: 100%; display: flex; justify-content: center; align-items: center; gap: 40px; margin-bottom: 20px;
         }
         .control-btn { background: none; border: none; color: #fff; cursor: pointer; transition: transform 0.2s; display: flex; align-items: center; justify-content: center;}
         .control-btn:active { transform: scale(0.9); }
@@ -171,119 +137,40 @@
 
         /* --- 3. CARTÃO "NOW PLAYING" --- */
         .now-playing-card {
-            width: 100%; 
-            max-width: 500px; /* Limite de largura no card */
+            width: 100%; max-width: 500px;
             background-color: var(--glass-bg); 
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-radius: 16px; 
-            padding: 15px 20px; 
-            display: flex; 
-            align-items: center;
-            border: 1px solid rgba(255,255,255,0.08); 
-            margin-bottom: 20px;
+            border-radius: 16px; padding: 15px 20px; 
+            display: flex; align-items: center;
+            border: 1px solid rgba(255,255,255,0.08); margin-bottom: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
-        .song-cover { 
-            width: 64px; height: 64px; 
-            border-radius: 10px; 
-            object-fit: cover; 
-            background-color: #333; 
-            margin-right: 18px; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
+        .song-cover { width: 64px; height: 64px; border-radius: 10px; object-fit: cover; background-color: #333; margin-right: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         .song-info { flex: 1; overflow: hidden; }
-        .song-title { 
-            font-size: 18px; 
-            font-weight: 700; 
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
-            color: #fff; margin-bottom: 4px;
-        }
-        .song-artist { 
-            font-size: 15px; 
-            color: var(--secondary-color); 
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
-        }
-        .lyrics-btn { 
-            opacity: 0.6; cursor: pointer; background:none; border:none; color:white; padding: 10px; 
-            transition: opacity 0.2s;
-        }
+        .song-title { font-size: 18px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; margin-bottom: 4px; }
+        .song-artist { font-size: 15px; color: var(--secondary-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .lyrics-btn { opacity: 0.6; cursor: pointer; background:none; border:none; color:white; padding: 10px; transition: opacity 0.2s; }
         .lyrics-btn:hover { opacity: 1; }
 
-        /* --- EXTRAS (Volume & Nav) --- */
-        .volume-container { 
-            width: 90%; max-width: 400px; 
-            display: flex; align-items: center; gap: 15px; 
-            margin-bottom: 20px; opacity: 0.8; 
-        }
-        .volume-slider { 
-            flex: 1; 
-            -webkit-appearance: none; 
-            background: rgba(255,255,255,0.2); 
-            height: 6px; 
-            border-radius: 3px; 
-            outline: none;
-        }
-        .volume-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 16px; height: 16px;
-            border-radius: 50%;
-            background: #fff;
-            cursor: pointer;
-        }
+        /* --- EXTRAS --- */
+        .volume-container { width: 90%; max-width: 400px; display: flex; align-items: center; gap: 15px; margin-bottom: 20px; opacity: 0.8; }
+        .volume-slider { flex: 1; -webkit-appearance: none; background: rgba(255,255,255,0.2); height: 6px; border-radius: 3px; outline: none; }
+        .volume-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #fff; cursor: pointer; }
         
-        .bottom-nav { 
-            display: flex; justify-content: space-around; width: 100%; 
-            padding: 15px 0; 
-            border-top: 1px solid rgba(255,255,255,0.1); 
-            background: rgba(0,0,0,0.2);
-        }
-        .nav-item { 
-            color: var(--secondary-color); cursor: pointer; font-size: 11px; 
-            display: flex; flex-direction: column; align-items: center; gap: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;
-        }
+        .bottom-nav { display: flex; justify-content: space-around; width: 100%; padding: 15px 0; border-top: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); }
+        .nav-item { color: var(--secondary-color); cursor: pointer; font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
         .nav-item.active { color: var(--primary-color); }
 
-        /* --- DESKTOP / TABLET (TELA GRANDE) --- */
         @media (min-width: 768px) {
-            body {
-                background-image: url('/image/bg-desktop-pattern.png'); /* Opcional: textura */
-                background-size: cover;
-            }
-
-            .player-container {
-                max-width: 700px; /* AUMENTA A LARGURA NO PC */
-                height: 90vh;
-                max-height: 1000px;
-                background-color: rgba(20, 20, 20, 0.6);
-                border-radius: 30px;
-                border: 1px solid rgba(255,255,255,0.1);
-                box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-                backdrop-filter: blur(30px);
-                justify-content: center;
-                gap: 30px;
-            }
-
-            /* Círculo gigante no PC */
-            .program-circle {
-                width: 380px;
-                height: 380px;
-            }
-            .program-circle.is-playing::before {
-                top: -12px; left: -12px; right: -12px; bottom: -12px;
-            }
-
+            body { background-image: url('/image/bg-desktop-pattern.png'); background-size: cover; }
+            .player-container { max-width: 700px; height: 90vh; max-height: 1000px; background-color: rgba(20, 20, 20, 0.6); border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 60px rgba(0,0,0,0.5); backdrop-filter: blur(30px); justify-content: center; gap: 30px; }
+            .program-circle { width: 380px; height: 380px; }
+            .program-circle.is-playing::before { top: -12px; left: -12px; right: -12px; bottom: -12px; }
             .program-name { font-size: 32px; margin-bottom: 10px; }
             .program-status { font-size: 14px; }
-
-            .play-btn { 
-                width: 90px; height: 90px; 
-            }
+            .play-btn { width: 90px; height: 90px; }
             .play-btn svg { width: 40px; height: 40px; }
-
-            .now-playing-card {
-                max-width: 600px;
-                padding: 20px 30px;
-            }
+            .now-playing-card { max-width: 600px; padding: 20px 30px; }
             .song-cover { width: 80px; height: 80px; }
             .song-title { font-size: 22px; }
             .song-artist { font-size: 18px; }
@@ -362,7 +249,6 @@
         const ZENO_ID = "hvwifp8ezc6tv"; 
         const LASTFM_API_KEY = "7744c8f90ee053fc761e0e23bfa00b89";
 
-        // --- IMAGENS LOCAIS (MINÚSCULAS) ---
         const IMG_DEFAULT = "/image/logopraisefm.webp"; 
         const IMG_COMMERCIAL = "/image/commercial break.png"; 
         const IMG_SPOT = "/image/spot.webp";
@@ -397,7 +283,7 @@
 
         // --- ATUALIZAÇÃO VISUAL ---
         function updateDisplay(programImage, programName, songImage, songTitle, songArtist, isMusicalTrack, durationMs = 0) {
-            // 1. Logo do Programa (Círculo Grande)
+            // 1. Círculo do Programa
             if (programImg.src !== programImage && !programImg.src.endsWith(programImage)) {
                 programImg.src = programImage;
             }
@@ -415,7 +301,7 @@
             trackTitle.innerText = songTitle;
             trackArtist.innerText = songArtist;
 
-            // 3. Lógica do Anel de Progresso
+            // 3. Anel de Progresso
             if (progressInterval) clearInterval(progressInterval);
             
             if (isMusicalTrack) {
@@ -429,11 +315,11 @@
 
         // --- FUNÇÃO DO ANEL DE PROGRESSO ---
         function startProgressMonitor(durationMs) {
-            const totalDuration = durationMs > 0 ? durationMs : 210000; // 3:30 default
+            const totalDuration = durationMs > 0 ? durationMs : 210000; 
             const startTime = Date.now();
 
             progressInterval = setInterval(() => {
-                if (!isPlaying) return; // Pausa visual se o áudio parar
+                if (!isPlaying) return; 
 
                 const elapsed = Date.now() - startTime;
                 const percentage = Math.min(elapsed / totalDuration, 1); 
@@ -527,16 +413,19 @@
                 if (data.track) {
                     if (data.track.album && data.track.album.image) {
                         const img = data.track.album.image.find(i => i.size === 'extralarge')['#text'];
-                        if (img) currentSongImg = img;
+                        if (img) {
+                            currentSongImg = img;
+                            currentProgramImg = img; // AQUI ESTÁ A MUDANÇA: Capa vai pro círculo também
+                        }
                     }
                     if (data.track.duration) {
                         songDuration = parseInt(data.track.duration);
-                        console.log("Duração LastFM:", songDuration);
                     }
                 }
             } catch(e) { console.log("Erro LastFM", e); }
 
-            updateDisplay(IMG_DEFAULT, "Praise FM", currentSongImg, track, artist, true, songDuration);
+            // Aqui currentProgramImg será a capa da música (se achada) ou IMG_DEFAULT
+            updateDisplay(currentProgramImg, "Praise FM", currentSongImg, track, artist, true, songDuration);
         }
 
         // --- CONTROLES DE ÁUDIO ---
@@ -556,6 +445,7 @@
                 iconPause.style.display = 'none';
             } else {
                 if (audio.src !== STREAM_URL) audio.src = STREAM_URL;
+                
                 audio.play().then(() => {
                     isPlaying = true;
                     iconPlay.style.display = 'none';
