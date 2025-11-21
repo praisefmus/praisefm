@@ -492,12 +492,12 @@
             }
         }
         
-        // --- FUNÇÃO CORRIGIDA setMedia ---
+        // --- FUNÇÃO setMedia ---
         function setMedia(programImageUrl, trackImageUrl, trackTitle, artistName, audioSource = STREAM_URL) {
             trackNameEl.innerText = trackTitle;
             artistNameEl.innerText = artistName;
             
-            // 1. ATUALIZA LOGO DO PROGRAMA (CÍRCULO GRANDE) - Deve ser sempre o logo da rádio ou o logo do programa
+            // 1. ATUALIZA LOGO DO PROGRAMA (CÍRCULO GRANDE) 
             if (programLogoEl.src !== programImageUrl) {
                 programLogoEl.src = programImageUrl;
                 programLogoEl.alt = `${trackTitle} by ${artistName} program logo`;
@@ -670,7 +670,7 @@
             }
 
             setMedia(ep.img || IMG_DEFAULT, ep.img || IMG_DEFAULT, ep.title, ep.artist, ep.url);
-            setProgramLogoActiveState(true); 
+            setProgramLogoActiveState(false); // On Demand NÃO tem anel rotativo
             
             btnBackLive.style.display = 'inline-block';
             liveBadge.style.display = 'none';
@@ -832,7 +832,7 @@
         async function updateTrackInfo(artist, track) {
             if(!isLive) return;
 
-            // 1. DESATIVA O ANEL POR PADRÃO. SÓ SERÁ ATIVADO SE FOR UMA MÚSICA (REGRA 4).
+            // 1. O ESTADO PADRÃO É SEM ANEL (Se for programa, esse será o estado final)
             setProgramLogoActiveState(false); 
 
             const artistLow = artist.toLowerCase();
@@ -862,48 +862,27 @@
                 return;
             }
             
-            // --- REGRA 3: PROGRAMAS TEMÁTICOS (USAM O LOGO DO PROGRAMA PARA AMBOS) ---
+            // --- REGRA 3: PROGRAMAS TEMÁTICOS ---
             let isProgram = false;
+            
+            // Mapeamento de Programas (Para simplificar a adição futura)
+            const programMap = {
+                "midday grace": IMG_MIDDAY_GRACE,
+                "midnight grace": IMG_MIDNIGHT_GRACE,
+                "morning show": IMG_MORNING_SHOW,
+                "carpool": IMG_CARPOOL,
+                "classic": IMG_CLASSIC,
+                "future artists": IMG_FUTURE_ARTISTS,
+                "pop": IMG_POP,
+                "sunday morning": IMG_SUNDAY_MORNING,
+            };
 
-            // Midday Grace
-            if (artistLow.includes("midday grace") || trackLow.includes("midday grace")) {
-                programLogoUrl = IMG_MIDDAY_GRACE;
-                isProgram = true;
-            }
-            // Midnight Grace
-            else if (artistLow.includes("midnight grace") || trackLow.includes("midnight grace")) {
-                programLogoUrl = IMG_MIDNIGHT_GRACE;
-                isProgram = true;
-            }
-            // Morning Show
-            else if (artistLow.includes("morning show") || trackLow.includes("morning show")) {
-                programLogoUrl = IMG_MORNING_SHOW;
-                isProgram = true;
-            }
-            // Praise FM Carpool
-            else if (trackLow.includes("carpool")) {
-                programLogoUrl = IMG_CARPOOL;
-                isProgram = true;
-            }
-            // Praise FM Classic
-            else if (artistLow.includes("classic") || trackLow.includes("classic")) {
-                programLogoUrl = IMG_CLASSIC;
-                isProgram = true;
-            }
-            // Praise FM Future Artists
-            else if (artistLow.includes("future artists") || trackLow.includes("future artists")) {
-                programLogoUrl = IMG_FUTURE_ARTISTS;
-                isProgram = true;
-            }
-            // Praise FM Pop
-            else if (artistLow.includes("pop") || trackLow.includes("pop")) {
-                programLogoUrl = IMG_POP;
-                isProgram = true;
-            }
-            // Sunday Morning
-            else if (artistLow.includes("sunday morning") || trackLow.includes("sunday morning")) {
-                programLogoUrl = IMG_SUNDAY_MORNING;
-                isProgram = true;
+            for (const key in programMap) {
+                if (artistLow.includes(key) || trackLow.includes(key)) {
+                    programLogoUrl = programMap[key];
+                    isProgram = true;
+                    break;
+                }
             }
 
             if (isProgram) {
@@ -918,7 +897,7 @@
 
             // --- REGRA 4: BUSCA NO LAST.FM (MÚSICAS) ---
             // Se chegou aqui, é uma MÚSICA.
-            
+
             const lastfmUrl = `https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${LASTFM_API_KEY}&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}&format=json`;
             
             try {
@@ -952,7 +931,8 @@
                 }
 
             } catch (error) {
-                // Se o Last.fm falhar: Anel ATIVADO. Imagem é o fallback default.
+                // Se o Last.fm falhar, ainda é uma música.
+                // Anel ATIVADO. Imagem é o fallback default.
                 setProgramLogoActiveState(true); 
                 setMedia(programLogoUrl, IMG_DEFAULT, track, artist);
             }
@@ -967,7 +947,7 @@
         setInterval(updateChicagoTime, 1000);
         
         // Define o logo inicial e ativa o anel no início, pois a rádio está em "Live"
-        setMedia(IMG_DEFAULT, IMG_DEFAULT, "Praise FM", "Live from Chicago"); 
+        // setMedia(IMG_DEFAULT, IMG_DEFAULT, "Praise FM", "Live from Chicago"); // Removido por ser redundante (setupZenoMetadata faz a primeira atualização)
         setProgramLogoActiveState(true); 
 
     </script>
