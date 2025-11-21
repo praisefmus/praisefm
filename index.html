@@ -691,7 +691,7 @@
             };
         }
         
-        // --- LÓGICA DE BUSCA DE METADADOS (APLICANDO FUNDO DINÂMICO) ---
+        // --- LÓGICA DE BUSCA DE METADADOS (REFORÇADA) ---
         async function updateTrackInfo(artist, track) {
             if(!isLive) return;
 
@@ -718,51 +718,62 @@
             }
             
             // --- REGRA 3: PROGRAMAS TEMÁTICOS (NOVOS LOGOS) ---
-            // Se for um programa, oculta o botão de letras e usa o logo específico.
+            // Oculta botão de letras para todos os programas
+            lyricsBtn.style.display = 'none'; 
+
+            // Midday Grace
             if (artistLow.includes("midday grace") || trackLow.includes("midday grace")) {
                 setMedia(IMG_MIDDAY_GRACE, track, artist);
-                lyricsBtn.style.display = 'none'; 
                 return;
             }
+            
+            // Midnight Grace
             if (artistLow.includes("midnight grace") || trackLow.includes("midnight grace")) {
                 setMedia(IMG_MIDNIGHT_GRACE, track, artist);
-                lyricsBtn.style.display = 'none'; 
                 return;
             }
-            if (artistLow.includes("morning show") || trackLow.includes("morning show")) {
+            
+            // Morning Show
+            if (artistLow.includes("morning show") || trackLow.includes("morning show") || trackLow.includes("morning showlogo")) {
                 setMedia(IMG_MORNING_SHOW, track, artist);
-                lyricsBtn.style.display = 'none'; 
                 return;
             }
-            if (artistLow.includes("carpool") || trackLow.includes("carpool")) {
+            
+            // Praise FM Carpool
+            if (artistLow.includes("praise fm carpool") || trackLow.includes("praise fm carpool") || trackLow.includes("carpool")) {
                 setMedia(IMG_CARPOOL, track, artist);
-                lyricsBtn.style.display = 'none'; 
                 return;
             }
-            if (artistLow.includes("classic") || trackLow.includes("classic")) {
+
+            // Praise FM Classic (Reforçado com a string completa)
+            if (artistLow.includes("praise fm classic") || trackLow.includes("praise fm classic") || trackLow.includes("classic")) {
                 setMedia(IMG_CLASSIC, track, artist);
-                lyricsBtn.style.display = 'none'; 
                 return;
             }
-            if (artistLow.includes("future artists") || trackLow.includes("future artists")) {
+            
+            // Praise FM Future Artists (Reforçado com a string completa)
+            if (artistLow.includes("praise fm future artists") || trackLow.includes("praise fm future artists") || trackLow.includes("future artists")) {
                 setMedia(IMG_FUTURE_ARTISTS, track, artist);
-                lyricsBtn.style.display = 'none'; 
                 return;
             }
-            if (artistLow.includes("pop") || trackLow.includes("pop")) {
+            
+            // Praise FM Pop (Reforçado com a string completa para evitar falsos positivos com a palavra "pop" em títulos de música)
+            if (artistLow.includes("praise fm pop") || trackLow.includes("praise fm pop")) {
                 setMedia(IMG_POP, track, artist);
-                lyricsBtn.style.display = 'none'; 
                 return;
             }
+            
+            // Sunday Morning
             if (artistLow.includes("sunday morning") || trackLow.includes("sunday morning")) {
                 setMedia(IMG_SUNDAY_MORNING, track, artist);
-                lyricsBtn.style.display = 'none'; 
                 return;
             }
             
             // --- REGRA 4: BUSCA NO LAST.FM (MÚSICA) ---
-            // Se chegou aqui, é uma música e o botão de letras está 'block'.
+            // Se chegou aqui, é uma música e o botão de letras volta a ser 'block'.
             
+            lyricsBtn.style.display = 'block';
+
             const url = `https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${LASTFM_API_KEY}&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}&format=json`;
 
             try {
