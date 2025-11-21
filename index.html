@@ -280,11 +280,12 @@
         const LASTFM_API_KEY = "7744c8f90ee053fc761e0e23bfa00b89";
         
         // --- IMAGENS LOCAIS (USANDO CAMINHO ABSOLUTO /image/ E NOME EM MINÚSCULAS) ---
+        // ESTE CÓDIGO ESTÁ CORRETO, POIS VOCÊ JÁ RENOMEOU OS ARQUIVOS NO GITHUB PARA MINÚSCULAS
         const IMG_DEFAULT = "/image/logopraisefm.webp"; 
         const IMG_COMMERCIAL = "/image/commercial break.png";
         const IMG_SPOT = "/image/spot.webp";
         
-        // NOVOS LOGOS DE PROGRAMAS (TUDO EM MINÚSCULA NO CÓDIGO)
+        // LOGOS DE PROGRAMAS (TUDO EM MINÚSCULA CONFORME SEU REPOSITÓRIO CORRIGIDO)
         const IMG_MIDDAY_GRACE = "/image/middaygracelogo.webp";
         const IMG_MIDNIGHT_GRACE = "/image/midnightgracelogo.webp";
         const IMG_MORNING_SHOW = "/image/morningshowlogo.webp";
@@ -294,7 +295,7 @@
         const IMG_POP = "/image/praisefmpoplogo.webp";
         const IMG_SUNDAY_MORNING = "/image/sundaymorninglogo.webp";
 
-        // --- LISTA ON DEMAND (MANTENHA OS SEUS LINKS MP3/IMG AQUI) ---
+        // --- LISTA ON DEMAND ---
         const episodes = [
             {
                 title: "Morning Prayer",
@@ -347,14 +348,15 @@
         let eventSource = null;
 
         // --- FUNÇÃO AUXILIAR PARA CORRIGIR CORS (TROCA DE COR DINÂMICA) ---
+        /**
+         * CORREÇÃO FINAL: Garante que as imagens locais não sejam proxied ou codificadas incorretamente.
+         */
         function getProxiedUrl(url) {
-            if (!url || url.includes(window.location.origin) || 
-                url.includes(IMG_DEFAULT) || url.includes(IMG_COMMERCIAL) || url.includes(IMG_SPOT)
-            ) {
-                // Se a URL for local ou for uma das imagens de fallback, não precisa de proxy
+            // Se a URL for uma URL local (começa com /), retorna a URL pura.
+            if (url.startsWith('/')) {
                 return url;
             }
-            // Usa um proxy público para contornar restrições de CORS e permitir a leitura da cor
+            // Se for uma URL externa (Last.fm, etc), aplica o proxy para leitura de cor.
             return 'https://corsproxy.io/?' + encodeURIComponent(url);
         }
 
@@ -370,6 +372,7 @@
         albumArtEl.onload = () => {
             const currentSrc = albumArtEl.src;
             if (currentSrc) {
+                // Passa a URL pura (local ou proxied) para a função de fundo
                 updateBlurredBackground(currentSrc);
             }
         };
@@ -432,7 +435,7 @@
             return new Promise((resolve, reject) => {
                 const img = new Image();
                 img.crossOrigin = "Anonymous";
-                img.src = imgUrl;
+                img.src = imgUrl; // Esta URL já deve ser o caminho local ou o caminho proxied
 
                 img.onload = () => {
                     try {
@@ -451,25 +454,24 @@
         }
         
         function updateBlurredBackground(imgSrc) {
-            // Verifica se a imagem é um de nossos fallbacks locais (que já estão em cinza)
-            const decodedSrc = decodeURIComponent(imgSrc);
-            if (decodedSrc.includes(IMG_COMMERCIAL)) {
-                 bgBlur.style.background = `radial-gradient(circle at 50% 30%, #333, #000)`; 
-            } else if (decodedSrc.includes(IMG_DEFAULT) || decodedSrc.includes(IMG_SPOT)) {
-                 bgBlur.style.background = `radial-gradient(circle at 50% 30%, var(--bg-gradient-2), #000)`; 
-            } else {
-                // Tenta pegar a cor da capa (agora via proxy)
-                getColorFromImage(imgSrc).then(color => {
-                    if (color) {
-                        bgBlur.style.background = `radial-gradient(circle at 50% 30%, ${color}, #000)`;
-                    } else {
-                        // Fallback em caso de falha de CORS ou do Proxy
-                        bgBlur.style.background = `radial-gradient(circle at 50% 30%, #282828, #000)`; 
-                    }
-                }).catch(() => {
-                    bgBlur.style.background = `radial-gradient(circle at 50% 30%, #282828, #000)`; 
-                });
+            // Se a imagem for local (começa com /image/), não tenta ler a cor, pois
+            // as imagens locais não precisam de cor dinâmica (são logos/propaganda).
+            if (imgSrc.includes('/image/')) {
+                 bgBlur.style.background = `radial-gradient(circle at 50% 30%, #282828, #000)`; 
+                 return;
             }
+
+            // Para URLs externas (Last.fm) - que JÁ ESTÃO PROXIED - tenta ler a cor.
+            getColorFromImage(imgSrc).then(color => {
+                if (color) {
+                    bgBlur.style.background = `radial-gradient(circle at 50% 30%, ${color}, #000)`;
+                } else {
+                    // Fallback em caso de falha de CORS ou do Proxy
+                    bgBlur.style.background = `radial-gradient(circle at 50% 30%, #282828, #000)`; 
+                }
+            }).catch(() => {
+                bgBlur.style.background = `radial-gradient(circle at 50% 30%, #282828, #000)`; 
+            });
         }
 
 
@@ -479,7 +481,7 @@
             trackNameEl.innerText = trackTitle;
             artistNameEl.innerText = artistName;
             
-            // Aplica o proxy APENAS se a imagem for externa e não um fallback local.
+            // SOMENTE APLICA O PROXY SE FOR UMA IMAGEM EXTERNA (não começa com '/')
             const finalImageUrl = getProxiedUrl(imageUrl); 
 
             if (albumArtEl.src !== finalImageUrl) {
@@ -718,7 +720,7 @@
                 return;
             }
             
-            // --- REGRA 3: PROGRAMAS TEMÁTICOS (TODAS AS IMAGENS EM MINÚSCULAS) ---
+            // --- REGRA 3: PROGRAMAS TEMÁTICOS (SEU CÓDIGO CORRIGIDO) ---
 
             // Midday Grace
             if (artistLow.includes("midday grace") || trackLow.includes("midday grace")) {
@@ -795,6 +797,7 @@
                     }
                 }
 
+                // A URL aqui será externa e passará pelo getProxiedUrl (que aplica o corsproxy.io)
                 setMedia(imageUrl, track, artist);
 
                 // RASTREIO GA4: Evento Nova Música
