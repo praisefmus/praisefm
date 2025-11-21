@@ -53,37 +53,121 @@
         .player-container {
             width: 100%; max-width: 380px; height: 100%; max-height: 800px;
             padding: 20px 24px; display: flex; flex-direction: column;
-            justify-content: space-between; position: relative; overflow: hidden;
+            justify-content: flex-start; /* Ajuste para centralizar o novo layout */
+            position: relative; overflow: hidden;
         }
 
         .top-bar { display: flex; justify-content: center; padding-bottom: 10px; }
         .grip { width: 40px; height: 5px; background: rgba(255,255,255,0.2); border-radius: 10px; }
 
-        /* ARTWORK */
-        .artwork-container {
-            width: 100%; aspect-ratio: 1/1; border-radius: 12px; overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5); margin-bottom: 20px;
-            transform: scale(1); transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-            background-color: #1a1a1a; position: relative;
-        }
-        .artwork-container.paused { transform: scale(0.85); opacity: 0.8; }
-        .artwork-img { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.5s ease; }
 
-        /* INFO */
-        .track-info { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-        .text-area { flex: 1; padding-right: 10px; }
-        .song-title { font-size: 22px; font-weight: 700; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .artist-name { font-size: 18px; color: var(--secondary-color); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .more-btn { background: none; border: none; cursor: pointer; color: var(--primary-color); padding: 5px; font-size: 20px; transition: color 0.3s; }
+        /* --- NOVO LAYOUT DE ARTE E LOGO --- */
+
+        .media-area {
+            width: 100%;
+            margin-top: 30px; /* Espaço do topo */
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        /* 1. LOGO DO PROGRAMA (GRANDE E REDONDO) */
+        .program-logo-container {
+            width: 180px; /* Tamanho do círculo */
+            height: 180px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            background-color: #1a1a1a;
+            margin-bottom: 30px;
+        }
+        .program-logo-img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            transition: opacity 0.3s ease;
+        }
+
+        /* 2. ARTE DA MÚSICA ATUAL (MINIATURA) */
+        .artwork-container {
+            display: flex; /* Para alinhar o texto da música ao lado da capa */
+            width: 100%; 
+            height: 60px; /* Altura da miniatura */
+            padding: 10px;
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.05); /* Fundo sutil para destaque */
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            
+            /* Remove a escala e opacidade para o novo design */
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .artwork-container.paused { /* Não aplica efeito de pausa neste contêiner */
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .artwork-img { 
+            width: 40px; 
+            height: 40px; 
+            object-fit: cover; 
+            border-radius: 4px;
+            margin-right: 15px;
+            transition: opacity 0.5s ease; 
+        }
+
+
+        /* 3. INFO DA MÚSICA (DENTRO DA MINIATURA) */
+        .track-info-mini {
+            flex: 1; 
+            overflow: hidden; 
+            white-space: nowrap;
+        }
+
+        .song-title-mini { 
+            font-size: 16px; 
+            font-weight: 600; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+        }
+
+        .artist-name-mini { 
+            font-size: 14px; 
+            color: var(--secondary-color); 
+            font-weight: 400; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+        }
+
+        /* 4. BOTÃO DE LETRAS DENTRO DO NOVO CONTÊINER */
+        .more-btn { 
+            background: none; 
+            border: none; 
+            cursor: pointer; 
+            color: var(--primary-color); 
+            padding: 5px; 
+            font-size: 20px; 
+            transition: color 0.3s; 
+        }
         .more-btn:hover { color: var(--accent-color); }
 
 
+        /* INFO (ÁREA CENTRAL QUE CONTINUA) */
+        .track-info { 
+            display: none; /* ESCONDE O TEXTO GRANDE ANTIGO */
+        }
+
         /* PROGRESS */
-        .progress-area { margin-bottom: 10px; position: relative; }
+        .progress-area { margin-bottom: 10px; position: relative; padding-top: 20px; } /* Ajuste de espaço */
         .progress-bar-bg { width: 100%; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; }
         .progress-bar-fill { width: 0%; height: 100%; background: var(--accent-color); border-radius: 2px; transition: width 0.1s linear; }
-        .seek-slider { position: absolute; top: -5px; width: 100%; height: 15px; opacity: 0; cursor: pointer; }
-        
+        .seek-slider { position: absolute; top: 15px; width: 100%; height: 15px; opacity: 0; cursor: pointer; }
+
         .time-info { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--secondary-color); margin-top: 8px; font-weight: 600; }
 
         /* LIVE BADGE */
@@ -106,7 +190,7 @@
         .volume-slider { position: absolute; width: 100%; height: 100%; top:0; opacity:0; cursor:pointer; }
 
         /* FOOTER */
-        .bottom-icons { display: flex; justify-content: space-around; color: var(--secondary-color); z-index: 10; }
+        .bottom-icons { display: flex; justify-content: space-around; color: var(--secondary-color); z-index: 10; margin-top: auto; } /* Push to bottom */
         .bottom-icon { cursor: pointer; padding: 10px; }
 
         /* --- DRAWER MENU (ON DEMAND) --- */
@@ -149,6 +233,9 @@
             font-weight: 700;
             cursor: pointer;
             text-transform: uppercase;
+            /* Nova posição no layout */
+            margin-top: 15px; 
+            align-self: flex-start;
         }
         
         svg { fill: currentColor; }
@@ -157,7 +244,6 @@
         @media (min-width: 600px) {
             
             .player-container {
-                /* Aumenta a largura máxima e adiciona um visual de "vidro" */
                 max-width: 500px; 
                 max-height: 90vh; 
                 padding: 40px; 
@@ -166,29 +252,29 @@
                 backdrop-filter: blur(15px); 
             }
 
-            .artwork-container {
-                /* Aumenta a capa */
-                width: 100%;
-                max-width: 400px; 
-                margin: 20px auto 30px auto; 
+            .program-logo-container {
+                width: 250px; 
+                height: 250px;
             }
 
-            .song-title { 
-                /* Aumenta o título */
-                font-size: 28px; 
+            .artwork-container {
+                width: 100%;
+                max-width: 400px;
+                margin: 20px auto; 
+            }
+
+            .song-title-mini { 
+                font-size: 18px; 
             }
             
-            .artist-name { 
-                /* Aumenta o nome do artista */
-                font-size: 22px; 
+            .artist-name-mini { 
+                font-size: 16px; 
             }
 
             .live-badge, .time-info span {
-                /* Aumenta o texto de tempo/live */
                 font-size: 14px;
             }
 
-            /* Opcional: Aumenta um pouco os controles */
             .play-btn { width: 80px; height: 80px; }
             .skip-btn { width: 50px; }
         }
@@ -203,18 +289,27 @@
             <div class="grip"></div>
         </div>
 
-        <div class="artwork-container paused" id="artContainer">
-            <img src="/image/logopraisefm.webp" alt="Praise FM station logo or current album art" class="artwork-img" id="albumArt">
+        <div class="media-area">
+            
+            <div class="program-logo-container" id="programLogoContainer">
+                <img src="/image/logopraisefm.webp" alt="Praise FM station logo" class="program-logo-img" id="programLogo">
+            </div>
+
+            <div class="artwork-container paused" id="artContainer">
+                <img src="/image/logopraisefm.webp" alt="Praise FM station logo or current album art" class="artwork-img" id="albumArt">
+                
+                <div class="track-info-mini">
+                    <div class="song-title-mini" id="trackName">Praise FM</div>
+                    <div class="artist-name-mini" id="artistName">Live from Chicago</div>
+                </div>
+
+                <button class="more-btn" id="lyricsBtn" aria-label="Search Lyrics">•••</button>
+            </div>
         </div>
 
-        <div class="track-info">
-            <div class="text-area">
-                <div class="song-title" id="trackName">Praise FM</div>
-                <div class="artist-name" id="artistName">Live from Chicago</div>
-                <button id="btnBackLive" class="back-to-live" aria-label="Return to Live Stream">Return to Live</button>
-            </div>
-            <button class="more-btn" id="lyricsBtn" aria-label="Search Lyrics">•••</button>
-        </div>
+        <button id="btnBackLive" class="back-to-live" aria-label="Return to Live Stream">Return to Live</button>
+        
+        <div class="track-info" style="display:none;"></div> 
 
         <div class="progress-area">
             <div class="progress-bar-bg">
@@ -280,12 +375,11 @@
         const LASTFM_API_KEY = "7744c8f90ee053fc761e0e23bfa00b89";
         
         // --- IMAGENS LOCAIS (USANDO CAMINHO ABSOLUTO /image/ E NOME EM MINÚSCULAS) ---
-        // ESTE CÓDIGO ESTÁ CORRETO, POIS VOCÊ JÁ RENOMEOU OS ARQUIVOS NO GITHUB PARA MINÚSCULAS
-        const IMG_DEFAULT = "/image/logopraisefm.webp"; 
+        const IMG_DEFAULT = "/image/logopraisefm.webp"; // Logo Genérico da Rádio (para o círculo fixo quando toca música)
         const IMG_COMMERCIAL = "/image/commercial break.png";
         const IMG_SPOT = "/image/spot.webp";
         
-        // LOGOS DE PROGRAMAS (TUDO EM MINÚSCULA CONFORME SEU REPOSITÓRIO CORRIGIDO)
+        // LOGOS DE PROGRAMAS (TUDO EM MINÚSCULA CONFORME SEU REPOSITÓRIO)
         const IMG_MIDDAY_GRACE = "/image/middaygracelogo.webp";
         const IMG_MIDNIGHT_GRACE = "/image/midnightgracelogo.webp";
         const IMG_MORNING_SHOW = "/image/morningshowlogo.webp";
@@ -311,17 +405,22 @@
             }
         ];
 
-        // --- DOM ELEMENTS ---
+        // --- DOM ELEMENTS (NOVOS E ANTIGOS) ---
         const audio = new Audio(STREAM_URL);
         const playPauseBtn = document.getElementById('playPauseBtn');
         const iconPlay = document.getElementById('iconPlay');
         const iconPause = document.getElementById('iconPause');
+
+        // Elementos de Imagem
+        const programLogoEl = document.getElementById('programLogo'); // NOVO: Logo do Programa (Círculo)
         const artContainer = document.getElementById('artContainer');
+        const albumArtEl = document.getElementById('albumArt'); // Capa da música (miniatura)
+
+        // Elementos de Texto e Barra
         const volumeSlider = document.getElementById('volumeSlider');
         const volFill = document.getElementById('volFill');
-        const albumArtEl = document.getElementById('albumArt');
-        const trackNameEl = document.getElementById('trackName');
-        const artistNameEl = document.getElementById('artistName');
+        const trackNameEl = document.getElementById('trackName'); // Título (na miniatura)
+        const artistNameEl = document.getElementById('artistName'); // Artista (na miniatura)
         const bgBlur = document.getElementById('bgBlur');
         const clockDisplay = document.getElementById('clockDisplay');
         
@@ -349,11 +448,12 @@
 
         // --- FUNÇÃO AUXILIAR PARA CORRIGIR CORS (TROCA DE COR DINÂMICA) ---
         /**
-         * CORREÇÃO FINAL: Garante que as imagens locais não sejam proxied ou codificadas incorretamente.
+         * CORREÇÃO: Garante que as imagens locais (/image/...) não sejam proxied ou codificadas incorretamente.
+         * Apenas URLs externas (Last.fm) são proxied para leitura de cor.
          */
         function getProxiedUrl(url) {
-            // Se a URL for uma URL local (começa com /), retorna a URL pura.
-            if (url.startsWith('/')) {
+            // Se a URL for uma URL local (começa com /image/), retorna a URL pura.
+            if (url.startsWith('/image/')) {
                 return url;
             }
             // Se for uma URL externa (Last.fm, etc), aplica o proxy para leitura de cor.
@@ -365,7 +465,8 @@
         renderEpisodes();
         updateChicagoTime();
         setInterval(updateChicagoTime, 1000);
-        setMedia(IMG_DEFAULT, "Praise FM", "Live from Chicago");
+        // Chamada inicial: Logo da Rádio como Fixo e como Miniatura
+        setMedia(IMG_DEFAULT, IMG_DEFAULT, "Praise FM", "Live from Chicago"); 
 
         // --- LISTENERS E FUNÇÕES AUXILIARES ---
 
@@ -377,6 +478,8 @@
             }
         };
 
+        // ... (togglePlay, volumeSlider, getColorFromImage, updateBlurredBackground - Sem alteração)
+        
         // --- CONTROLES PRINCIPAIS E RASTREAMENTO GA4 ---
         playPauseBtn.addEventListener('click', togglePlay);
         
@@ -475,20 +578,31 @@
         }
 
 
-        // --- LÓGICA LIVE VS ON DEMAND ---
-
-        function setMedia(imageUrl, trackTitle, artistName, audioSource = STREAM_URL) {
+        // --- LÓGICA LIVE VS ON DEMAND (setMedia REVISADA) ---
+        /**
+         * Define o logo do programa (programLogo) e a capa da música (albumArt).
+         * @param {string} programImageUrl - URL do logo do programa atual (local: /image/...) - Vai para o círculo fixo.
+         * @param {string} trackImageUrl - URL da capa da música atual (externa: Last.fm ou logo local) - Vai para a miniatura.
+         */
+        function setMedia(programImageUrl, trackImageUrl, trackTitle, artistName, audioSource = STREAM_URL) {
             trackNameEl.innerText = trackTitle;
             artistNameEl.innerText = artistName;
             
-            // SOMENTE APLICA O PROXY SE FOR UMA IMAGEM EXTERNA (não começa com '/')
-            const finalImageUrl = getProxiedUrl(imageUrl); 
+            // 1. ATUALIZA LOGO DO PROGRAMA (FIXO)
+            if (programLogoEl.src !== programImageUrl) {
+                programLogoEl.src = programImageUrl;
+                programLogoEl.alt = `${trackTitle} by ${artistName} program logo`;
+            }
+            
+            // 2. ATUALIZA CAPA DA MÚSICA (MINIATURA)
+            // SOMENTE APLICA O PROXY SE FOR UMA IMAGEM EXTERNA (Last.fm, não local)
+            const finalTrackImageUrl = getProxiedUrl(trackImageUrl); 
 
-            if (albumArtEl.src !== finalImageUrl) {
-                albumArtEl.src = finalImageUrl; 
+            if (albumArtEl.src !== finalTrackImageUrl) {
+                albumArtEl.src = finalTrackImageUrl; 
             } else {
                 // Se a URL não mudou, forçamos a atualização do fundo
-                updateBlurredBackground(finalImageUrl);
+                updateBlurredBackground(finalTrackImageUrl);
             }
             // ACESSIBILIDADE: Atualiza o alt text da capa
             albumArtEl.alt = `${trackTitle} by ${artistName} album art`;
@@ -518,7 +632,8 @@
             
             if(!eventSource) setupZenoMetadata();
             
-            setMedia(IMG_DEFAULT, "Praise FM", "Live from Chicago");
+            // Ambos Logos (Fixo e Miniatura) voltam para o default da rádio
+            setMedia(IMG_DEFAULT, IMG_DEFAULT, "Praise FM", "Live from Chicago");
         }
 
         // 2. Tocar Episódio On Demand
@@ -531,13 +646,14 @@
                 eventSource = null;
             }
 
-            setMedia(ep.img || IMG_DEFAULT, ep.title, ep.artist, ep.url);
+            // Logo Fixo (programa) usa a imagem do episódio, assim como a miniatura
+            setMedia(ep.img || IMG_DEFAULT, ep.img || IMG_DEFAULT, ep.title, ep.artist, ep.url);
             
             btnBackLive.style.display = 'inline-block';
             liveBadge.style.display = 'none';
             timeDisplay.style.display = 'block';
             seekSlider.style.display = 'block';
-            lyricsBtn.style.display = 'none'; // Desativa letras para on-demand, se necessário
+            lyricsBtn.style.display = 'none'; 
             
             audio.play();
             isPlaying = true;
@@ -554,6 +670,8 @@
                 });
             }
         }
+
+        // ... (timeupdate, seekSlider, skip, updateUIState, menu drawer, lyrics - Sem alteração)
 
         // 3. Barra de Progresso (On Demand)
         audio.addEventListener('timeupdate', () => {
@@ -693,125 +811,128 @@
             };
         }
         
-        // --- LÓGICA DE BUSCA DE METADADOS (REFORÇADA) ---
+        // --- LÓGICA DE BUSCA DE METADADOS (REFORÇADA E CORRIGIDA) ---
         async function updateTrackInfo(artist, track) {
             if(!isLive) return;
 
             const artistLow = artist.toLowerCase();
             const trackLow = track.toLowerCase();
             
-            let fallbackImage = IMG_DEFAULT; 
+            // Por padrão, se for uma música (Last.fm), o logo fixo é o default da rádio.
+            let programLogoUrl = IMG_DEFAULT; 
+            let trackImageUrl = IMG_DEFAULT;
             
             // Assume música por padrão, mas será sobrescrito se for programa ou propaganda.
             lyricsBtn.style.display = 'block'; 
 
+
             // --- REGRA 1: COMMERCIAL BREAK ---
             if (trackLow.includes("commercial") || artistLow.includes("commercial") || trackLow.includes("ad break")) {
-                setMedia(IMG_COMMERCIAL, "Commercial Break", "Praise FM");
+                // Logo Fixo (Círculo) e Miniatura (Música) usam o logo comercial
+                programLogoUrl = IMG_COMMERCIAL;
+                trackImageUrl = IMG_COMMERCIAL;
+                setMedia(programLogoUrl, trackImageUrl, "Commercial Break", "Praise FM");
                 lyricsBtn.style.display = 'none'; 
                 return; 
             }
 
             // --- REGRA 2: SPOTS / JINGLES / DEFAULT STATION ID ---
-            // A rádio Zeno envia "Praise FM - Praise FM" ou "Praise FM - Station ID"
             if (trackLow.includes("spot") || artistLow.includes("spot") || trackLow.includes("station id") || artist === "Praise FM") {
-                setMedia(IMG_SPOT, track, artist);
+                // Logo Fixo (Círculo) e Miniatura (Música) usam o logo spot
+                programLogoUrl = IMG_SPOT;
+                trackImageUrl = IMG_SPOT;
+                setMedia(programLogoUrl, trackImageUrl, track, artist);
                 lyricsBtn.style.display = 'none'; 
                 return;
             }
             
-            // --- REGRA 3: PROGRAMAS TEMÁTICOS (SEU CÓDIGO CORRIGIDO) ---
+            // --- REGRA 3: PROGRAMAS TEMÁTICOS (USAM O LOGO DO PROGRAMA PARA AMBOS) ---
+            let isProgram = false;
 
             // Midday Grace
             if (artistLow.includes("midday grace") || trackLow.includes("midday grace")) {
-                setMedia(IMG_MIDDAY_GRACE, track, artist);
-                lyricsBtn.style.display = 'none';
-                return;
+                programLogoUrl = IMG_MIDDAY_GRACE;
+                isProgram = true;
             }
-
             // Midnight Grace
-            if (artistLow.includes("midnight grace") || trackLow.includes("midnight grace")) {
-                setMedia(IMG_MIDNIGHT_GRACE, track, artist);
-                lyricsBtn.style.display = 'none';
-                return;
+            else if (artistLow.includes("midnight grace") || trackLow.includes("midnight grace")) {
+                programLogoUrl = IMG_MIDNIGHT_GRACE;
+                isProgram = true;
             }
-
             // Morning Show
-            if (artistLow.includes("morning show") || trackLow.includes("morning show")) {
-                setMedia(IMG_MORNING_SHOW, track, artist);
-                lyricsBtn.style.display = 'none';
-                return;
+            else if (artistLow.includes("morning show") || trackLow.includes("morning show")) {
+                programLogoUrl = IMG_MORNING_SHOW;
+                isProgram = true;
             }
-            
             // Praise FM Carpool
-            if (trackLow.includes("carpool")) {
-                setMedia(IMG_CARPOOL, track, artist);
-                lyricsBtn.style.display = 'none';
-                return;
+            else if (trackLow.includes("carpool")) {
+                programLogoUrl = IMG_CARPOOL;
+                isProgram = true;
             }
-
             // Praise FM Classic
-            if (artistLow.includes("classic") || trackLow.includes("classic")) {
-                setMedia(IMG_CLASSIC, track, artist);
-                lyricsBtn.style.display = 'none';
-                return;
+            else if (artistLow.includes("classic") || trackLow.includes("classic")) {
+                programLogoUrl = IMG_CLASSIC;
+                isProgram = true;
             }
-
             // Praise FM Future Artists
-            if (artistLow.includes("future artists") || trackLow.includes("future artists")) {
-                setMedia(IMG_FUTURE_ARTISTS, track, artist);
+            else if (artistLow.includes("future artists") || trackLow.includes("future artists")) {
+                programLogoUrl = IMG_FUTURE_ARTISTS;
+                isProgram = true;
+            }
+            // Praise FM Pop
+            else if (artistLow.includes("pop") || trackLow.includes("pop")) {
+                programLogoUrl = IMG_POP;
+                isProgram = true;
+            }
+            // Sunday Morning
+            else if (artistLow.includes("sunday morning") || trackLow.includes("sunday morning")) {
+                programLogoUrl = IMG_SUNDAY_MORNING;
+                isProgram = true;
+            }
+
+            if (isProgram) {
+                // Se for programa, o Logo Fixo e a Miniatura são o logo do programa
+                trackImageUrl = programLogoUrl; 
+                setMedia(programLogoUrl, trackImageUrl, track, artist);
                 lyricsBtn.style.display = 'none';
                 return;
             }
 
-            // Praise FM Pop
-            if (artistLow.includes("pop") || trackLow.includes("pop")) {
-                setMedia(IMG_POP, track, artist);
-                lyricsBtn.style.display = 'none';
-                return;
-            }
-            
-            // Sunday Morning
-            if (artistLow.includes("sunday morning") || trackLow.includes("sunday morning")) {
-                setMedia(IMG_SUNDAY_MORNING, track, artist);
-                lyricsBtn.style.display = 'none';
-                return;
-            }
 
             // --- REGRA 4: BUSCA NO LAST.FM (MÚSICAS) ---
+            // Se chegou aqui, é uma MÚSICA. O Logo Fixo é o IMG_DEFAULT.
+            
             const lastfmUrl = `https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${LASTFM_API_KEY}&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}&format=json`;
             
             try {
                 const response = await fetch(lastfmUrl);
                 const data = await response.json();
 
-                let imageUrl = fallbackImage;
-
+                // Se houver capa do Last.fm, ela será a capa da MÚSICA (miniatura)
                 if (data.track && data.track.album && data.track.album.image) {
-                    // Tenta buscar a imagem de maior qualidade
                     const images = data.track.album.image;
                     const largeImage = images.find(img => img.size === 'extralarge' || img.size === 'large');
                     
                     if (largeImage && largeImage['#text']) {
-                        imageUrl = largeImage['#text'];
+                        trackImageUrl = largeImage['#text'];
                     }
                 }
-
-                // A URL aqui será externa e passará pelo getProxiedUrl (que aplica o corsproxy.io)
-                setMedia(imageUrl, track, artist);
+                
+                // Program Logo (Fixo) é o IMG_DEFAULT; Track Image (Miniatura) é o Last.fm
+                setMedia(programLogoUrl, trackImageUrl, track, artist);
 
                 // RASTREIO GA4: Evento Nova Música
                 if (typeof gtag === 'function') {
                     gtag('event', 'now_playing', {
                         'track_name': track,
                         'artist_name': artist,
-                        'image_source': imageUrl === fallbackImage ? 'lastfm_fallback' : 'lastfm'
+                        'image_source': trackImageUrl === IMG_DEFAULT ? 'lastfm_fallback' : 'lastfm'
                     });
                 }
 
             } catch (error) {
                 // Fallback total se o Last.fm falhar
-                setMedia(fallbackImage, track, artist);
+                setMedia(programLogoUrl, IMG_DEFAULT, track, artist);
             }
         }
     </script>
