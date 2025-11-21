@@ -416,7 +416,7 @@
         const IMG_SPOT = "/image/spot.webp";
         
         // LOGOS DE PROGRAMAS 
-        const IMG_MIDDAY_GRACE = "/image/middaygracelogo.webp";
+        const IMG_MIDDAY_GRACE = "/image/middaygracelogo.webp"; // Confirmação de arquivo no servidor
         const IMG_MIDNIGHT_GRACE = "/image/midnightgracelogo.webp";
         const IMG_MORNING_SHOW = "/image/morningshowlogo.webp";
         const IMG_CARPOOL = "/image/praisefmcarpoollogo.webp"; 
@@ -832,12 +832,15 @@
         async function updateTrackInfo(artist, track) {
             if(!isLive) return;
 
-            // 1. O ESTADO PADRÃO É SEM ANEL (Se for programa, esse será o estado final)
-            setProgramLogoActiveState(false); 
-
             const artistLow = artist.toLowerCase();
             const trackLow = track.toLowerCase();
             
+            // 📣 FERRAMENTA DE DEBBUG: OLHE O CONSOLE DO NAVEGADOR (F12) PARA VER O TEXTO EXATO!
+            console.log(`[ZENO] Artista: ${artistLow} | Música: ${trackLow}`); 
+            
+            // 1. O ESTADO PADRÃO É SEM ANEL (Se for programa, esse será o estado final)
+            setProgramLogoActiveState(false); 
+
             let programLogoUrl = IMG_DEFAULT; // Círculo Grande (default é o logo da rádio)
             let trackImageUrl = IMG_DEFAULT;  // Miniatura (default é o logo da rádio)
             
@@ -862,15 +865,19 @@
                 return;
             }
             
-            // --- REGRA 3: PROGRAMAS TEMÁTICOS ---
+            // --- REGRA 3: PROGRAMAS TEMÁTICOS (ULTRA-REFORÇADA) ---
             let isProgram = false;
             
-            // Mapeamento de Programas (Para simplificar a adição futura)
+            // Mapeamento de Programas: Adicionado variações e metadados completos conhecidos.
             const programMap = {
                 "midday grace": IMG_MIDDAY_GRACE,
+                "mid-day grace": IMG_MIDDAY_GRACE, 
+                "mid day grace": IMG_MIDDAY_GRACE,
                 "midnight grace": IMG_MIDNIGHT_GRACE,
                 "morning show": IMG_MORNING_SHOW,
+                "the morning show": IMG_MORNING_SHOW, 
                 "carpool": IMG_CARPOOL,
+                "praise fm carpool": IMG_CARPOOL,
                 "classic": IMG_CLASSIC,
                 "future artists": IMG_FUTURE_ARTISTS,
                 "pop": IMG_POP,
@@ -888,7 +895,7 @@
             if (isProgram) {
                 trackImageUrl = programLogoUrl; // Miniatura também usa o logo do programa
                 
-                // Círculo Grande e Miniatura usam o logo do programa. Anel permanece DESATIVADO.
+                // Anel permanece DESATIVADO (false, definido no início).
                 setMedia(programLogoUrl, trackImageUrl, track, artist); 
                 lyricsBtn.style.display = 'none';
                 return; 
@@ -916,7 +923,7 @@
                 // Círculo Grande: USA o IMG_DEFAULT (logo da rádio).
                 programLogoUrl = IMG_DEFAULT; 
                 
-                // ATIVA O ANEL: É uma música! (Regra 4)
+                // 💥 ATIVA O ANEL: É uma música! (Regra 4)
                 setProgramLogoActiveState(true); 
                 
                 // programLogoUrl é o logo da rádio (círculo grande), trackImageUrl é a capa (miniatura)
@@ -946,10 +953,4 @@
         updateChicagoTime();
         setInterval(updateChicagoTime, 1000);
         
-        // Define o logo inicial e ativa o anel no início, pois a rádio está em "Live"
-        // setMedia(IMG_DEFAULT, IMG_DEFAULT, "Praise FM", "Live from Chicago"); // Removido por ser redundante (setupZenoMetadata faz a primeira atualização)
-        setProgramLogoActiveState(true); 
-
-    </script>
-</body>
-</html>
+        // Define o logo inicial e ativa o anel no início, pois a
