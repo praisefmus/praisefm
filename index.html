@@ -280,7 +280,6 @@
         const LASTFM_API_KEY = "7744c8f90ee053fc761e0e23bfa00b89";
         
         // --- IMAGENS LOCAIS (USANDO CAMINHO ABSOLUTO /image/ E NOME EM MINÚSCULAS) ---
-        // ATENÇÃO: Seus arquivos em 'image/' DEVEM AGORA estar em minúsculas para funcionar!
         const IMG_DEFAULT = "/image/logopraisefm.webp"; 
         const IMG_COMMERCIAL = "/image/commercial break.png";
         const IMG_SPOT = "/image/spot.webp";
@@ -536,7 +535,7 @@
             liveBadge.style.display = 'none';
             timeDisplay.style.display = 'block';
             seekSlider.style.display = 'block';
-            lyricsBtn.style.display = 'block'; 
+            lyricsBtn.style.display = 'none'; // Desativa letras para on-demand, se necessário
             
             audio.play();
             isPlaying = true;
@@ -719,82 +718,96 @@
                 return;
             }
             
-            // --- REGRA 3: PROGRAMAS TEMÁTICOS (TODAS AS REGRAS REFORÇADAS) ---
-            lyricsBtn.style.display = 'none'; 
+            // --- REGRA 3: PROGRAMAS TEMÁTICOS (TODAS AS IMAGENS EM MINÚSCULAS) ---
 
             // Midday Grace
             if (artistLow.includes("midday grace") || trackLow.includes("midday grace")) {
                 setMedia(IMG_MIDDAY_GRACE, track, artist);
-                return;
-            }
-            
-            // Midnight Grace
-            if (artistLow.includes("midnight grace") || trackLow.includes("midnight grace")) {
-                setMedia(IMG_MIDNIGHT_GRACE, track, artist);
-                return;
-            }
-            
-            // Morning Show
-            if (artistLow.includes("morning show") || trackLow.includes("morning show") || trackLow.includes("morning showlogo")) {
-                setMedia(IMG_MORNING_SHOW, track, artist);
-                return;
-            }
-            
-            // Praise FM Carpool (Fix reforçado)
-            if (artistLow.includes("praise fm carpool") || trackLow.includes("praise fm carpool") || trackLow.includes("carpool")) {
-                setMedia(IMG_CARPOOL, track, artist);
+                lyricsBtn.style.display = 'none';
                 return;
             }
 
-            // Praise FM Classic (Reforçado com a string completa)
-            if (artistLow.includes("praise fm classic") || trackLow.includes("praise fm classic") || trackLow.includes("classic")) {
+            // Midnight Grace
+            if (artistLow.includes("midnight grace") || trackLow.includes("midnight grace")) {
+                setMedia(IMG_MIDNIGHT_GRACE, track, artist);
+                lyricsBtn.style.display = 'none';
+                return;
+            }
+
+            // Morning Show
+            if (artistLow.includes("morning show") || trackLow.includes("morning show")) {
+                setMedia(IMG_MORNING_SHOW, track, artist);
+                lyricsBtn.style.display = 'none';
+                return;
+            }
+            
+            // Praise FM Carpool
+            if (trackLow.includes("carpool")) {
+                setMedia(IMG_CARPOOL, track, artist);
+                lyricsBtn.style.display = 'none';
+                return;
+            }
+
+            // Praise FM Classic
+            if (artistLow.includes("classic") || trackLow.includes("classic")) {
                 setMedia(IMG_CLASSIC, track, artist);
+                lyricsBtn.style.display = 'none';
                 return;
             }
-            
-            // Praise FM Future Artists (Reforçado com a string completa)
-            if (artistLow.includes("praise fm future artists") || trackLow.includes("praise fm future artists") || trackLow.includes("future artists")) {
+
+            // Praise FM Future Artists
+            if (artistLow.includes("future artists") || trackLow.includes("future artists")) {
                 setMedia(IMG_FUTURE_ARTISTS, track, artist);
+                lyricsBtn.style.display = 'none';
                 return;
             }
-            
-            // Praise FM Pop (Reforçado com a string completa para evitar falsos positivos com a palavra "pop" em títulos de música)
-            if (artistLow.includes("praise fm pop") || trackLow.includes("praise fm pop")) {
+
+            // Praise FM Pop
+            if (artistLow.includes("pop") || trackLow.includes("pop")) {
                 setMedia(IMG_POP, track, artist);
+                lyricsBtn.style.display = 'none';
                 return;
             }
             
             // Sunday Morning
             if (artistLow.includes("sunday morning") || trackLow.includes("sunday morning")) {
                 setMedia(IMG_SUNDAY_MORNING, track, artist);
+                lyricsBtn.style.display = 'none';
                 return;
             }
-            
-            // --- REGRA 4: BUSCA NO LAST.FM (MÚSICA) ---
-            // Se chegou aqui, é uma música e o botão de letras volta a ser 'block'.
-            
-            lyricsBtn.style.display = 'block';
 
-            const url = `https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${LASTFM_API_KEY}&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}&format=json`;
-
+            // --- REGRA 4: BUSCA NO LAST.FM (MÚSICAS) ---
+            const lastfmUrl = `https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${LASTFM_API_KEY}&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}&format=json`;
+            
             try {
-                const response = await fetch(url);
+                const response = await fetch(lastfmUrl);
                 const data = await response.json();
-                
+
+                let imageUrl = fallbackImage;
+
                 if (data.track && data.track.album && data.track.album.image) {
+                    // Tenta buscar a imagem de maior qualidade
                     const images = data.track.album.image;
-                    const foundImg = images[images.length - 1]['#text'];
+                    const largeImage = images.find(img => img.size === 'extralarge' || img.size === 'large');
                     
-                    if(foundImg) {
-                        setMedia(foundImg, track, artist);
-                        return;
+                    if (largeImage && largeImage['#text']) {
+                        imageUrl = largeImage['#text'];
                     }
                 }
-                
-                // --- FALLBACK FINAL: SE FALHAR NO LAST.FM ---
-                setMedia(fallbackImage, track, artist);
 
-            } catch (e) { 
+                setMedia(imageUrl, track, artist);
+
+                // RASTREIO GA4: Evento Nova Música
+                if (typeof gtag === 'function') {
+                    gtag('event', 'now_playing', {
+                        'track_name': track,
+                        'artist_name': artist,
+                        'image_source': imageUrl === fallbackImage ? 'lastfm_fallback' : 'lastfm'
+                    });
+                }
+
+            } catch (error) {
+                // Fallback total se o Last.fm falhar
                 setMedia(fallbackImage, track, artist);
             }
         }
