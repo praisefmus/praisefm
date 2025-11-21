@@ -22,22 +22,22 @@
         /* --- CSS --- */
         :root {
             --primary-color: #fff;
-            --secondary-color: #e0e0e0; /* Texto secundário mais claro para contraste */
-            --accent-color: #ff4d00;
+            --secondary-color: #e0e0e0;
+            --accent-color: #ff4d00; /* Laranja */
             --bg-dark: #121212;
-            --glass-bg: rgba(20, 20, 20, 0.6); /* Fundo mais escuro para o card da música */
+            --glass-bg: rgba(20, 20, 20, 0.7);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
 
         body {
             background-color: #000;
-            height: 100dvh;
+            height: 100vh; /* Garante que ocupa 100% da altura da janela */
             width: 100vw;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
+            overflow: hidden; /* Evita barras de rolagem */
             color: var(--primary-color);
         }
 
@@ -50,36 +50,37 @@
         }
 
         .player-container {
-            width: 100%; height: 100%;
-            display: flex; flex-direction: column;
+            width: 100%; 
+            height: 100%;
+            max-height: 100vh; /* Limita a altura máxima */
+            display: flex; 
+            flex-direction: column;
             align-items: center;
-            justify-content: space-between;
-            padding: 40px 24px;
+            justify-content: center; /* Centraliza o conteúdo */
+            padding: 20px;
             position: relative;
-            max-width: 100%;
-            /* Sombra de texto para legibilidade sem o box de fundo */
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+            gap: 15px; /* Espaçamento consistente entre elementos */
         }
 
         /* --- 1. CÍRCULO DO PROGRAMA --- */
         .program-area {
-            flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            width: 100%;
-            margin-top: 20px; 
+            margin-bottom: 10px;
         }
 
         .program-circle {
-            width: min(70vw, 280px); 
-            height: min(70vw, 280px);
+            /* Tamanho responsivo: usa a menor dimensão para não estourar */
+            width: min(60vw, 260px); 
+            height: min(60vw, 260px);
             border-radius: 50%;
             background-color: #000;
             position: relative;
             z-index: 2;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.6);
             transition: all 0.3s ease;
             --progress-deg: 0deg;
         }
@@ -88,7 +89,7 @@
             width: 100%; height: 100%;
             border-radius: 50%;
             object-fit: cover;
-            border: 4px solid #111; 
+            border: 3px solid #111; 
             position: relative; z-index: 2;
         }
 
@@ -96,7 +97,7 @@
         .program-circle.is-playing::before {
             content: '';
             position: absolute;
-            top: -8px; left: -8px; right: -8px; bottom: -8px;
+            top: -6px; left: -6px; right: -6px; bottom: -6px;
             border-radius: 50%;
             z-index: -1;
             background: conic-gradient(
@@ -108,57 +109,88 @@
             transition: --progress-deg 1s linear;
         }
 
-        .program-label { margin-top: 30px; text-align: center; opacity: 0; animation: fadeIn 1s forwards; }
-        @keyframes fadeIn { to { opacity: 1; } }
+        .program-label { margin-top: 20px; text-align: center; }
 
-        .program-name { font-size: clamp(22px, 5vw, 32px); font-weight: 800; margin-bottom: 8px; letter-spacing: -0.5px; }
-        .program-status { font-size: 13px; color: var(--accent-color); font-weight: 800; letter-spacing: 2px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 6px; text-shadow: none; }
-        .live-dot { width: 8px; height: 8px; background-color: var(--accent-color); border-radius: 50%; box-shadow: 0 0 10px var(--accent-color); animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
+        /* LIVE PISCANDO (Texto todo) */
+        .program-status { 
+            font-size: 12px; 
+            color: var(--accent-color); 
+            font-weight: 800; 
+            letter-spacing: 2px; 
+            text-transform: uppercase; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px; 
+            animation: flash 2s infinite ease-in-out; /* Piscar suave */
+        }
+        
+        .live-dot { 
+            width: 8px; height: 8px; 
+            background-color: var(--accent-color); 
+            border-radius: 50%; 
+            box-shadow: 0 0 8px var(--accent-color); 
+        }
+
+        @keyframes flash {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.98); }
+        }
+
+        .program-name { font-size: 24px; font-weight: 800; margin-top: 5px; letter-spacing: -0.5px; line-height: 1.1;}
 
         /* --- 2. CONTROLES --- */
         .controls-area {
-            width: 100%; display: flex; justify-content: center; align-items: center; gap: 40px; margin-bottom: 30px;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); /* Sombra nos ícones */
+            display: flex; justify-content: center; align-items: center; gap: 30px; 
+            margin: 10px 0;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
         }
         .control-btn { background: none; border: none; color: #fff; cursor: pointer; transition: transform 0.2s; display: flex; align-items: center; justify-content: center;}
         .control-btn:active { transform: scale(0.9); }
         
         .play-btn { 
-            width: 80px; height: 80px; 
+            width: 70px; height: 70px; 
             background: var(--accent-color); 
             border-radius: 50%; 
-            box-shadow: 0 10px 25px rgba(255, 77, 0, 0.3); 
+            box-shadow: 0 8px 20px rgba(255, 77, 0, 0.4); 
             color: white;
             display: flex; align-items: center; justify-content: center;
         }
-        .play-btn svg { width: 36px; height: 36px; fill: white; }
-        .play-btn svg.play-icon { margin-left: 6px; }
+        .play-btn svg { width: 30px; height: 30px; fill: white; }
+        .play-btn svg.play-icon { margin-left: 4px; }
         
-        .skip-btn svg { width: 32px; height: 32px; opacity: 0.8; }
+        .skip-btn svg { width: 28px; height: 28px; opacity: 0.8; }
         .skip-btn:hover svg { opacity: 1; }
 
         /* --- 3. CARTÃO "NOW PLAYING" --- */
         .now-playing-card {
-            width: 100%; max-width: 500px;
-            background-color: var(--glass-bg); /* Fundo semi-transparente */
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-radius: 16px; padding: 15px 20px; 
+            width: 100%; max-width: 450px;
+            background-color: var(--glass-bg);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border-radius: 12px; padding: 12px 18px; 
             display: flex; align-items: center;
-            border: 1px solid rgba(255,255,255,0.1); margin-bottom: 30px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
-        .song-cover { width: 64px; height: 64px; border-radius: 10px; object-fit: cover; background-color: #333; margin-right: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .song-cover { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; background-color: #333; margin-right: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
         .song-info { flex: 1; overflow: hidden; text-shadow: none; }
-        .song-title { font-size: 18px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; margin-bottom: 4px; }
-        .song-artist { font-size: 15px; color: var(--secondary-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .lyrics-btn { opacity: 0.7; cursor: pointer; background:none; border:none; color:white; padding: 10px; transition: opacity 0.2s; }
+        .song-title { font-size: 16px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; margin-bottom: 2px; }
+        .song-artist { font-size: 14px; color: #ccc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .lyrics-btn { opacity: 0.8; cursor: pointer; background:none; border:none; color:white; padding: 8px; transition: opacity 0.2s; }
         .lyrics-btn:hover { opacity: 1; }
 
         /* --- EXTRAS (Volume) --- */
-        .volume-container { width: 90%; max-width: 400px; display: flex; align-items: center; gap: 15px; margin-bottom: 20px; opacity: 0.9; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
-        .volume-slider { flex: 1; -webkit-appearance: none; background: rgba(255,255,255,0.3); height: 6px; border-radius: 3px; outline: none; }
-        .volume-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #fff; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+        /* Garantindo que o volume seja visível com cor de fundo */
+        .volume-container { 
+            width: 80%; max-width: 350px; 
+            display: flex; align-items: center; gap: 12px; 
+            background-color: rgba(0,0,0,0.4); /* Fundo para destacar */
+            padding: 8px 15px;
+            border-radius: 20px;
+            opacity: 1; 
+        }
+        .volume-slider { flex: 1; -webkit-appearance: none; background: rgba(255,255,255,0.3); height: 4px; border-radius: 2px; outline: none; }
+        .volume-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: #fff; cursor: pointer; }
         
         /* --- DATA E HORA --- */
         .datetime-container {
@@ -167,64 +199,48 @@
             align-items: center;
             justify-content: center;
             width: 100%;
-            padding-top: 15px;
-            border-top: 1px solid rgba(255,255,255,0.15); /* Borda sutil */
-            margin-top: auto; 
+            margin-top: 5px;
         }
         .date-display {
-            font-size: 14px;
-            color: var(--secondary-color);
+            font-size: 13px;
+            color: #ccc;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 5px;
+            margin-bottom: 2px;
         }
         .clock-display {
-            font-size: 36px;
+            font-size: 32px;
             font-weight: 700;
             color: var(--primary-color);
             font-variant-numeric: tabular-nums;
-            letter-spacing: -1px;
+            line-height: 1;
         }
 
-        /* --- DESKTOP (SEM RETÂNGULO) --- */
+        /* --- DESKTOP (AJUSTES PARA NÃO ESTOURAR A TELA) --- */
         @media (min-width: 768px) {
-            /* Removemos a imagem de fundo de pattern para ficar mais limpo */
-            body { background-color: #050505; }
-
             .player-container { 
-                max-width: 800px; /* Mais largo para respirar */
-                height: 95vh; 
-                max-height: 1200px; 
-                
-                /* AQUI ESTÁ A MUDANÇA: FUNDO TRANSPARENTE E SEM BORDA */
-                background-color: transparent; 
-                border: none;
-                box-shadow: none;
-                backdrop-filter: none; 
-                
-                justify-content: space-between; 
-                gap: 20px; 
-                padding-bottom: 40px;
+                /* Reduzimos a altura máxima para garantir que tudo caiba em laptops */
+                max-width: 800px; 
+                height: auto;
+                min-height: 600px; 
+                background-color: transparent;
+                justify-content: center;
+                gap: 25px;
+                padding: 30px;
             }
 
-            .program-area { margin-top: 60px; }
-            .program-circle { width: 400px; height: 400px; } /* Círculo bem grande */
-            .program-circle.is-playing::before { top: -12px; left: -12px; right: -12px; bottom: -12px; }
+            .program-circle { width: 320px; height: 320px; } /* Reduzido para caber melhor */
             
-            .program-name { font-size: 48px; margin-bottom: 15px; } /* Texto maior */
-            .program-status { font-size: 16px; }
+            .program-name { font-size: 36px; }
             
-            .play-btn { width: 100px; height: 100px; }
-            .play-btn svg { width: 45px; height: 45px; }
+            .play-btn { width: 80px; height: 80px; }
             
-            .now-playing-card { max-width: 650px; padding: 25px 35px; }
-            .song-cover { width: 90px; height: 90px; }
-            .song-title { font-size: 24px; }
-            .song-artist { font-size: 20px; }
+            .now-playing-card { max-width: 500px; padding: 20px; }
+            .song-cover { width: 60px; height: 60px; }
             
-            .clock-display { font-size: 48px; }
-            .date-display { font-size: 16px; }
+            /* Relógio e Volume garantidos na tela */
+            .clock-display { font-size: 42px; }
         }
     </style>
 </head>
@@ -246,7 +262,7 @@
 
         <div class="controls-area">
             <button class="control-btn skip-btn" onclick="skip(-15)">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg>
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg>
             </button>
             
             <button class="control-btn play-btn" id="playPauseBtn">
@@ -255,7 +271,7 @@
             </button>
 
             <button class="control-btn skip-btn" onclick="skip(15)">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg>
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg>
             </button>
         </div>
 
@@ -271,7 +287,7 @@
         </div>
 
         <div class="volume-container">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="min-width:20px"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
             <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.01" value="0.8">
         </div>
 
@@ -290,7 +306,7 @@
         const ZENO_ID = "hvwifp8ezc6tv"; 
         const LASTFM_API_KEY = "7744c8f90ee053fc761e0e23bfa00b89";
 
-        // --- IMAGENS LOCAIS ---
+        // --- IMAGENS LOCAIS (VERIFIQUE OS CAMINHOS NO SEU SERVIDOR) ---
         const IMG_DEFAULT = "/image/logopraisefm.webp"; 
         const IMG_COMMERCIAL = "/image/commercial break.png"; 
         const IMG_SPOT = "/image/spot.webp";
@@ -328,9 +344,11 @@
 
         // --- RELÓGIO E DATA CHICAGO ---
         function updateChicagoTime() {
+            // Data atual com fuso horário de Chicago
             const now = new Date();
             const optionsTime = { timeZone: 'America/Chicago', hour: 'numeric', minute: '2-digit', hour12: true };
             const timeString = now.toLocaleTimeString('en-US', optionsTime);
+            // Formato da data: Friday, November 21
             const optionsDate = { timeZone: 'America/Chicago', weekday: 'long', month: 'long', day: 'numeric' };
             const dateString = now.toLocaleDateString('en-US', optionsDate);
 
@@ -349,6 +367,7 @@
             // 2. Cartão da Música
             let safeSongImage = songImage;
             if (!songImage.startsWith('/image/') && !songImage.startsWith('data:')) {
+                // Usamos o proxy para evitar problemas de CORS com imagens externas
                 safeSongImage = 'https://corsproxy.io/?' + encodeURIComponent(songImage);
             }
             if (songCover.src !== safeSongImage && !songCover.src.endsWith(safeSongImage)) {
@@ -358,7 +377,7 @@
             trackTitle.innerText = songTitle;
             trackArtist.innerText = songArtist;
 
-            // 3. Anel de Progresso
+            // 3. Anel de Progresso (SÓ PARA MÚSICAS)
             if (progressInterval) clearInterval(progressInterval);
             
             if (isMusicalTrack) {
@@ -372,6 +391,7 @@
 
         // --- FUNÇÃO DO ANEL ---
         function startProgressMonitor(durationMs) {
+            // Se a duração for 0 ou não vier, assume 3:30 (210 segundos)
             const totalDuration = durationMs > 0 ? durationMs : 210000; 
             const startTime = Date.now();
 
@@ -385,13 +405,16 @@
                 programCircle.style.setProperty('--progress-deg', `${degrees}deg`);
 
                 if (percentage >= 1) {
+                    // Reinicia a checagem de metadados para pegar a próxima música
                     clearInterval(progressInterval);
+                    setTimeout(setupZeno, 5000); 
                 }
             }, 1000);
         }
 
         // --- FUNDO COLORIDO ---
         function updateBackground(imgUrl) {
+            // Ignora cores para logos locais
             if(imgUrl.includes('/image/')) {
                 bgBlur.style.background = `radial-gradient(circle at 50% 30%, #222, #000)`;
                 return;
@@ -401,15 +424,17 @@
             img.src = imgUrl;
             img.onload = () => {
                 try {
+                    // Pega a cor média (apenas 1 pixel)
                     colorCanvas.width = 1; colorCanvas.height = 1;
                     ctx.drawImage(img, 0, 0, 1, 1);
                     const [r,g,b] = ctx.getImageData(0,0,1,1).data;
+                    // Aplica ao fundo com gradiente
                     bgBlur.style.background = `radial-gradient(circle at 50% 30%, rgb(${r},${g},${b}), #000)`;
                 } catch(e) {}
             }
         }
 
-        // --- LÓGICA PRINCIPAL ---
+        // --- LÓGICA PRINCIPAL (Metadados) ---
         async function processMetadata(artist, track) {
             const artistLow = artist.toLowerCase();
             const trackLow = track.toLowerCase();
@@ -420,7 +445,7 @@
             let isMusic = true;
             let songDuration = 0; 
 
-            console.log(`Zeno: ${artist} - ${track}`);
+            // console.log(`Zeno: ${artist} - ${track}`);
 
             const programMap = {
                 "midday": [IMG_MIDDAY_GRACE, "Midday Grace"],
@@ -455,11 +480,13 @@
                 return;
             }
 
+            // Se for um programa (não é música, não tem anel)
             if (foundProgram) {
                 updateDisplay(currentProgramImg, currentProgramName, currentSongImg, track, artist, false);
                 return;
             }
 
+            // Se for música, busca dados do Last.fm para capa e duração
             try {
                 const res = await fetch(`https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${LASTFM_API_KEY}&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}&format=json`);
                 const data = await res.json();
@@ -478,6 +505,7 @@
                 }
             } catch(e) { console.log("Erro LastFM", e); }
 
+            // Atualiza com status de música (anel rodando)
             updateDisplay(currentProgramImg, "Praise FM", currentSongImg, track, artist, true, songDuration);
         }
 
@@ -529,8 +557,10 @@
             };
         }
 
+        // Função vazia, mantém os botões no HTML
         function skip(sec) {}
 
+        // Inicia a checagem de metadados e o relógio
         setupZeno();
         setInterval(updateChicagoTime, 1000);
         updateChicagoTime(); 
