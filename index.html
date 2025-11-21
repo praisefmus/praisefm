@@ -19,13 +19,13 @@
     <link rel="apple-touch-icon" sizes="180x180" href="./image/apple-touch-icon.png">
 
     <style>
-        /* --- CSS (DESIGN RESPONSIVO + BIG CIRCLE) --- */
+        /* --- CSS --- */
         :root {
             --primary-color: #fff;
-            --secondary-color: #b3b3b3;
+            --secondary-color: #e0e0e0; /* Texto secundário mais claro para contraste */
             --accent-color: #ff4d00;
             --bg-dark: #121212;
-            --glass-bg: rgba(40, 40, 40, 0.7);
+            --glass-bg: rgba(20, 20, 20, 0.6); /* Fundo mais escuro para o card da música */
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -45,7 +45,7 @@
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
             background: radial-gradient(circle at 50% 30%, #222, #000);
             filter: blur(90px); 
-            opacity: 0.5; 
+            opacity: 0.6; 
             transition: background 1s ease;
         }
 
@@ -54,9 +54,11 @@
             display: flex; flex-direction: column;
             align-items: center;
             justify-content: space-between;
-            padding: 20px;
+            padding: 40px 24px;
             position: relative;
-            max-width: 100%; 
+            max-width: 100%;
+            /* Sombra de texto para legibilidade sem o box de fundo */
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
 
         /* --- 1. CÍRCULO DO PROGRAMA --- */
@@ -67,7 +69,7 @@
             justify-content: center;
             align-items: center;
             width: 100%;
-            max-height: 60vh;
+            margin-top: 20px; 
         }
 
         .program-circle {
@@ -77,7 +79,7 @@
             background-color: #000;
             position: relative;
             z-index: 2;
-            box-shadow: 0 15px 50px rgba(0,0,0,0.6);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
             transition: all 0.3s ease;
             --progress-deg: 0deg;
         }
@@ -106,17 +108,18 @@
             transition: --progress-deg 1s linear;
         }
 
-        .program-label { margin-top: 25px; text-align: center; opacity: 0; animation: fadeIn 1s forwards; }
+        .program-label { margin-top: 30px; text-align: center; opacity: 0; animation: fadeIn 1s forwards; }
         @keyframes fadeIn { to { opacity: 1; } }
 
-        .program-name { font-size: clamp(18px, 4vw, 24px); font-weight: 800; margin-bottom: 6px; letter-spacing: -0.5px; }
-        .program-status { font-size: 12px; color: var(--accent-color); font-weight: 800; letter-spacing: 2px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .program-name { font-size: clamp(22px, 5vw, 32px); font-weight: 800; margin-bottom: 8px; letter-spacing: -0.5px; }
+        .program-status { font-size: 13px; color: var(--accent-color); font-weight: 800; letter-spacing: 2px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 6px; text-shadow: none; }
         .live-dot { width: 8px; height: 8px; background-color: var(--accent-color); border-radius: 50%; box-shadow: 0 0 10px var(--accent-color); animation: pulse 2s infinite; }
         @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
 
         /* --- 2. CONTROLES --- */
         .controls-area {
-            width: 100%; display: flex; justify-content: center; align-items: center; gap: 40px; margin-bottom: 20px;
+            width: 100%; display: flex; justify-content: center; align-items: center; gap: 40px; margin-bottom: 30px;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); /* Sombra nos ícones */
         }
         .control-btn { background: none; border: none; color: #fff; cursor: pointer; transition: transform 0.2s; display: flex; align-items: center; justify-content: center;}
         .control-btn:active { transform: scale(0.9); }
@@ -132,48 +135,96 @@
         .play-btn svg { width: 36px; height: 36px; fill: white; }
         .play-btn svg.play-icon { margin-left: 6px; }
         
-        .skip-btn svg { width: 32px; height: 32px; opacity: 0.7; }
+        .skip-btn svg { width: 32px; height: 32px; opacity: 0.8; }
         .skip-btn:hover svg { opacity: 1; }
 
         /* --- 3. CARTÃO "NOW PLAYING" --- */
         .now-playing-card {
             width: 100%; max-width: 500px;
-            background-color: var(--glass-bg); 
+            background-color: var(--glass-bg); /* Fundo semi-transparente */
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             border-radius: 16px; padding: 15px 20px; 
             display: flex; align-items: center;
-            border: 1px solid rgba(255,255,255,0.08); margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.1); margin-bottom: 30px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
         }
         .song-cover { width: 64px; height: 64px; border-radius: 10px; object-fit: cover; background-color: #333; margin-right: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        .song-info { flex: 1; overflow: hidden; }
+        .song-info { flex: 1; overflow: hidden; text-shadow: none; }
         .song-title { font-size: 18px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; margin-bottom: 4px; }
         .song-artist { font-size: 15px; color: var(--secondary-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .lyrics-btn { opacity: 0.6; cursor: pointer; background:none; border:none; color:white; padding: 10px; transition: opacity 0.2s; }
+        .lyrics-btn { opacity: 0.7; cursor: pointer; background:none; border:none; color:white; padding: 10px; transition: opacity 0.2s; }
         .lyrics-btn:hover { opacity: 1; }
 
-        /* --- EXTRAS --- */
-        .volume-container { width: 90%; max-width: 400px; display: flex; align-items: center; gap: 15px; margin-bottom: 20px; opacity: 0.8; }
-        .volume-slider { flex: 1; -webkit-appearance: none; background: rgba(255,255,255,0.2); height: 6px; border-radius: 3px; outline: none; }
-        .volume-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #fff; cursor: pointer; }
+        /* --- EXTRAS (Volume) --- */
+        .volume-container { width: 90%; max-width: 400px; display: flex; align-items: center; gap: 15px; margin-bottom: 20px; opacity: 0.9; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+        .volume-slider { flex: 1; -webkit-appearance: none; background: rgba(255,255,255,0.3); height: 6px; border-radius: 3px; outline: none; }
+        .volume-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #fff; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
         
-        .bottom-nav { display: flex; justify-content: space-around; width: 100%; padding: 15px 0; border-top: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); }
-        .nav-item { color: var(--secondary-color); cursor: pointer; font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
-        .nav-item.active { color: var(--primary-color); }
+        /* --- DATA E HORA --- */
+        .datetime-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.15); /* Borda sutil */
+            margin-top: auto; 
+        }
+        .date-display {
+            font-size: 14px;
+            color: var(--secondary-color);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        .clock-display {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--primary-color);
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -1px;
+        }
 
+        /* --- DESKTOP (SEM RETÂNGULO) --- */
         @media (min-width: 768px) {
-            body { background-image: url('/image/bg-desktop-pattern.png'); background-size: cover; }
-            .player-container { max-width: 700px; height: 90vh; max-height: 1000px; background-color: rgba(20, 20, 20, 0.6); border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 60px rgba(0,0,0,0.5); backdrop-filter: blur(30px); justify-content: center; gap: 30px; }
-            .program-circle { width: 380px; height: 380px; }
+            /* Removemos a imagem de fundo de pattern para ficar mais limpo */
+            body { background-color: #050505; }
+
+            .player-container { 
+                max-width: 800px; /* Mais largo para respirar */
+                height: 95vh; 
+                max-height: 1200px; 
+                
+                /* AQUI ESTÁ A MUDANÇA: FUNDO TRANSPARENTE E SEM BORDA */
+                background-color: transparent; 
+                border: none;
+                box-shadow: none;
+                backdrop-filter: none; 
+                
+                justify-content: space-between; 
+                gap: 20px; 
+                padding-bottom: 40px;
+            }
+
+            .program-area { margin-top: 60px; }
+            .program-circle { width: 400px; height: 400px; } /* Círculo bem grande */
             .program-circle.is-playing::before { top: -12px; left: -12px; right: -12px; bottom: -12px; }
-            .program-name { font-size: 32px; margin-bottom: 10px; }
-            .program-status { font-size: 14px; }
-            .play-btn { width: 90px; height: 90px; }
-            .play-btn svg { width: 40px; height: 40px; }
-            .now-playing-card { max-width: 600px; padding: 20px 30px; }
-            .song-cover { width: 80px; height: 80px; }
-            .song-title { font-size: 22px; }
-            .song-artist { font-size: 18px; }
+            
+            .program-name { font-size: 48px; margin-bottom: 15px; } /* Texto maior */
+            .program-status { font-size: 16px; }
+            
+            .play-btn { width: 100px; height: 100px; }
+            .play-btn svg { width: 45px; height: 45px; }
+            
+            .now-playing-card { max-width: 650px; padding: 25px 35px; }
+            .song-cover { width: 90px; height: 90px; }
+            .song-title { font-size: 24px; }
+            .song-artist { font-size: 20px; }
+            
+            .clock-display { font-size: 48px; }
+            .date-display { font-size: 16px; }
         }
     </style>
 </head>
@@ -224,19 +275,9 @@
             <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.01" value="0.8">
         </div>
 
-        <div class="bottom-nav">
-            <div class="nav-item active">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-                <span>Home</span>
-            </div>
-            <div class="nav-item">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
-                <span>Schedule</span>
-            </div>
-            <div class="nav-item">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
-                <span>My Sounds</span>
-            </div>
+        <div class="datetime-container">
+            <div class="date-display" id="dateDisplay">Loading Date...</div>
+            <div class="clock-display" id="clockDisplay">--:--</div>
         </div>
 
     </div>
@@ -249,11 +290,12 @@
         const ZENO_ID = "hvwifp8ezc6tv"; 
         const LASTFM_API_KEY = "7744c8f90ee053fc761e0e23bfa00b89";
 
+        // --- IMAGENS LOCAIS ---
         const IMG_DEFAULT = "/image/logopraisefm.webp"; 
         const IMG_COMMERCIAL = "/image/commercial break.png"; 
         const IMG_SPOT = "/image/spot.webp";
 
-        // Lista de programas
+        // LOGOS DE PROGRAMAS 
         const IMG_MIDDAY_GRACE = "/image/middaygracelogo.webp"; 
         const IMG_MIDNIGHT_GRACE = "/image/midnightgracelogo.webp";
         const IMG_MORNING_SHOW = "/image/morningshowlogo.webp";
@@ -277,9 +319,24 @@
         const bgBlur = document.getElementById('bgBlur');
         const colorCanvas = document.getElementById('colorCanvas');
         const ctx = colorCanvas.getContext('2d', {willReadFrequently: true});
+        
+        const dateDisplay = document.getElementById('dateDisplay');
+        const clockDisplay = document.getElementById('clockDisplay');
 
         let isPlaying = false;
         let progressInterval = null; 
+
+        // --- RELÓGIO E DATA CHICAGO ---
+        function updateChicagoTime() {
+            const now = new Date();
+            const optionsTime = { timeZone: 'America/Chicago', hour: 'numeric', minute: '2-digit', hour12: true };
+            const timeString = now.toLocaleTimeString('en-US', optionsTime);
+            const optionsDate = { timeZone: 'America/Chicago', weekday: 'long', month: 'long', day: 'numeric' };
+            const dateString = now.toLocaleDateString('en-US', optionsDate);
+
+            clockDisplay.innerText = timeString;
+            dateDisplay.innerText = dateString;
+        }
 
         // --- ATUALIZAÇÃO VISUAL ---
         function updateDisplay(programImage, programName, songImage, songTitle, songArtist, isMusicalTrack, durationMs = 0) {
@@ -313,7 +370,7 @@
             }
         }
 
-        // --- FUNÇÃO DO ANEL DE PROGRESSO ---
+        // --- FUNÇÃO DO ANEL ---
         function startProgressMonitor(durationMs) {
             const totalDuration = durationMs > 0 ? durationMs : 210000; 
             const startTime = Date.now();
@@ -352,7 +409,7 @@
             }
         }
 
-        // --- LÓGICA PRINCIPAL (ZENO + LAST.FM) ---
+        // --- LÓGICA PRINCIPAL ---
         async function processMetadata(artist, track) {
             const artistLow = artist.toLowerCase();
             const trackLow = track.toLowerCase();
@@ -365,7 +422,6 @@
 
             console.log(`Zeno: ${artist} - ${track}`);
 
-            // 1. Detecção de Programa
             const programMap = {
                 "midday": [IMG_MIDDAY_GRACE, "Midday Grace"],
                 "mid-day": [IMG_MIDDAY_GRACE, "Midday Grace"],
@@ -390,7 +446,6 @@
                 }
             }
 
-            // 2. Detecção de Comerciais
             if (trackLow.includes("commercial") || trackLow.includes("ad break")) {
                 updateDisplay(IMG_COMMERCIAL, "Commercial Break", IMG_COMMERCIAL, "Commercial Break", "Praise FM", false);
                 return;
@@ -405,7 +460,6 @@
                 return;
             }
 
-            // 3. É Música
             try {
                 const res = await fetch(`https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${LASTFM_API_KEY}&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}&format=json`);
                 const data = await res.json();
@@ -415,7 +469,7 @@
                         const img = data.track.album.image.find(i => i.size === 'extralarge')['#text'];
                         if (img) {
                             currentSongImg = img;
-                            currentProgramImg = img; // AQUI ESTÁ A MUDANÇA: Capa vai pro círculo também
+                            currentProgramImg = img; 
                         }
                     }
                     if (data.track.duration) {
@@ -424,7 +478,6 @@
                 }
             } catch(e) { console.log("Erro LastFM", e); }
 
-            // Aqui currentProgramImg será a capa da música (se achada) ou IMG_DEFAULT
             updateDisplay(currentProgramImg, "Praise FM", currentSongImg, track, artist, true, songDuration);
         }
 
@@ -433,7 +486,7 @@
             console.log("Erro no stream, tentando reconectar...");
             setTimeout(() => {
                 audio.src = STREAM_URL;
-                audio.play().catch(e => console.log("Autoplay bloqueado na reconexão"));
+                audio.play().catch(e => console.log("Autoplay bloqueado"));
             }, 3000);
         });
 
@@ -445,7 +498,6 @@
                 iconPause.style.display = 'none';
             } else {
                 if (audio.src !== STREAM_URL) audio.src = STREAM_URL;
-                
                 audio.play().then(() => {
                     isPlaying = true;
                     iconPlay.style.display = 'none';
@@ -480,6 +532,8 @@
         function skip(sec) {}
 
         setupZeno();
+        setInterval(updateChicagoTime, 1000);
+        updateChicagoTime(); 
     </script>
 </body>
 </html>
