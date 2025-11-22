@@ -8,76 +8,38 @@
     <link rel="icon" type="image/png" sizes="32x32" href="./image/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="./image/apple-touch-icon.png">
     <style>
-        :root {
-            --orange: #ff4d00;
-            --dark: #111;
-            --grey: #555;
-            --light-grey: #888;
-            --bg: #fff;
-            --border-color: #ddd;
-        }
+        :root { --orange:#ff4d00; --dark:#111; --grey:#555; --light-grey:#888; --bg:#fff; --border-color:#ddd; }
         * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; }
         body { background:var(--bg); color:#000; min-height:100vh; padding-bottom:120px; display:flex; flex-direction:column; align-items:center; }
-        
         .container { width:100%; max-width:800px; padding:20px; text-align:center; }
         .station-title { font-size:32px; font-weight:900; color:var(--orange); margin:20px 0 4px; }
         .station-subtitle { font-size:17px; color:var(--grey); margin-bottom:30px; }
-
-        .circle-container { 
-            width:min(80vw, 320px); 
-            height:min(80vw, 320px); 
-            margin:0 auto 20px; 
-            position:relative; 
-        }
-        .circle-border {
-            position:absolute; inset:0; border-radius:50%; 
-            background:conic-gradient(var(--orange) 0%, transparent 0%);
-            mask:radial-gradient(transparent 68%, black 70%);
-            -webkit-mask:radial-gradient(transparent 68%, black 70%);
-        }
-        .circle-img {
-            position:absolute; inset:6px; border-radius:50%; overflow:hidden; background:#000;
-        }
+        .circle-container { width:min(80vw,320px); height:min(80vw,320px); margin:0 auto 20px; position:relative; }
+        .circle-border { position:absolute; inset:0; border-radius:50%; background:conic-gradient(var(--orange) 0%, transparent 0%);
+            mask:radial-gradient(transparent 68%, black 70%); -webkit-mask:radial-gradient(transparent 68%, black 70%); }
+        .circle-img { position:absolute; inset:6px; border-radius:50%; overflow:hidden; background:#000; }
         .circle-img img { width:100%; height:100%; object-fit:cover; }
-
-        .live-badge {
-            display:inline-flex; align-items:center; gap:8px; 
-            color:var(--orange); font-weight:700; font-size:14px; text-transform:uppercase; letter-spacing:1px;
-            margin-bottom:12px;
-        }
+        .live-badge { display:inline-flex; align-items:center; gap:8px; color:var(--orange); font-weight:700; font-size:14px; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; }
         .live-dot { width:9px; height:9px; background:var(--orange); border-radius:50%; animation:pulse 2s infinite; }
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-
         .program-title { font-size:28px; font-weight:800; margin:10px 0 30px; line-height:1.2; }
-
-        .play-button {
-            margin:40px auto; width:200px; height:56px; background:var(--orange); color:#fff;
-            border:none; border-radius:28px; font-size:18px; font-weight:700; cursor:pointer;
-            display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 6px 20px rgba(255,77,0,.3);
-            transition: transform 0.2s;
-        }
-        .play-button:hover { transform: scale(1.05); }
+        .play-button { margin:40px auto; width:200px; height:56px; background:var(--orange); color:#fff; border:none; border-radius:28px; font-size:18px; font-weight:700; cursor:pointer;
+            display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 6px 20px rgba(255,77,0,.3); transition:transform .2s; }
+        .play-button:hover { transform:scale(1.05); }
         .play-button svg { width:24px; height:24px; fill:#fff; margin-left:10px; }
-
-        .upnext {
-            background:#f8f8f8; border-radius:12px; padding:20px; margin:40px 0; text-align:left;
-        }
+        .upnext { background:#f8f8f8; border-radius:12px; padding:20px; margin:40px 0; text-align:left; }
         .upnext-header { font-size:13px; font-weight:700; color:var(--grey); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; }
         .upnext-items { display:flex; gap:20px; flex-wrap:wrap; }
         .upnext-item { flex:1; min-width:200px; display:flex; align-items:center; gap:16px; }
         .upnext-img { width:60px; height:60px; border-radius:8px; object-fit:cover; background:#eee; }
-
         .recently { margin-top:40px; text-align:left; }
-        .recently-header { font-size:13px; font-weight:700; color:var(--grey); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; }
+        .recently-header { font-size:-shorter13px; font-weight:700; color:var(--grey); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; }
         .recent-item { display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--border-color); }
         .recent-cover { width:48px; height:48px; border-radius:6px; object-fit:cover; background:#eee; }
         .recent-title { font-weight:600; font-size:15px; }
         .recent-artist { font-size:13px; color:var(--light-grey); }
-
-        .mini-player {
-            position:fixed; bottom:0; left:0; right:0; background:#fff; border-top:1px solid var(--border-color);
-            box-shadow:0 -4px 20px rgba(0,0,0,.1); padding:12px 16px; display:none; align-items:center; gap:12px; z-index:999;
-        }
+        .mini-player { position:fixed; bottom:0; left:0; right:0; background:#fff; border-top:1px solid var(--border-color);
+            box-shadow:0 -4px 20px rgba(0,0,0,.1); padding:12px 16px; display:none; align-items:center; gap:12px; z-index:999; }
         .mini-player.show { display:flex; }
         .mini-cover { width:56px; height:56px; border-radius:8px; object-fit:cover; background:#eee; }
         .mini-info { flex:1; min-width:0; }
@@ -86,12 +48,12 @@
         .mini-controls { display:flex; align-items:center; gap:16px; }
         .mini-btn { background:none; border:none; cursor:pointer; padding:8px; }
         .mini-btn svg { width:24px; height:24px; fill:var(--grey); }
-        .mini-play { background:var(--orange); width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; box-shadow:0 2px 10px rgba(255,77,0,.3); }
+        .mini-play { background:var(--orange); width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+            border:none; cursor:pointer; box-shadow:0 2px 10px rgba(255,77,0,.3); }
         .mini-play svg { width:20px; height:20px; fill:#fff; }
         .mini-volume { display:flex; align-items:center; gap:4px; width:100px; }
         .mini-volume-bar { flex:1; height:4px; background:#ddd; border-radius:2px; position:relative; cursor:pointer; }
         .mini-volume-fill { height:100%; background:var(--orange); border-radius:2px; width:80%; }
-
         @media (max-width:480px) {
             .circle-container { width:260px; height:260px; }
             .program-title { font-size:24px; }
@@ -117,8 +79,7 @@
     <h2 class="program-title" id="programTitle">Praise FM</h2>
 
     <button class="play-button" id="bigPlay">
-        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-        Play
+        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Play
     </button>
 
     <div class="upnext">
@@ -154,22 +115,12 @@
         <div class="mini-artist" id="miniArtist">Praise & Worship</div>
     </div>
     <div class="mini-controls">
-        <button class="mini-btn" id="miniRewind">
-            <svg viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg>
-        </button>
-        <button class="mini-play" id="miniPlayPause">
-            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-        </button>
-        <button class="mini-btn" id="miniForward">
-            <svg viewBox="0 0 24 24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg>
-        </button>
+        <button class="mini-btn" id="miniRewind"><svg viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg></button>
+        <button class="mini-play" id="miniPlayPause"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+        <button class="mini-btn" id="miniForward"><svg viewBox="0 0 24 24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg></button>
         <div class="mini-volume">
-            <button class="mini-btn" id="miniVolumeIcon">
-                <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
-            </button>
-            <div class="mini-volume-bar" id="miniVolumeBar">
-                <div class="mini-volume-fill" id="miniVolumeFill"></div>
-            </div>
+            <button class="mini-btn" id="miniVolumeIcon"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
+            <div class="mini-volume-bar" id="miniVolumeBar"><div class="mini-volume-fill" id="miniVolumeFill"></div></div>
         </div>
     </div>
 </div>
@@ -178,7 +129,6 @@
     const STREAM_URL = "https://stream.zeno.fm/hvwifp8ezc6tv";
     const audio = new Audio(STREAM_URL);
     audio.volume = 0.8;
-
     const LASTFM_API_KEY = "7744c8f90ee053fc761e0e23bfa00b89";
 
     const images = {
@@ -190,11 +140,12 @@
         classic: "/image/praisefmclassiclogo.webp",
         future: "/image/praisefmfutureartistslogo.webp",
         pop: "/image/praisefmpoplogo.webp",
-        sunday: "/image/sundaymorninglogo.webp"
+        sunday: "/image/sundaymorninglogo.webp",
+        nonstop: "/image/logopraisefm.webp"
     };
 
     const hosts = {
-        "Morning Show With Stancy Campbell": "Stancy Campbell",
+        "Morning Show": "Stancy Campbell",
         "Midday Grace": "Michael Ray",
         "Praise FM Carpool": "DJ Praise",
         "Praise FM Future Artists": "DJ Future",
@@ -202,22 +153,34 @@
         "Praise FM POP": "DJ POP",
         "Sunday With Christ": "Pastor John",
         "Midnight Grace": "Pastor Grace",
-        "Living The Message": "Pastor Mark"
+        "Living The Message": "Pastor Mark",
+        "Praise FM Non Stop": "Auto DJ"
     };
 
+    // PROGRAMAÇÃO 100% CONFORME O SEU TXT
     const schedule = [
-        {start:"07:00", end:"12:00", name:"Sunday With Christ", img:images.sunday, days:[0]},
         {start:"00:00", end:"06:00", name:"Midnight Grace", img:images.midnight},
         {start:"06:00", end:"07:00", name:"Music Only", img:images.default},
-        {start:"07:00", end:"12:00", name:"Morning Show With Stancy Campbell", img:images.morning},
+        {start:"07:00", end:"12:00", name:"Morning Show", img:images.morning},
         {start:"10:00", end:"10:30", name:"Living The Message", img:images.default},
         {start:"12:00", end:"18:00", name:"Midday Grace", img:images.midday},
-        {start:"18:00", end:"20:00", name:"Praise FM Carpool", img:images.carpool, days:[1,2,3,4,5]},
+        {start:"16:00", end:"17:00", name:"Praise FM Non Stop", img:images.nonstop},
+        {start:"18:00", end:"20:00", name:"Praise FM Carpool", img:images.carpool, days:[1,2,3,4,5]}, // seg-sex
         {start:"22:00", end:"23:59", name:"Praise FM POP", img:images.pop},
+
+        // Future Artists (seg, qua, sex)
         {start:"12:00", end:"13:00", name:"Praise FM Future Artists", img:images.future, days:[1,3,5]},
         {start:"20:00", end:"21:00", name:"Praise FM Future Artists (Replay)", img:images.future, days:[1,3,5]},
+
+        // Classics (ter, qui, sáb)
         {start:"12:00", end:"13:00", name:"Praise FM Classics", img:images.classic, days:[2,4,6]},
-        {start:"20:00", end:"21:00", name:"Praise FM Classics (Replay)", img:images.classic, days:[2,4,6]}
+        {start:"20:00", end:"21:00", name:"Praise FM Classics (Replay)", img:images.classic, days:[2,4,6]},
+
+        // Living The Message replay às 21h todo dia
+        {start:"21:00", end:"21:30", name:"Living The Message (Replay)", img:images.default},
+
+        // Domingo
+        {start:"07:00", end:"12:00", name:"Sunday With Christ", img:images.sunday, days:[0]}
     ];
 
     function getChicagoTime() { return new Date(new Date().toLocaleString("en-US",{timeZone:"America/Chicago"})); }
@@ -229,48 +192,57 @@
         const mins = timeToMins(now.toTimeString().slice(0,5));
 
         let current = null;
+        const future = [];
+
         for (const p of schedule) {
             if (p.days && !p.days.includes(day)) continue;
             const s = timeToMins(p.start);
             const e = timeToMins(p.end);
             const end = e < s ? e + 1440 : e;
+
             if (mins >= s && mins < end) {
-                if (!current || e > timeToMins(p.end)) current = p;
+                if (!current || e > timeToMins(current.end)) current = p;
+            }
+            if (mins < s) {
+                future.push({prog:p, startMins:s});
             }
         }
 
-        const candidates = [];
-        for (const p of schedule) {
-            const validDays = p.days || [0,1,2,3,4,5,6];
-            if (validDays.includes(day) && timeToMins(p.start) > mins) candidates.push({prog:p, offset:0});
-            if (validDays.includes((day+1)%7)) candidates.push({prog:p, offset:1});
+        // Se não tiver mais hoje, pega do amanhã
+        if (future.length === 0) {
+            const tomorrow = (day + 1) % 7;
+            for (const p of schedule) {
+                if (!p.days || p.days.includes(tomorrow)) {
+                    future.push({prog:p, startMins:timeToMins(p.start)});
+                }
+            }
         }
-        candidates.sort((a,b) => timeToMins(a.prog.start) - timeToMins(b.prog.start));
 
-        return {
-            current: current || {name:"Praise FM", img:images.default},
-            next1: candidates[0]?.prog || schedule[0],
-            next2: candidates[1]?.prog || schedule[1]
-        };
+        future.sort((a,b) => a.startMins - b.startMins);
+        const next1 = future[0]?.prog || schedule[0];
+        const next2 = future[1]?.prog || schedule[1];
+
+        return { current: current || {name:"Praise FM", img:images.default}, next1, next2 };
     }
 
     let currentTrack = {title:"", artist:""};
-    const recents = [];
+    const recents = []; // Máximo 3
 
     async function fetchAlbumCover(artist, title) {
         if (!artist || !title) return images.default;
         try {
-            const resp = await fetch(`https://ws.audioscrobbler.com/2.0/?method=track.getInfo&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(title)}&api_key=${LASTFM_API_KEY}&format=json`);
-            const data = await resp.json();
-            return data.track?.album?.image?.[3]?.["#text"] || data.track?.artist?.image?.[3]?.["#text"] || images.default;
+            const r = await fetch(`https://ws.audioscrobbler.com/2.0/?method=track.getInfo&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(title)}&api_key=${LASTFM_API_KEY}&format=json`);
+            const d = await r.json();
+            return d.track?.album?.image?.[3]?.["#text"] || d.track?.artist?.image?.[3]?.["#text"] || images.default;
         } catch { return images.default; }
     }
 
-    function formatProgramName(prog) {
-        if (!prog || prog.name.includes("With ") || prog.name === "Music Only" || prog.name === "Living The Message") return prog.name;
-        const base = prog.name.replace(/ \([^)]*\)$/, '');
+    function formatProgramName(p) {
+        if (!p) return "Praise FM";
+        const base = p.name.replace(/ \([^)]*\)$/, '').trim();
+        if (base === "Music Only") return base;
         const host = hosts[base] || "DJ Praise";
-        return host ? `${base} With ${host}` : base;
+        return `${base} With ${host}`;
     }
 
     function updateDisplay() {
@@ -287,7 +259,6 @@
         document.getElementById("miniTitle").textContent = isMusic ? currentTrack.title : displayName;
         document.getElementById("miniArtist").textContent = isMusic ? currentTrack.artist : "Praise & Worship";
 
-        // Up next
         const fmt = (p, offset=0) => {
             if (!p.start) return "--:--";
             const d = new Date(now);
@@ -296,6 +267,7 @@
             d.setHours(+h, +m, 0, 0);
             return d.toLocaleTimeString("en-US", {hour:"2-digit", minute:"2-digit", timeZone:"America/Chicago"});
         };
+
         const todayNext = schedule.filter(p => (!p.days || p.days.includes(now.getDay())) && timeToMins(p.start) > timeToMins(now.toTimeString().slice(0,5)));
         const off1 = todayNext.length > 0 ? 0 : 1;
         const off2 = todayNext.length > 1 ? 0 : 1;
@@ -325,9 +297,10 @@
         } else {
             currentTrack = {title, artist};
             const cover = await fetchAlbumCover(artist, title);
-            if (!recents.some(r => r.title === title && r.artist === artist)) {
-                recents.unshift({title, artist, cover});
-                if (recents.length > 6) recents.pop();
+            const trackKey = `${artist} - ${title}`;
+            if (!recents.some(t => t.key === trackKey)) {
+                recents.unshift({title, artist, cover, key: trackKey});
+                if (recents.length > 3) recents.pop(); // Só 3 músicas
                 document.getElementById("recentList").innerHTML = recents.map(t => `
                     <div class="recent-item">
                         <img src="${t.cover}" class="recent-cover" onerror="this.src='${images.default}'">
@@ -348,16 +321,14 @@
             const d = JSON.parse(e.data);
             if (d.streamTitle) {
                 const parts = d.streamTitle.split(" - ");
-                processMetadata(parts[0] || "", parts.slice(1).join(" - ") || "");
+                processMetadata(parts[0]||"", parts.slice(1).join(" - ")||"");
             }
         } catch {}
     };
 
     function togglePlay() {
-        if (audio.paused) {
-            audio.play();
-            document.getElementById("miniPlayer").classList.add("show");
-        } else audio.pause();
+        if (audio.paused) { audio.play(); document.getElementById("miniPlayer").classList.add("show"); }
+        else audio.pause();
         const playing = !audio.paused;
         const playSvg = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
         const pauseSvg = '<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
@@ -369,12 +340,11 @@
     document.getElementById("miniPlayPause").onclick = togglePlay;
     document.getElementById("miniRewind").onclick = () => audio.currentTime = Math.max(0, audio.currentTime - 15);
     document.getElementById("miniForward").onclick = () => audio.currentTime += 15;
-
     document.getElementById("miniVolumeBar").onclick = e => {
         const rect = e.currentTarget.getBoundingClientRect();
         const percent = (e.clientX - rect.left) / rect.width;
         audio.volume = Math.max(0, Math.min(1, percent));
-        document.getElementById("miniVolumeFill").style.width = (audio.volume * 100) + '%';
+        document.getElementById("miniVolumeFill").style.width = (audio.volume*100)+'%';
     };
 
     setInterval(updateDisplay, 8000);
