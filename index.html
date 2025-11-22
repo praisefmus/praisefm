@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Praise FM - Live Radio</title>
-    
+    <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-0RNK6G5WWL"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -12,7 +12,7 @@
       gtag('js', new Date());
       gtag('config', 'G-0RNK6G5WWL');
     </script>
-    
+    <!-- Favicon -->
     <link rel="icon" type="image/png" sizes="32x32" href="./image/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="./image/favicon-16x16.png">
     <link rel="shortcut icon" type="image/x-icon" href="./image/favicon.ico">
@@ -21,25 +21,31 @@
     <style>
         /* --- CSS --- */
         :root {
-            --primary-color: #fff;
+            --primary-color: #000;
             --secondary-color: #e0e0e0;
             --accent-color: #ff4d00; /* Orange */
             --bg-dark: #121212;
             --glass-bg: rgba(20, 20, 20, 0.7);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            -webkit-tap-highlight-color: transparent; 
+        }
 
-        /* AJUSTE 1: body centraliza verticalmente */
         body {
-            background-color: #000;
+            background-color: #fff;
             height: 100vh;
             width: 100vw;
             display: flex;
             justify-content: center;
-            align-items: center; /* CENTRALIZA VERTICALMENTE */
+            align-items: flex-start; /* Alinha no topo */
             overflow-y: auto; 
             color: var(--primary-color);
+            padding: 20px;
         }
 
         .background-blur {
@@ -50,40 +56,38 @@
             transition: background 1s ease;
         }
 
-        /* AJUSTE 2: player-container com min-height: 100vh; REMOVIDO */
         .player-container {
             width: 100%; 
-            /* min-height: 100vh; <-- Removida para centralizar em desktop */
             max-width: 600px; 
             display: flex; 
             flex-direction: column;
-            align-items: center; /* CENTER THE MAIN COLUMN HORIZONTALLY */
-            justify-content: flex-start; /* ALINHA OS ITENS AO TOPO PARA SCROLL (Mobile) */
+            align-items: flex-start; /* Alinha tudo à esquerda */
+            justify-content: flex-start; 
             padding: 20px;
             position: relative;
             text-shadow: 0 2px 10px rgba(0,0,0,0.8);
-            gap: 15px; 
+            gap: 20px; 
         }
 
-        /* --- 1. PROGRAM CIRCLE (Centralized) --- */
+        /* --- 1. PROGRAM CIRCLE (BBC Style) --- */
         .program-area {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
+            flex-direction: row;
             align-items: center;
-            margin-bottom: 10px;
-            align-self: center; 
+            gap: 20px;
+            width: 100%;
         }
-        
+
         .program-circle {
-            width: min(60vw, 260px); 
-            height: min(60vw, 260px);
+            width: 150px; 
+            height: 150px;
             border-radius: 50%;
-            background-color: #000;
+            background-color: #f0f0f0;
             position: relative;
             z-index: 2;
-            box-shadow: 0 15px 50px rgba(0,0,0,0.6);
-            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border: 3px solid #ddd;
+            /* Anel de progresso */
             --progress-deg: 0deg;
         }
 
@@ -91,11 +95,9 @@
             width: 100%; height: 100%;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid #111; 
             position: relative; z-index: 2;
         }
 
-        /* Progress Ring */
         .program-circle.is-playing::before {
             content: '';
             position: absolute;
@@ -111,118 +113,160 @@
             transition: all 1s linear; 
         }
 
-        .program-label { margin-top: 20px; text-align: center; }
+        .program-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
 
         .program-status { 
-            font-size: 12px; color: var(--accent-color); font-weight: 800; letter-spacing: 2px; 
-            text-transform: uppercase; display: flex; align-items: center; justify-content: center; 
-            gap: 8px; animation: flash 2s infinite ease-in-out;
-        }
-        
-        .live-dot { width: 8px; height: 8px; background-color: var(--accent-color); border-radius: 50%; box-shadow: 0 0 8px var(--accent-color); }
-
-        @keyframes flash {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(0.98); }
+            font-size: 12px; color: #888; font-weight: 500; letter-spacing: 0.5px; 
+            text-transform: uppercase; display: flex; align-items: center; justify-content: flex-start; 
+            gap: 8px; 
         }
 
-        .program-name { font-size: 24px; font-weight: 800; margin-top: 5px; letter-spacing: -0.5px; line-height: 1.1;}
+        .live-dot { width: 8px; height: 8px; background-color: #ff4d00; border-radius: 50%; box-shadow: 0 0 8px #ff4d00; }
 
-        /* --- 2. CONTROLS (Centralized) --- */
-        .controls-area {
-            display: flex; justify-content: center; align-items: center; gap: 30px; 
-            margin: 10px 0;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
-            align-self: center; /* KEEP CONTROLS CENTERED */
-            width: 100%;
+        .program-name { 
+            font-size: 28px; 
+            font-weight: 800; 
+            margin-top: 5px; 
+            letter-spacing: -0.5px; 
+            line-height: 1.1;
+            color: #000;
         }
-        .control-btn { background: none; border: none; color: #fff; cursor: pointer; transition: transform 0.2s; display: flex; align-items: center; justify-content: center;}
-        .control-btn:active { transform: scale(0.9); }
-        
-        .play-btn { 
-            width: 70px; height: 70px; background: var(--accent-color); border-radius: 50%; 
-            box-shadow: 0 8px 20px rgba(255, 77, 0, 0.4); color: white;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .play-btn svg { width: 30px; height: 30px; fill: white; }
-        .play-btn svg.play-icon { margin-left: 4px; }
-        
-        .skip-btn svg { width: 28px; height: 28px; opacity: 0.8; }
-        .skip-btn:hover svg { opacity: 1; }
 
-        /* --- 3. NOW PLAYING CARD (Left Aligned) --- */
+        .program-description { 
+            font-size: 16px; 
+            color: #555; 
+            margin-top: 5px; 
+            line-height: 1.4;
+        }
+
+        /* --- 2. PLAY BUTTON (BBC Style) --- */
+        .play-btn {
+            width: 150px; 
+            height: 50px; 
+            background: #ff4d00; 
+            border-radius: 6px; 
+            box-shadow: 0 4px 10px rgba(255, 77, 0, 0.3); 
+            color: white;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 10px;
+        }
+
+        .play-btn:hover {
+            background: #e64500;
+            transform: translateY(-2px);
+        }
+
+        .play-btn svg {
+            width: 24px; 
+            height: 24px; 
+            fill: white; 
+            margin-right: 8px;
+        }
+
+        /* --- 3. NOW PLAYING CARD (BBC Style) --- */
         .now-playing-card {
             width: 100%; 
-            background-color: var(--glass-bg);
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border-radius: 12px; padding: 12px 18px; 
-            display: flex; align-items: center;
-            border: 1px solid rgba(255,255,255,0.1); 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            background-color: #fafafa;
+            border-radius: 8px; 
+            padding: 12px 18px; 
+            display: flex; 
+            align-items: center;
+            border: 1px solid #eee; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             align-self: flex-start; /* ALIGNED LEFT */
         }
-        .song-cover { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; background-color: #333; margin-right: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
-        .song-info { flex: 1; overflow: hidden; text-shadow: none; }
-        .song-title { font-size: 16px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; margin-bottom: 2px; }
-        .song-artist { font-size: 14px; color: #ccc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .lyrics-btn { opacity: 0.8; cursor: pointer; background:none; border:none; color:white; padding: 8px; transition: opacity 0.2s; }
-        .lyrics-btn:hover { opacity: 1; }
 
-        /* --- EXTRAS (Volume - Left Aligned) --- */
+        .song-cover { 
+            width: 50px; 
+            height: 50px; 
+            border-radius: 8px; 
+            object-fit: cover; 
+            background-color: #ddd; 
+            margin-right: 15px; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+        }
+
+        .song-info { 
+            flex: 1; 
+            overflow: hidden; 
+            text-shadow: none; 
+        }
+
+        .song-title { 
+            font-size: 16px; 
+            font-weight: 700; 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            color: #000; 
+            margin-bottom: 2px; 
+        }
+
+        .song-artist { 
+            font-size: 14px; 
+            color: #555; 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+        }
+
+        /* --- 4. VOLUME SLIDER (BBC Style) --- */
         .volume-container { 
             width: 80%; 
-            display: flex; align-items: center; gap: 12px; 
-            background-color: rgba(0,0,0,0.4); 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            background-color: #f5f5f5; 
             padding: 8px 15px;
             border-radius: 20px;
-            opacity: 1; 
             align-self: flex-start; /* ALIGNED LEFT */
             margin-left: 20px; 
         }
-        .volume-slider { flex: 1; -webkit-appearance: none; background: rgba(255,255,255,0.3); height: 4px; border-radius: 2px; outline: none; }
-        .volume-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: #fff; cursor: pointer; }
-        
-        /* --- 4. RECENTLY PLAYED (Left Aligned) --- */
-        .recents-container {
-            width: 100%; 
-            margin-top: 20px;
-            padding: 10px 0;
-            margin-bottom: 40px; 
-            align-self: flex-start; /* ALIGNED LEFT */
+
+        .volume-slider { 
+            flex: 1; 
+            -webkit-appearance: none; 
+            background: rgba(0,0,0,0.1); 
+            height: 4px; 
+            border-radius: 2px; 
+            outline: none; 
         }
-        .recents-title {
-            font-size: 14px; font-weight: 700; color: #999; text-transform: uppercase; margin-bottom: 10px; padding: 0 18px;
+
+        .volume-slider::-webkit-slider-thumb { 
+            -webkit-appearance: none; 
+            width: 14px; 
+            height: 14px; 
+            border-radius: 50%; 
+            background: #ff4d00; 
+            cursor: pointer; 
         }
-        .recent-item {
-            display: flex; align-items: center; padding: 8px 18px; transition: background-color 0.2s; border-radius: 0;
-        }
-        .recent-item:hover { background-color: rgba(255, 255, 255, 0.05); }
-        .recent-cover {
-            width: 35px; height: 35px; border-radius: 4px; object-fit: cover; background-color: #333; margin-right: 15px;
-        }
-        .recent-info { flex: 1; overflow: hidden; }
-        .recent-title { font-size: 14px; font-weight: 500; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .recent-artist { font-size: 12px; color: #aaa; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         /* --- DESKTOP --- */
         @media (min-width: 768px) {
             .player-container { 
                 max-width: 800px; 
-                /* min-height REMOVIDO AQUI TAMBÉM */
-                justify-content: flex-start; 
-                gap: 25px;
                 padding: 30px;
+                gap: 30px;
             }
-
-            .program-circle { width: 320px; height: 320px; }
+            .program-circle { width: 200px; height: 200px; }
             .program-name { font-size: 36px; }
-            .play-btn { width: 80px; height: 80px; }
-            
-            /* DESKTOP - Move all cards to the left edge of the centered column */
-            .now-playing-card, .recents-container {
-                align-self: flex-start; 
-                max-width: 500px;
+            .play-btn { 
+                width: 200px; 
+                height: 60px; 
+                font-size: 20px;
             }
+            .song-cover { width: 60px; height: 60px; }
             .volume-container {
                 align-self: flex-start;
                 margin-left: 0;
@@ -233,34 +277,22 @@
     </style>
 </head>
 <body>
-
     <div class="background-blur" id="bgBlur"></div>
-
     <div class="player-container">
-        
         <div class="program-area">
             <div class="program-circle" id="programCircle">
-                <img src="/image/logopraisefm.webp" id="programImg" class="program-img" alt="Program Logo">
+                <img src="/image/praisefmcarpoollogo.webp" id="programImg" class="program-img" alt="Program Logo">
             </div>
-            <div class="program-label">
+            <div class="program-info">
                 <div class="program-status"><div class="live-dot"></div> LIVE ON AIR</div>
-                <div class="program-name" id="programNameDisplay">Praise FM</div>
+                <div class="program-name" id="programNameDisplay">Carpool</div>
+                <div class="program-description">Praise FM Carpool with Rachael Harris</div>
             </div>
         </div>
 
-        <div class="controls-area">
-            <button class="control-btn skip-btn" onclick="skip(-15)" aria-label="Skip Back 15 Seconds">
-                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg>
-            </button>
-            
-            <button class="control-btn play-btn" id="playPauseBtn" aria-label="Play / Pause">
-                <svg id="iconPlay" class="play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                <svg id="iconPause" class="pause-icon" style="display:none;" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-            </button>
-
-            <button class="control-btn skip-btn" onclick="skip(15)" aria-label="Skip Forward 15 Seconds">
-                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg>
-            </button>
+        <div class="play-btn" id="playPauseBtn">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            Play
         </div>
 
         <div class="now-playing-card">
@@ -269,26 +301,15 @@
                 <div class="song-title" id="trackTitle">Loading...</div>
                 <div class="song-artist" id="trackArtist">Praise FM</div>
             </div>
-            <button class="lyrics-btn" id="lyricsBtn" aria-label="View Lyrics">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
-            </button>
         </div>
 
         <div class="volume-container">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="min-width:20px"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="min-width:20px"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
             <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.01" value="0.8" aria-label="Volume">
         </div>
-        
-        <div class="recents-container">
-            <div class="recents-title">Recently Played</div>
-            <div id="recentsList">
-                </div>
-        </div>
-
     </div>
-    
-    <canvas id="colorCanvas" style="display:none;"></canvas>
 
+    <canvas id="colorCanvas" style="display:none;"></canvas>
     <script>
         // --- CONFIGURATION ---
         const STREAM_URL = "https://stream.zeno.fm/hvwifp8ezc6tv";
@@ -312,8 +333,6 @@
         // --- DOM ELEMENTS ---
         const audio = new Audio(STREAM_URL);
         const playBtn = document.getElementById('playPauseBtn');
-        const iconPlay = document.getElementById('iconPlay');
-        const iconPause = document.getElementById('iconPause');
         const programCircle = document.getElementById('programCircle');
         const programImg = document.getElementById('programImg');
         const programNameDisplay = document.getElementById('programNameDisplay');
@@ -323,107 +342,56 @@
         const bgBlur = document.getElementById('bgBlur');
         const colorCanvas = document.getElementById('colorCanvas');
         const ctx = colorCanvas.getContext('2d', {willReadFrequently: true});
-        
+        const volumeSlider = document.getElementById('volumeSlider');
+
         // --- GLOBAL STATE ---
         let isPlaying = false;
         let progressInterval = null; 
-        const RECENTLY_PLAYED = [];
-        const MAX_RECENTS = 5;
         const CARPOOL_START_HOUR = 18; // 6 PM Chicago
         const CARPOOL_END_HOUR = 20;   // 8 PM Chicago
 
-        // --- TIME FUNCTIONS (Simplificada: apenas para o Carpool) ---
+        // --- TIME FUNCTIONS ---
         function isTimeBetween(startHour, endHour) {
-            // Cria um objeto Date baseado no fuso horário de Chicago para cálculo
             const nowChicago = new Date(new Date().toLocaleString("en-US", { timeZone: CHICAGO_TIMEZONE }));
-            
             const start = new Date(nowChicago);
             start.setHours(startHour, 0, 0, 0);
-
             const end = new Date(nowChicago);
             end.setHours(endHour, 0, 0, 0);
-
             return nowChicago.getTime() >= start.getTime() && nowChicago.getTime() < end.getTime();
         }
 
-        // --- RECENT TRACKS FUNCTION ---
-        function updateRecents(track, artist, cover) {
-            if (track === "Loading..." || track.toLowerCase().includes("commercial") || track.toLowerCase().includes("station id")) return;
-
-            if (RECENTLY_PLAYED.length > 0 && 
-                RECENTLY_PLAYED[0].title === track && 
-                RECENTLY_PLAYED[0].artist === artist) {
-                return;
-            }
-            
-            RECENTLY_PLAYED.unshift({ title: track, artist: artist, cover: cover || IMG_DEFAULT });
-            if (RECENTLY_PLAYED.length > MAX_RECENTS) {
-                RECENTLY_PLAYED.pop();
-            }
-
-            const recentsList = document.getElementById('recentsList');
-            recentsList.innerHTML = '';
-
-            // Pula a música atual (index 0)
-            for (let i = 1; i < RECENTLY_PLAYED.length; i++) {
-                const item = RECENTLY_PLAYED[i];
-                const itemHtml = `
-                    <div class="recent-item">
-                        <img src="${item.cover}" class="recent-cover" alt="${item.title} Cover">
-                        <div class="recent-info">
-                            <div class="recent-title">${item.title}</div>
-                            <div class="recent-artist">${item.artist}</div>
-                        </div>
-                    </div>
-                `;
-                recentsList.innerHTML += itemHtml;
-            }
-        }
-
-        // --- PROGRESS RING FUNCTION (Program or Music) ---
+        // --- PROGRESS RING FUNCTION ---
         function startProgressMonitor(totalDurationMs, isProgramProgress = false) {
             if (isProgramProgress && progressInterval) return;
-
             if (isProgramProgress && !isPlaying) return; 
-
             let totalDuration;
             let startTimeMs; 
-
             if (isProgramProgress) {
                 if (progressInterval) clearInterval(progressInterval);
-                
                 const nowChicago = new Date(new Date().toLocaleString("en-US", { timeZone: CHICAGO_TIMEZONE }));
                 const startOfProgram = new Date(nowChicago);
                 startOfProgram.setHours(CARPOOL_START_HOUR, 0, 0, 0);
-
                 if (nowChicago.getTime() >= startOfProgram.getTime()) {
                     startTimeMs = startOfProgram.getTime();
                 } else {
                     return; 
                 }
-
                 totalDuration = (CARPOOL_END_HOUR - CARPOOL_START_HOUR) * 60 * 60 * 1000; 
             } else {
-                // LOGICA DA MUSICA
                 if (progressInterval) clearInterval(progressInterval);
                 totalDuration = totalDurationMs > 0 ? totalDurationMs : 210000; 
                 startTimeMs = Date.now();
             }
-
             const startTime = startTimeMs;
-
             progressInterval = setInterval(() => {
                 if (!isPlaying) return; 
-
                 let percentage;
                 if (isProgramProgress) {
                     const nowChicago = new Date(new Date().toLocaleString("en-US", { timeZone: CHICAGO_TIMEZONE }));
                     const endOfProgram = new Date(nowChicago);
                     endOfProgram.setHours(CARPOOL_END_HOUR, 0, 0, 0);
-                    
                     const currentElapsed = nowChicago.getTime() - startTime;
                     percentage = Math.min(currentElapsed / totalDuration, 1);
-                    
                     if (nowChicago.getTime() >= endOfProgram.getTime()) {
                         percentage = 1; 
                         clearInterval(progressInterval);
@@ -436,10 +404,8 @@
                         setTimeout(setupZeno, 5000); 
                     }
                 }
-
                 const degrees = percentage * 360;
                 programCircle.style.setProperty('--progress-deg', `${degrees}deg`);
-
             }, 1000);
         }
 
@@ -450,8 +416,7 @@
                 programImg.src = programImage;
             }
             programNameDisplay.innerText = programName;
-
-            // 2. Music Card / Background
+            // 2. Music Card
             let safeSongImage = songImage;
             if (!songImage.startsWith('/image/') && !songImage.startsWith('data:')) {
                 safeSongImage = 'https://corsproxy.io/?' + encodeURIComponent(songImage);
@@ -462,7 +427,6 @@
             }
             trackTitle.innerText = songTitle;
             trackArtist.innerText = songArtist;
-
             // 3. Progress Ring
             if (isMusicalTrack) {
                 programCircle.classList.add('is-playing');
@@ -472,7 +436,7 @@
                 if (progressInterval) clearInterval(progressInterval);
             }
         }
-        
+
         // --- COLOUR BACKGROUND ---
         function updateBackground(imgUrl) {
             if(imgUrl.includes('/image/')) {
@@ -492,19 +456,15 @@
             }
         }
 
-
         // --- MAIN LOGIC (Metadata) ---
         async function processMetadata(artist, track) {
             const artistLow = artist.toLowerCase();
             const trackLow = track.toLowerCase();
-            
             let currentSongImg = IMG_DEFAULT;
             let songDuration = 0; 
-
             let finalCircleImg = IMG_DEFAULT;
             let finalCircleName = "Praise FM"; 
             let finalRingStatus = true; 
-
             let isCarpoolTime = isTimeBetween(CARPOOL_START_HOUR, CARPOOL_END_HOUR);
 
             // 0. FORCA O ESTADO CARPOOL (6 PM - 8 PM Chicago)
@@ -525,7 +485,6 @@
                 return;
             }
 
-
             // 2. CHECAGEM DE OUTROS PROGRAMAS (Apenas se não for Carpool)
             if (!isCarpoolTime) { 
                 const programMap = {
@@ -537,7 +496,6 @@
                     "pop": [IMG_POP, "Praise FM Pop"],
                     "sunday": [IMG_SUNDAY_MORNING, "Sunday Morning"]
                 };
-
                 let programMatch = null;
                 for (const key in programMap) {
                     if (artistLow.includes(key) || trackLow.includes(key)) {
@@ -545,22 +503,18 @@
                         break;
                     }
                 }
-
                 if (programMatch) {
                     const [img, name] = programMatch;
                     updateDisplay(img, name, img, name, "Praise FM", false); 
-                    updateRecents(name, "Praise FM", img);
                     return;
                 }
             }
 
             // 3. SE CHEGAR AQUI, É MÚSICA.
-
             // A. Busca Detalhes da Música (Capa/Duração)
             try {
                 const res = await fetch(`https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${LASTFM_API_KEY}&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}&format=json`);
                 const data = await res.json();
-                
                 if (data.track) {
                     if (data.track.album && data.track.album.image) {
                         const img = data.track.album.image.find(i => i.size === 'extralarge')['#text'];
@@ -574,15 +528,12 @@
                     }
                 }
             } catch(e) { console.log("LastFM Error", e); }
-            
+
             // B. Lógica do Anel de Progresso (Se NÃO for CARPOOL)
             if (!isCarpoolTime && isPlaying) {
                  programCircle.classList.add('is-playing');
                  startProgressMonitor(songDuration, false); 
             }
-
-            // C. Atualiza Recentes
-            updateRecents(track, artist, currentSongImg);
 
             // D. Chamada Final
             updateDisplay(
@@ -605,30 +556,25 @@
             if (isPlaying) {
                 audio.pause();
                 isPlaying = false;
-                iconPlay.style.display = 'block';
-                iconPause.style.display = 'none';
+                playBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Play';
             } else {
                 if (audio.src !== STREAM_URL) audio.src = STREAM_URL;
                 audio.play().then(() => {
                     isPlaying = true;
-                    iconPlay.style.display = 'none';
-                    iconPause.style.display = 'block';
+                    playBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg> Pause';
                     // Reinicia progresso se estiver em CARPOOL
                     if (isTimeBetween(CARPOOL_START_HOUR, CARPOOL_END_HOUR)) {
                         startProgressMonitor(0, true);
                     }
                 }).catch(e => {
                     console.error("Autoplay prevented", e);
-                    trackTitle.innerText = "Click to Play";
+                    alert("Please click the button again to start playback.");
                 });
             }
         });
 
-        document.getElementById('volumeSlider').addEventListener('input', (e) => { audio.volume = e.target.value; });
-
-        document.getElementById('lyricsBtn').addEventListener('click', () => {
-            const q = `${trackArtist.innerText} ${trackTitle.innerText}`;
-            window.open(`https://genius.com/search?q=${encodeURIComponent(q)}`, '_blank');
+        volumeSlider.addEventListener('input', (e) => { 
+            audio.volume = e.target.value; 
         });
 
         function setupZeno() {
@@ -646,11 +592,8 @@
             };
         }
 
-        function skip(sec) {} // A função permanece vazia pois pular (skip) em stream ao vivo não é padrão
-
         // Inicialização
         setupZeno();
-        
     </script>
 </body>
 </html>
