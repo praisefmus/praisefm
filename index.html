@@ -32,17 +32,17 @@
 
         body {
             background-color: #000;
-            height: 100vh; /* Garante que ocupa 100% da altura da janela */
+            height: 100vh;
             width: 100vw;
             display: flex;
             justify-content: center;
-            align-items: center;
-            overflow: hidden; /* Evita barras de rolagem */
+            align-items: flex-start; /* Alinha ao topo para caber mais conteúdo */
+            overflow-y: auto; /* Permite rolar o conteúdo */
             color: var(--primary-color);
         }
 
         .background-blur {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
             background: radial-gradient(circle at 50% 30%, #222, #000);
             filter: blur(90px); 
             opacity: 0.6; 
@@ -51,12 +51,10 @@
 
         .player-container {
             width: 100%; 
-            height: 100%;
-            max-height: 100vh; 
+            min-height: 100vh; /* Garante que o container ocupe a altura mínima */
             display: flex; 
             flex-direction: column;
             align-items: center;
-            justify-content: center; 
             padding: 20px;
             position: relative;
             text-shadow: 0 2px 10px rgba(0,0,0,0.8);
@@ -105,7 +103,7 @@
             );
             -webkit-mask: radial-gradient(transparent 68%, black 69%);
             mask: radial-gradient(transparent 68%, black 69%);
-            transition: --progress-deg 1s linear;
+            transition: all 1s linear; /* Alterado para ALL para aceitar a mudança de progresso */
         }
 
         .program-label { margin-top: 20px; text-align: center; }
@@ -190,7 +188,7 @@
         .volume-slider { flex: 1; -webkit-appearance: none; background: rgba(255,255,255,0.3); height: 4px; border-radius: 2px; outline: none; }
         .volume-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: #fff; cursor: pointer; }
         
-        /* --- DATA E HORA --- */
+        /* --- 4. DATA E HORA (TAMANHO REDUZIDO) --- */
         .datetime-container {
             display: flex;
             flex-direction: column;
@@ -200,7 +198,7 @@
             margin-top: 5px;
         }
         .date-display {
-            font-size: 13px;
+            font-size: 11px; /* REDUZIDO */
             color: #ccc;
             font-weight: 600;
             text-transform: uppercase;
@@ -208,20 +206,54 @@
             margin-bottom: 2px;
         }
         .clock-display {
-            font-size: 32px;
+            font-size: 24px; /* REDUZIDO */
             font-weight: 700;
             color: var(--primary-color);
             font-variant-numeric: tabular-nums;
             line-height: 1;
         }
 
+        /* --- 5. RECENTES TOCADAS --- */
+        .recents-container {
+            width: 100%; max-width: 450px;
+            margin-top: 20px;
+            padding: 10px 0;
+            margin-bottom: 40px; /* Espaço inferior */
+        }
+        .recents-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #999;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            padding: 0 18px;
+        }
+        .recent-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 18px;
+            transition: background-color 0.2s;
+            border-radius: 0;
+        }
+        .recent-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        .recent-cover {
+            width: 35px; height: 35px; 
+            border-radius: 4px; 
+            object-fit: cover; 
+            background-color: #333; 
+            margin-right: 15px;
+        }
+        .recent-info { flex: 1; overflow: hidden; }
+        .recent-title { font-size: 14px; font-weight: 500; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .recent-artist { font-size: 12px; color: #aaa; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
         /* --- DESKTOP --- */
         @media (min-width: 768px) {
             .player-container { 
                 max-width: 800px; 
-                height: auto;
-                min-height: 600px; 
-                background-color: transparent;
+                min-height: 800px; 
                 justify-content: center;
                 gap: 25px;
                 padding: 30px;
@@ -232,7 +264,12 @@
             .play-btn { width: 80px; height: 80px; }
             .now-playing-card { max-width: 500px; padding: 20px; }
             .song-cover { width: 60px; height: 60px; }
-            .clock-display { font-size: 42px; }
+            
+            /* TAMANHO REDUZIDO PARA DESKTOP */
+            .clock-display { font-size: 32px; } 
+            .date-display { font-size: 13px; }
+            
+            .recents-container { max-width: 500px; }
         }
     </style>
 </head>
@@ -288,6 +325,12 @@
             <div class="clock-display" id="clockDisplay">--:--</div>
         </div>
 
+        <div class="recents-container">
+            <div class="recents-title">Recentemente Tocadas</div>
+            <div id="recentsList">
+                </div>
+        </div>
+
     </div>
     
     <canvas id="colorCanvas" style="display:none;"></canvas>
@@ -329,8 +372,14 @@
         const dateDisplay = document.getElementById('dateDisplay');
         const clockDisplay = document.getElementById('clockDisplay');
 
+        // --- ESTADO GLOBAL ---
         let isPlaying = false;
         let progressInterval = null; 
+        const RECENTLY_PLAYED = [];
+        const MAX_RECENTS = 5;
+        const CARPOOL_START_HOUR = 18;
+        const CARPOOL_END_HOUR = 20;
+
 
         // --- FUNÇÕES DE HORA ---
         function updateChicagoTime() {
@@ -338,10 +387,28 @@
             const optionsTime = { timeZone: 'America/Chicago', hour: 'numeric', minute: '2-digit', hour12: true };
             const timeString = now.toLocaleTimeString('en-US', optionsTime);
             const optionsDate = { timeZone: 'America/Chicago', weekday: 'long', month: 'long', day: 'numeric' };
-            const dateString = now.toLocaleDateString('en-US', optionsDate);
+            const dateString = now.toLocaleDateString('pt-BR', optionsDate); // Alterado para pt-BR
+            
+            // Corrige a hora: se for 12:xx PM, mostra 12:xx. Se for 12:xx AM, mostra 00:xx.
+            let [time, ampm] = timeString.split(' ');
+            let [h, m] = time.split(':');
+            if (ampm === 'AM' && h === '12') { h = '00'; }
+            if (ampm === 'PM' && h !== '12') { h = parseInt(h, 10) + 12; }
+            const finalTimeString = `${h.toString().padStart(2, '0')}:${m}`;
 
-            clockDisplay.innerText = timeString;
+
+            clockDisplay.innerText = timeString; // Mantém AM/PM no display
             dateDisplay.innerText = dateString;
+
+            // Recalcula o progresso do programa a cada segundo para manter a precisão
+            if (isTimeBetween(CARPOOL_START_HOUR, CARPOOL_END_HOUR) && isPlaying) {
+                // Se estiver no CARPOOL, garante que o progresso esteja rodando com o tempo do programa
+                startProgressMonitor(0, true); 
+            } else if (programCircle.classList.contains('is-playing') && !isTimeBetween(CARPOOL_START_HOUR, CARPOOL_END_HOUR)) {
+                // Se não está mais no CARPOOL, mas o anel ainda está ligado, desliga
+                programCircle.classList.remove('is-playing');
+                if (progressInterval) clearInterval(progressInterval);
+            }
         }
 
         // Verifica se a hora atual de Chicago está entre startHour e endHour
@@ -354,20 +421,121 @@
             const end = new Date(nowChicago);
             end.setHours(endHour, 0, 0, 0);
 
-            // Se o intervalo atravessar a meia-noite (não relevante para 18h-20h, mas mantido)
-            if (startHour > endHour) {
-                if (nowChicago.getHours() < endHour) {
-                    start.setDate(start.getDate() - 1);
-                } else {
-                    end.setDate(end.getDate() + 1);
-                }
-            }
-            
             return nowChicago.getTime() >= start.getTime() && nowChicago.getTime() < end.getTime();
         }
 
+        // --- FUNÇÃO PARA ATUALIZAR RECENTES ---
+        function updateRecents(track, artist, cover) {
+            if (track === "Loading...") return;
 
-        // --- ATUALIZAÇÃO VISUAL ---
+            // 1. Evita duplicatas imediatas
+            if (RECENTLY_PLAYED.length > 0 && 
+                RECENTLY_PLAYED[0].title === track && 
+                RECENTLY_PLAYED[0].artist === artist) {
+                return;
+            }
+            
+            // 2. Adiciona ao topo e limita o tamanho
+            RECENTLY_PLAYED.unshift({ title: track, artist: artist, cover: cover || IMG_DEFAULT });
+            if (RECENTLY_PLAYED.length > MAX_RECENTS) {
+                RECENTLY_PLAYED.pop();
+            }
+
+            // 3. Renderiza no HTML
+            const recentsList = document.getElementById('recentsList');
+            recentsList.innerHTML = '';
+
+            // Pula o primeiro item (que é a música "Now Playing")
+            for (let i = 1; i < RECENTLY_PLAYED.length; i++) {
+                const item = RECENTLY_PLAYED[i];
+                const itemHtml = `
+                    <div class="recent-item">
+                        <img src="${item.cover}" class="recent-cover" alt="${item.title} Cover">
+                        <div class="recent-info">
+                            <div class="recent-title">${item.title}</div>
+                            <div class="recent-artist">${item.artist}</div>
+                        </div>
+                    </div>
+                `;
+                recentsList.innerHTML += itemHtml;
+            }
+        }
+
+        // --- FUNÇÃO DO ANEL (MODIFICADA PARA PROGRAMA OU MÚSICA) ---
+        function startProgressMonitor(totalDurationMs, isProgramProgress = false) {
+            // Se já estiver rodando e a lógica for a mesma, não faz nada para evitar reset
+            if (isProgramProgress && progressInterval) {
+                // Apenas permite que o setInterval continue atualizando
+            } else if (!isProgramProgress) {
+                // Se for música, limpa o progresso do programa
+                if (progressInterval) clearInterval(progressInterval);
+            }
+            
+            if (isProgramProgress && !isPlaying) return; // Só calcula o programa se estiver tocando
+
+            let totalDuration;
+            let startTimeMs; 
+
+            if (isProgramProgress) {
+                // LÓGICA DO PROGRAMA (18h às 20h - 2 horas)
+                const nowChicago = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Chicago" }));
+                
+                // Define o início do programa para 18:00h do dia atual
+                const startOfProgram = new Date(nowChicago);
+                startOfProgram.setHours(CARPOOL_START_HOUR, 0, 0, 0);
+
+                if (nowChicago.getTime() >= startOfProgram.getTime()) {
+                    startTimeMs = startOfProgram.getTime();
+                } else {
+                    return; // Antes de 18h, não deve rodar
+                }
+
+                totalDuration = (CARPOOL_END_HOUR - CARPOOL_START_HOUR) * 60 * 60 * 1000; // 7200000ms (2h)
+            } else {
+                // LÓGICA DA MÚSICA
+                totalDuration = totalDurationMs > 0 ? totalDurationMs : 210000; 
+                startTimeMs = Date.now();
+            }
+
+            const startTime = startTimeMs;
+
+            // Se o intervalo já estiver definido e for para programa, apenas o deixa rodar
+            if (isProgramProgress && progressInterval) return;
+            
+            // Define o novo intervalo
+            progressInterval = setInterval(() => {
+                if (!isPlaying) return; 
+
+                const elapsed = Date.now() - startTime;
+                let percentage = Math.min(elapsed / totalDuration, 1); 
+                
+                if (isProgramProgress) {
+                    const nowChicago = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Chicago" }));
+                    const endOfProgram = new Date(nowChicago);
+                    endOfProgram.setHours(CARPOOL_END_HOUR, 0, 0, 0);
+
+                    // Recalcula a porcentagem baseada no tempo real (hora atual - hora de início) / duração total
+                    const currentElapsed = nowChicago.getTime() - startTime;
+                    percentage = Math.min(currentElapsed / totalDuration, 1);
+                    
+                    if (nowChicago.getTime() >= endOfProgram.getTime()) {
+                        percentage = 1; // Força 100%
+                    }
+                }
+
+                const degrees = percentage * 360;
+                programCircle.style.setProperty('--progress-deg', `${degrees}deg`);
+
+                if (percentage >= 1) {
+                    clearInterval(progressInterval);
+                    if (!isProgramProgress) {
+                        setTimeout(setupZeno, 5000); 
+                    }
+                }
+            }, 1000);
+        }
+
+        // --- ATUALIZAÇÃO VISUAL E LÓGICA DO ANEL ---
         function updateDisplay(programImage, programName, songImage, songTitle, songArtist, isMusicalTrack, durationMs = 0) {
             // 1. Círculo do Programa
             if (programImg.src !== programImage && !programImg.src.endsWith(programImage)) {
@@ -387,39 +555,19 @@
             trackTitle.innerText = songTitle;
             trackArtist.innerText = songArtist;
 
-            // 3. Anel de Progresso (SÓ PARA MÚSICAS NO CARD)
-            if (progressInterval) clearInterval(progressInterval);
-            
+            // 3. Anel de Progresso
             if (isMusicalTrack) {
                 programCircle.classList.add('is-playing');
-                startProgressMonitor(durationMs);
             } else {
                 programCircle.classList.remove('is-playing');
                 programCircle.style.setProperty('--progress-deg', '0deg');
+                if (progressInterval) clearInterval(progressInterval);
             }
+
+            // A lógica de startProgressMonitor agora é chamada dentro de processMetadata para o CARPOOL
+            // ou para músicas normais, garantindo que o tipo de contador esteja correto.
         }
-
-        // --- FUNÇÃO DO ANEL ---
-        function startProgressMonitor(durationMs) {
-            const totalDuration = durationMs > 0 ? durationMs : 210000; 
-            const startTime = Date.now();
-
-            progressInterval = setInterval(() => {
-                if (!isPlaying) return; 
-
-                const elapsed = Date.now() - startTime;
-                const percentage = Math.min(elapsed / totalDuration, 1); 
-                const degrees = percentage * 360;
-
-                programCircle.style.setProperty('--progress-deg', `${degrees}deg`);
-
-                if (percentage >= 1) {
-                    clearInterval(progressInterval);
-                    setTimeout(setupZeno, 5000); 
-                }
-            }, 1000);
-        }
-
+        
         // --- FUNDO COLORIDO ---
         function updateBackground(imgUrl) {
             if(imgUrl.includes('/image/')) {
@@ -440,7 +588,7 @@
         }
 
 
-        // --- LÓGICA PRINCIPAL (Metadados - Com Lógica de Persistência 18h-20h) ---
+        // --- LÓGICA PRINCIPAL (Metadados) ---
         async function processMetadata(artist, track) {
             const artistLow = artist.toLowerCase();
             const trackLow = track.toLowerCase();
@@ -452,25 +600,31 @@
             let finalCircleName = "Praise FM"; 
             let finalRingStatus = true; 
 
-            const CARPOOL_START_HOUR = 18;
-            const CARPOOL_END_HOUR = 20;
-
             let isCarpoolTime = isTimeBetween(CARPOOL_START_HOUR, CARPOOL_END_HOUR);
 
-            // 0. FORÇAR ESTADO DO CARPOOL (Prioridade Máxima 18h-20h)
+            // 0. FORÇAR ESTADO DO CARPOOL (18h-20h)
             if (isCarpoolTime) {
                 finalCircleImg = IMG_CARPOOL;
                 finalCircleName = "Carpool";
-                finalRingStatus = true; // Anel LIGADO no card para músicas.
+                finalRingStatus = true; // Anel LIGADO
+                // Inicia/continua o progresso do programa (2 horas)
+                programCircle.classList.add('is-playing');
+                startProgressMonitor(0, true); 
+            } else {
+                 // Se não for CARPOOL, garante que o progresso do programa seja interrompido
+                 if (progressInterval) clearInterval(progressInterval);
+                 programCircle.style.setProperty('--progress-deg', '0deg');
             }
 
             // 1. CHECAGEM DE COMERCIAIS E IDENTIFICADORES (RETORNO IMEDIATO - Sobrescreve TUDO)
             if (trackLow.includes("commercial") || trackLow.includes("ad break")) {
                 updateDisplay(IMG_COMMERCIAL, "Commercial Break", IMG_COMMERCIAL, "Commercial Break", "Praise FM", false);
+                updateRecents("Commercial Break", "Praise FM", IMG_COMMERCIAL);
                 return;
             }
             if (trackLow.includes("station id") || trackLow.includes("spot") || (artistLow === "praise fm" && trackLow === "praise fm")) {
                 updateDisplay(IMG_SPOT, "Station ID", IMG_SPOT, "Station ID", "Praise FM", false);
+                updateRecents("Station ID", "Praise FM", IMG_SPOT);
                 return;
             }
 
@@ -500,10 +654,10 @@
                 if (programMatch) {
                     const [img, name] = programMatch;
                     updateDisplay(img, name, img, name, "Praise FM", false); 
+                    updateRecents(name, "Praise FM", img);
                     return;
                 }
             }
-
 
             // 3. SE CHEGOU AQUI, É MÚSICA.
 
@@ -517,7 +671,6 @@
                         const img = data.track.album.image.find(i => i.size === 'extralarge')['#text'];
                         if (img) {
                             currentSongImg = img;
-                            // Se não estiver no CARPOOL, a capa da música vai para o círculo principal
                             if (!isCarpoolTime) finalCircleImg = img; 
                         }
                     }
@@ -526,16 +679,23 @@
                     }
                 }
             } catch(e) { console.log("Erro LastFM", e); }
-
-
-            // B. Chamada final (Comportamento de Duas Camadas)
             
-            // O ring é LIGADO se for música OU se estiver no horário do CARPOOL (override 18h-20h)
+            // B. Lógica do Anel da Música (Se NÃO for CARPOOL)
+            if (!isCarpoolTime) {
+                 // Ativa o progresso da música e desliga qualquer progresso de programa
+                 programCircle.classList.add('is-playing');
+                 startProgressMonitor(songDuration, false); 
+            }
+
+            // C. Atualiza Recentes
+            updateRecents(track, artist, currentSongImg);
+
+            // D. Chamada final
             
             updateDisplay(
-                finalCircleImg, finalCircleName,   // Círculo fixo (CARPOOL) ou dinâmico (música/default)
-                currentSongImg, track, artist,     // Card de música (sempre dinâmico)
-                finalRingStatus, songDuration      // Anel rodando (Sempre true para música/CARPOOL)
+                finalCircleImg, finalCircleName,   // Círculo
+                currentSongImg, track, artist,     // Card de música
+                finalRingStatus, songDuration      // Anel (true para música/CARPOOL)
             );
         }
 
@@ -560,9 +720,13 @@
                     isPlaying = true;
                     iconPlay.style.display = 'none';
                     iconPause.style.display = 'block';
+                    // Re-inicia o progresso se estiver no CARPOOL e não estiver rodando
+                    if (isTimeBetween(CARPOOL_START_HOUR, CARPOOL_END_HOUR)) {
+                        startProgressMonitor(0, true);
+                    }
                 }).catch(e => {
                     console.error("Autoplay prevented", e);
-                    trackTitle.innerText = "Click to Play";
+                    trackTitle.innerText = "Clique para Tocar";
                 });
             }
         });
@@ -581,7 +745,6 @@
                     const d = JSON.parse(e.data);
                     if (d.streamTitle) {
                         const parts = d.streamTitle.split(' - ');
-                        // Garante que artist/track não fiquem undefined
                         const artist = parts[0]?.trim() || "Praise FM";
                         const track = parts.slice(1).join(' - ')?.trim() || "";
                         processMetadata(artist, track);
