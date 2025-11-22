@@ -267,8 +267,8 @@
         const IMG_MIDNIGHT_GRACE = "/image/midnightgracelogo.webp";
         const IMG_MORNING_SHOW = "/image/morningshowlogo.webp";
         const IMG_CARPOOL = "/image/praisefmcarpoollogo.webp"; 
-        const IMG_CLASSIC = "/image/praisefmclassiclogo.webp";
-        const IMG_FUTURE_ARTISTS = "/image/praisefmfutureartistslogo.webp";
+        const IMG_CLASSIC = "/image/praisefmclassicslogo.webp"; // Corrigido o nome
+        const IMG_FUTURE_ARTISTS = "/image/praisefmfutureartistslogo.webp"; // Corrigido o nome
         const IMG_POP = "/image/praisefmpoplogo.webp";
         const IMG_SUNDAY_MORNING = "/image/sundaymorninglogo.webp";
 
@@ -295,9 +295,8 @@
         const CARPOOL_START_HOUR = 18; // 6 PM Chicago
         const CARPOOL_END_HOUR = 20;   // 8 PM Chicago
 
-        // --- TIME FUNCTIONS (Simplificada: apenas para o Carpool) ---
+        // --- TIME FUNCTIONS ---
         function isTimeBetween(startHour, endHour) {
-            // Cria um objeto Date baseado no fuso horário de Chicago para cálculo
             const nowChicago = new Date(new Date().toLocaleString("en-US", { timeZone: CHICAGO_TIMEZONE }));
             const start = new Date(nowChicago);
             start.setHours(startHour, 0, 0, 0);
@@ -350,52 +349,52 @@
 
         // --- PROGRESS RING FUNCTION (Program or Music) ---
         function startProgressMonitor(totalDurationMs, isProgramProgress = false) {
-            if (isProgramProgress && progressInterval) return;
-            if (isProgramProgress && !isPlaying) return; 
+            if (isProgramProgress && progressInterval) return; // Não inicia se já estiver rodando um progresso de programa
+            if (isProgramProgress && !isPlaying) return; // Não inicia se não estiver tocando
             let totalDuration;
             let startTimeMs; 
             if (isProgramProgress) {
-                if (progressInterval) clearInterval(progressInterval);
+                if (progressInterval) clearInterval(progressInterval); // Limpa o intervalo anterior
                 const nowChicago = new Date(new Date().toLocaleString("en-US", { timeZone: CHICAGO_TIMEZONE }));
-                // Para programas de dia da semana, o progresso é do início do dia até o final (24h)
+                // Calcula o início do dia para o progresso de 24h (Future Artists / Classics)
                 const startOfProgram = new Date(nowChicago);
                 startOfProgram.setHours(0, 0, 0, 0); // Meia-noite
                 startTimeMs = startOfProgram.getTime();
-                totalDuration = 24 * 60 * 60 * 1000; // 24 horas em ms
+                totalDuration = 24 * 60 * 60 * 1000; // 24 horas em milissegundos
             } else {
                 // LOGICA DA MUSICA
-                if (progressInterval) clearInterval(progressInterval);
-                totalDuration = totalDurationMs > 0 ? totalDurationMs : 210000; // Padrão 3:30 min
+                if (progressInterval) clearInterval(progressInterval); // Limpa o intervalo anterior
+                totalDuration = totalDurationMs > 0 ? totalDurationMs : 210000; // Padrão 3:30 min se não tiver duração
                 startTimeMs = Date.now();
             }
             const startTime = startTimeMs;
             progressInterval = setInterval(() => {
-                if (!isPlaying) return; 
+                if (!isPlaying) return; // Para se não estiver mais tocando
                 let percentage;
                 if (isProgramProgress) {
                     const nowChicago = new Date(new Date().toLocaleString("en-US", { timeZone: CHICAGO_TIMEZONE }));
                     const endOfProgram = new Date(nowChicago);
-                    endOfProgram.setHours(24, 0, 0, 0); // Próxima meia-noite
+                    endOfProgram.setHours(24, 0, 0, 0); // Meia-noite do dia seguinte
                     const currentElapsed = nowChicago.getTime() - startTime;
                     percentage = Math.min(currentElapsed / totalDuration, 1);
                     if (nowChicago.getTime() >= endOfProgram.getTime()) {
-                        percentage = 1; 
-                        clearInterval(progressInterval);
-                        // Opcional: Atualizar o círculo para o programa do novo dia
-                        // setupZeno(); // Isto pode causar loops, melhor deixar para o próximo evento do Zeno
+                        percentage = 1; // Garante que chegue a 100%
+                        clearInterval(progressInterval); // Para o intervalo
+                        progressInterval = null; // Reseta a variável
                     }
                 } else {
                     const elapsed = Date.now() - startTime;
                     percentage = Math.min(elapsed / totalDuration, 1); 
                     if (percentage >= 1) {
-                        clearInterval(progressInterval);
-                        // Opcional: Reiniciar para a próxima música
-                        // setupZeno(); // Mesma consideração acima
+                        clearInterval(progressInterval); // Para o intervalo quando a música termina
+                        progressInterval = null; // Reseta a variável
+                        // Opcional: Reiniciar para a próxima música ou limpar o anel
+                        // programCircle.classList.remove('is-playing'); // Descomente se quiser limpar o anel
                     }
                 }
                 const degrees = percentage * 360;
                 programCircle.style.setProperty('--progress-deg', `${degrees}deg`);
-            }, 1000);
+            }, 1000); // Atualiza a cada segundo
         }
 
         // --- VISUAL UPDATE AND RING LOGIC ---
@@ -423,6 +422,7 @@
                 programCircle.classList.remove('is-playing');
                 programCircle.style.setProperty('--progress-deg', '0deg');
                 if (progressInterval) clearInterval(progressInterval);
+                progressInterval = null; // Garante que a variável seja limpa
             }
         }
 
@@ -456,26 +456,23 @@
             let finalRingStatus = true; 
             let isCarpoolTime = isTimeBetween(CARPOOL_START_HOUR, CARPOOL_END_HOUR);
 
-            // 0. FORCA O ESTADO CARPOOL (6 PM - 8 PM Chicago)
-            if (isCarpoolTime) {
+            // 0. VERIFICAÇÃO DE PROGRAMAS POR DIA DA SEMANA
+            if (isMondayWedFri()) {
+                finalCircleImg = IMG_FUTURE_ARTISTS;
+                finalCircleName = "Praise FM Future Artists";
+                finalRingStatus = true;
+                if (isPlaying) startProgressMonitor(0, true); // Inicia progresso do dia (24h)
+            } else if (isTuesdayThuSat()) {
+                finalCircleImg = IMG_CLASSIC;
+                finalCircleName = "Praise FM Classics";
+                finalRingStatus = true;
+                if (isPlaying) startProgressMonitor(0, true); // Inicia progresso do dia (24h)
+            } else if (isCarpoolTime) { // 0.1. FORCA O ESTADO CARPOOL (6 PM - 8 PM Chicago)
                 finalCircleImg = IMG_CARPOOL;
                 finalCircleName = "Carpool";
                 finalRingStatus = true; 
-                if (isPlaying) startProgressMonitor(0, true); 
-            } else {
-                // 0.1 VERIFICAÇÃO DE PROGRAMAS POR DIA DA SEMANA
-                if (isMondayWedFri()) {
-                    finalCircleImg = IMG_FUTURE_ARTISTS;
-                    finalCircleName = "Praise FM Future Artists";
-                    finalRingStatus = true;
-                    if (isPlaying) startProgressMonitor(0, true); // Inicia progresso do dia
-                } else if (isTuesdayThuSat()) {
-                    finalCircleImg = IMG_CLASSIC;
-                    finalCircleName = "Praise FM Classics";
-                    finalRingStatus = true;
-                    if (isPlaying) startProgressMonitor(0, true); // Inicia progresso do dia
-                }
-            }
+                if (isPlaying) startProgressMonitor(0, true); // Inicia progresso do Carpool (2h)
+            } 
 
             // 1. CHECAGEM DE COMERCIAIS E IDENTIFICADORES
             if (trackLow.includes("commercial") || trackLow.includes("ad break")) {
@@ -488,32 +485,10 @@
             }
 
             // 2. CHECAGEM DE OUTROS PROGRAMAS (Apenas se não for Carpool ou os de dia da semana)
-            if (!isCarpoolTime && !isMondayWedFri() && !isTuesdayThuSat()) { 
-                const programMap = {
-                    "midday": [IMG_MIDDAY_GRACE, "Midday Grace"],
-                    "midnight": [IMG_MIDNIGHT_GRACE, "Midnight Grace"],
-                    "morning show": [IMG_MORNING_SHOW, "The Morning Show"],
-                    "classic": [IMG_CLASSIC, "Praise FM Classic"],
-                    "future": [IMG_FUTURE_ARTISTS, "Future Artists"],
-                    "pop": [IMG_POP, "Praise FM Pop"],
-                    "sunday": [IMG_SUNDAY_MORNING, "Sunday Morning"]
-                };
-                let programMatch = null;
-                for (const key in programMap) {
-                    if (artistLow.includes(key) || trackLow.includes(key)) {
-                        programMatch = programMap[key]; 
-                        break;
-                    }
-                }
-                if (programMatch) {
-                    const [img, name] = programMatch;
-                    updateDisplay(img, name, img, name, "Praise FM", false); 
-                    updateRecents(name, "Praise FM", img);
-                    return;
-                }
-            }
+            // Esta verificação foi removida pois os programas fixos agora são baseados em dia/hora
+            // ou quando não se encaixam em nenhum dos acima e são identificados por metadados.
 
-            // 3. SE CHEGAR AQUI, É MÚSICA.
+            // 3. SE CHEGAR AQUI, É MÚSICA (ou um identificador não detectado como "praise fm - praise fm").
             // A. Busca Detalhes da Música (Capa/Duração)
             try {
                 const res = await fetch(`https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${LASTFM_API_KEY}&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}&format=json`);
@@ -523,7 +498,7 @@
                         const img = data.track.album.image.find(i => i.size === 'extralarge')['#text'];
                         if (img) {
                             currentSongImg = img;
-                            // O círculo não muda para a capa da música se for um programa fixo
+                            // O círculo não muda para a capa da música se for um programa fixo (Future Artists, Classics, Carpool)
                         }
                     }
                     if (data.track.duration) {
@@ -533,9 +508,10 @@
             } catch(e) { console.log("LastFM Error", e); }
 
             // B. Lógica do Anel de Progresso (Se NÃO for CARPOOL e NÃO for programa de dia da semana)
+            // Se for música e não for um dos programas fixos (Future Artists, Classics, Carpool), usa o progresso da música
             if (!isCarpoolTime && !isMondayWedFri() && !isTuesdayThuSat() && isPlaying) {
                  programCircle.classList.add('is-playing');
-                 startProgressMonitor(songDuration, false); 
+                 startProgressMonitor(songDuration, false); // Inicia progresso da música
             }
 
             // C. Atualiza Recentes
@@ -543,9 +519,9 @@
 
             // D. Chamada Final
             updateDisplay(
-                finalCircleImg, finalCircleName,   // Círculo
+                finalCircleImg, finalCircleName,   // Círculo (Programa ou Logo Padrão)
                 currentSongImg, track, artist,     // Card Música
-                finalRingStatus, songDuration      // Anel
+                finalRingStatus, songDuration      // Anel (Status e Duração)
             );
         }
 
@@ -564,17 +540,23 @@
                 isPlaying = false;
                 iconPlay.style.display = 'block';
                 iconPause.style.display = 'none';
+                // Para o anel se estiver pausado
+                programCircle.classList.remove('is-playing');
+                if (progressInterval) clearInterval(progressInterval);
+                progressInterval = null;
             } else {
                 if (audio.src !== STREAM_URL) audio.src = STREAM_URL;
                 audio.play().then(() => {
                     isPlaying = true;
                     iconPlay.style.display = 'none';
                     iconPause.style.display = 'block';
-                    // Reinicia progresso se estiver em CARPOOL
-                    if (isTimeBetween(CARPOOL_START_HOUR, CARPOOL_END_HOUR)) {
-                        startProgressMonitor(0, true);
-                    } else if (isMondayWedFri() || isTuesdayThuSat()) {
-                        startProgressMonitor(0, true); // Reinicia progresso do dia
+                    // Reinicia progresso se estiver em um dos programas fixos
+                    if (isCarpoolTime) {
+                        startProgressMonitor(0, true); // Carpool (2h)
+                    } else if (isMondayWedFri()) {
+                        startProgressMonitor(0, true); // Future Artists (24h)
+                    } else if (isTuesdayThuSat()) {
+                        startProgressMonitor(0, true); // Classics (24h)
                     }
                 }).catch(e => {
                     console.error("Autoplay prevented", e);
