@@ -331,6 +331,7 @@
 
         // --- TIME FUNCTIONS (Simplificada: apenas para o Carpool) ---
         function isTimeBetween(startHour, endHour) {
+            // Cria um objeto Date baseado no fuso horário de Chicago para cálculo
             const nowChicago = new Date(new Date().toLocaleString("en-US", { timeZone: CHICAGO_TIMEZONE }));
             
             const start = new Date(nowChicago);
@@ -360,7 +361,7 @@
             const recentsList = document.getElementById('recentsList');
             recentsList.innerHTML = '';
 
-            // Skip the current playing song (index 0)
+            // Pula a música atual (index 0)
             for (let i = 1; i < RECENTLY_PLAYED.length; i++) {
                 const item = RECENTLY_PLAYED[i];
                 const itemHtml = `
@@ -400,7 +401,7 @@
 
                 totalDuration = (CARPOOL_END_HOUR - CARPOOL_START_HOUR) * 60 * 60 * 1000; 
             } else {
-                // MUSIC LOGIC
+                // LOGICA DA MUSICA
                 if (progressInterval) clearInterval(progressInterval);
                 totalDuration = totalDurationMs > 0 ? totalDurationMs : 210000; 
                 startTimeMs = Date.now();
@@ -503,7 +504,7 @@
 
             let isCarpoolTime = isTimeBetween(CARPOOL_START_HOUR, CARPOOL_END_HOUR);
 
-            // 0. FORCE CARPOOL STATE (6 PM - 8 PM Chicago)
+            // 0. FORCA O ESTADO CARPOOL (6 PM - 8 PM Chicago)
             if (isCarpoolTime) {
                 finalCircleImg = IMG_CARPOOL;
                 finalCircleName = "Carpool";
@@ -511,7 +512,7 @@
                 if (isPlaying) startProgressMonitor(0, true); 
             } 
 
-            // 1. COMMERCIALS AND IDENTIFIERS CHECK
+            // 1. CHECAGEM DE COMERCIAIS E IDENTIFICADORES
             if (trackLow.includes("commercial") || trackLow.includes("ad break")) {
                 updateDisplay(IMG_COMMERCIAL, "Commercial Break", IMG_COMMERCIAL, "Commercial Break", "Praise FM", false);
                 return;
@@ -522,7 +523,7 @@
             }
 
 
-            // 2. OTHER NON-PERSISTENT PROGRAMS CHECK (Only if not in Carpool Time)
+            // 2. CHECAGEM DE OUTROS PROGRAMAS (Apenas se não for Carpool)
             if (!isCarpoolTime) { 
                 const programMap = {
                     "midday": [IMG_MIDDAY_GRACE, "Midday Grace"],
@@ -550,9 +551,9 @@
                 }
             }
 
-            // 3. IF WE REACH HERE, IT IS MUSIC.
+            // 3. SE CHEGAR AQUI, É MÚSICA.
 
-            // A. Fetch Music Details (Cover/Duration)
+            // A. Busca Detalhes da Música (Capa/Duração)
             try {
                 const res = await fetch(`https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${LASTFM_API_KEY}&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}&format=json`);
                 const data = await res.json();
@@ -571,20 +572,20 @@
                 }
             } catch(e) { console.log("LastFM Error", e); }
             
-            // B. Music Ring Logic (If NOT CARPOOL)
+            // B. Lógica do Anel de Progresso (Se NÃO for CARPOOL)
             if (!isCarpoolTime && isPlaying) {
                  programCircle.classList.add('is-playing');
                  startProgressMonitor(songDuration, false); 
             }
 
-            // C. Update Recents
+            // C. Atualiza Recentes
             updateRecents(track, artist, currentSongImg);
 
-            // D. Final Call
+            // D. Chamada Final
             updateDisplay(
-                finalCircleImg, finalCircleName,   // Circle
-                currentSongImg, track, artist,     // Music Card
-                finalRingStatus, songDuration      // Ring
+                finalCircleImg, finalCircleName,   // Círculo
+                currentSongImg, track, artist,     // Card Música
+                finalRingStatus, songDuration      // Anel
             );
         }
 
@@ -609,7 +610,7 @@
                     isPlaying = true;
                     iconPlay.style.display = 'none';
                     iconPause.style.display = 'block';
-                    // Restart progress if in CARPOOL
+                    // Reinicia progresso se estiver em CARPOOL
                     if (isTimeBetween(CARPOOL_START_HOUR, CARPOOL_END_HOUR)) {
                         startProgressMonitor(0, true);
                     }
@@ -642,12 +643,11 @@
             };
         }
 
-        function skip(sec) {} // Function remains empty as skipping in live stream is not typical
+        function skip(sec) {} // A função permanece vazia pois pular (skip) em stream ao vivo não é padrão
 
-        // Initialization
+        // Inicialização
         setupZeno();
-        // REMOVIDO: setInterval(updateChicagoTime, 1000);
-        // REMOVIDO: updateChicagoTime(); 
+        
     </script>
 </body>
 </html>
