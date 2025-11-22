@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Praise FM - Live</title>
+    <title>Praise FM • Live</title>
     <meta name="theme-color" content="#ff4d00">
     <link rel="icon" type="image/png" sizes="32x32" href="./image/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="./image/apple-touch-icon.png">
@@ -14,19 +14,19 @@
             --grey: #555;
             --light-grey: #888;
             --bg: #fff;
-            --border-color: #ddd;
+            --border: #ddd;
         }
         * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; }
-        body { background:var(--bg); color:#000; min-height:100vh; padding-bottom:120px; display:flex; flex-direction:column; align-items:center; }
-        
+        body { background:var(--bg); color:#000; min-height:100vh; padding-bottom:180px; display:flex; flex-direction:column; align-items:center; }
+
         .container { width:100%; max-width:800px; padding:20px; text-align:center; }
-        .station-title { font-size:32px; font-weight:900; color:var(--orange); margin:20px 0 4px; }
-        .station-subtitle { font-size:17px; color:var(--grey); margin-bottom:30px; }
+        .station-title { font-size:36px; font-weight:900; color:var(--orange); margin:20px 0 4px; }
+        .station-subtitle { font-size:18px; color:var(--grey); margin-bottom:30px; font-weight:600; }
 
         .circle-container { 
-            width:min(80vw, 320px); 
-            height:min(80vw, 320px); 
-            margin:0 auto 10px; 
+            width:min(85vw, 340px); 
+            height:min(85vw, 340px); 
+            margin:0 auto 20px; 
             position:relative; 
         }
         .circle-border {
@@ -36,69 +36,85 @@
             -webkit-mask:radial-gradient(transparent 68%, black 70%);
         }
         .circle-img {
-            position:absolute; inset:6px; border-radius:50%; overflow:hidden; background:#000;
+            position:absolute; inset:8px; border-radius:50%; overflow:hidden; background:#000;
+            border: 4px solid white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
         .circle-img img { width:100%; height:100%; object-fit:cover; }
 
-        .program-name-current { font-size:20px; font-weight:700; margin-bottom:20px; color:var(--dark); }
-
         .live-badge {
-            display:inline-flex; align-items:center; gap:8px; 
-            color:var(--orange); font-weight:700; font-size:14px; text-transform:uppercase; letter-spacing:1px;
-            margin-bottom:12px;
+            display:inline-flex; align-items:center; gap:10px; 
+            color:var(--orange); font-weight:800; font-size:15px; text-transform:uppercase; letter-spacing:1.5px;
+            margin:15px 0; padding:8px 20px; background:rgba(255,77,0,0.1); border-radius:50px; border:1px solid rgba(255,77,0,0.3);
         }
-        .live-dot { width:9px; height:9px; background:var(--orange); border-radius:50%; animation:pulse 2s infinite; }
+        .live-dot { width:11px; height:11px; background:var(--orange); border-radius:50%; animation:pulse 1.8s infinite; box-shadow:0 0 15px var(--orange); }
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
-        .program-title { font-size:28px; font-weight:800; margin:10px 0; line-height:1.2; }
+        .program-title { 
+            font-size:30px; font-weight:900; margin:10px 0 20px; line-height:1.2; color:var(--dark);
+            text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
 
         .play-button {
-            margin:40px auto; width:200px; height:56px; background:var(--orange); color:#fff;
-            border:none; border-radius:28px; font-size:18px; font-weight:700; cursor:pointer;
-            display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 6px 20px rgba(255,77,0,.3);
-            transition: transform 0.2s;
+            margin:40px auto; width:240px; height:70px; background:var(--orange); color:#fff;
+            border:none; border-radius:35px; font-size:22px; font-weight:800; cursor:pointer;
+            display:flex; align-items:center; justify-content:center; gap:12px; 
+            box-shadow:0 10px 30px rgba(255,77,0,.4); transition:all .3s;
         }
-        .play-button:hover { transform: scale(1.05); }
-        .play-button svg { width:24px; height:24px; fill:#fff; margin-left:10px; }
+        .play-button:hover { transform:scale(1.08); box-shadow:0 15px 40px rgba(255,77,0,.5); }
 
-        .upnext {
-            background:#f8f8f8; border-radius:12px; padding:20px; margin:40px 0; text-align:left;
-        }
-        .upnext-header { font-size:13px; font-weight:700; color:var(--grey); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; }
-        .upnext-items { display:flex; gap:20px; flex-wrap:wrap; }
-        .upnext-item { flex:1; min-width:200px; display:flex; align-items:center; gap:16px; }
-        .upnext-img { width:60px; height:60px; border-radius:8px; object-fit:cover; background:#eee; }
-
-        .recently { margin-top:40px; text-align:left; }
-        .recently-header { font-size:13px; font-weight:700; color:var(--grey); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; }
-        .recent-item { display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--border-color); }
-        .recent-cover { width:48px; height:48px; border-radius:6px; object-fit:cover; background:#eee; }
-        .recent-title { font-weight:600; font-size:15px; }
-        .recent-artist { font-size:13px; color:var(--light-grey); }
-
+        /* MINI PLAYER GIGANTE E LINDO */
         .mini-player {
-            position:fixed; bottom:0; left:0; right:0; background:#fff; border-top:1px solid var(--border-color);
-            box-shadow:0 -4px 20px rgba(0,0,0,.1); padding:12px 16px; display:none; align-items:center; gap:12px; z-index:999;
+            position:fixed; bottom:0; left:0; right:0; background:#fff; 
+            border-top:4px solid var(--orange); box-shadow:0 -10px 40px rgba(0,0,0,.15);
+            padding:18px 20px; display:none; align-items:center; gap:18px; z-index:999;
+            height:110px;
         }
-        .mini-player.show { display:flex; }
-        .mini-cover { width:56px; height:56px; border-radius:8px; object-fit:cover; background:#eee; }
-        .mini-info { flex:1; min-width:0; }
-        .mini-title { font-weight:700; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-        .mini-artist { font-size:13px; color:var(--grey); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-        .mini-controls { display:flex; align-items:center; gap:16px; }
-        .mini-btn { background:none; border:none; cursor:pointer; padding:8px; }
-        .mini-btn svg { width:24px; height:24px; fill:var(--grey); }
-        .mini-play { background:var(--orange); width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; box-shadow:0 2px 10px rgba(255,77,0,.3); }
-        .mini-play svg { width:20px; height:20px; fill:#fff; }
-        .mini-volume { display:flex; align-items:center; gap:4px; width:100px; }
-        .mini-volume-bar { flex:1; height:4px; background:#ddd; border-radius:2px; position:relative; cursor:pointer; }
-        .mini-volume-fill { height:100%; background:var(--orange); border-radius:2px; width:80%; }
+        .mini-player.show { display:flex; animation:slideUp 0.5s ease; }
+        @keyframes slideUp { from { transform:translateY(100%) } to { transform:translateY(0) } }
 
-        @media (max-width:480px) {
-            .circle-container { width:260px; height:260px; }
-            .program-title { font-size:24px; }
-            .mini-controls { gap:10px; }
-            .mini-volume { width:80px; }
+        .mini-cover { 
+            width:90px; height:90px; border-radius:16px; object-fit:cover; 
+            box-shadow:0 8px 25px rgba(0,0,0,0.3); flex-shrink:0;
+        }
+        .mini-info { flex:1; min-width:0; text-align:left; }
+        .mini-title { 
+            font-weight:900; font-size:18px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; 
+            color:var(--dark); margin-bottom:4px;
+        }
+        .mini-artist { 
+            font-size:15px; color:var(--orange); font-weight:700; 
+            white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+        }
+
+        .mini-controls { display:flex; align-items:center; gap:20px; }
+        .mini-play {
+            background:var(--orange); width:64px; height:64px; border-radius:50%; 
+            display:flex; align-items:center; justify-content:center; border:none; cursor:pointer;
+            box-shadow:0 8px 25px rgba(255,77,0,0.5);
+        }
+        .mini-play svg { width:28px; height:28px; fill:#fff; }
+
+        /* Recently Played com capas reais */
+        .recent-item {
+            display:flex; align-items:center; gap:16px; padding:16px 0; 
+            border-bottom:1px solid #eee; transition:all .2s;
+        }
+        .recent-item:hover { background:#f9f9f9; border-radius:12px; padding-left:10px; }
+        .recent-cover { 
+            width:64px; height:64px; border-radius:12px; object-fit:cover; 
+            box-shadow:0 4px 15px rgba(0,0,0,0.2);
+        }
+        .recent-title { font-weight:700; font-size:16px; }
+        .recent-artist { font-size:14px; color:var(--grey); margin-top:2px; }
+
+        .upnext, .recently {
+            background:#f8f8f8; border-radius:16px; padding:24px; margin:40px 0; text-align:left;
+            box-shadow:0 4px 20px rgba(0,0,0,0.05);
+        }
+        .upnext-header, .recently-header {
+            font-size:14px; font-weight:800; color:var(--orange); text-transform:uppercase; 
+            letter-spacing:1.5px; margin-bottom:16px;
         }
     </style>
 </head>
@@ -106,7 +122,7 @@
 
 <div class="container">
     <h1 class="station-title">Praise FM</h1>
-    <p class="station-subtitle">Praise & Worship</p>
+    <p class="station-subtitle">Praise & Worship • 24h com você</p>
 
     <div class="circle-container">
         <div class="circle-border" id="progressRing"></div>
@@ -114,42 +130,41 @@
             <img id="mainImg" src="/image/logopraisefm.webp" alt="Now Playing">
         </div>
     </div>
-    <div class="program-name-current" id="currentProgramName">Carregando...</div>
 
-    <div class="live-badge"><div class="live-dot"></div> LIVE</div>
+    <div class="live-badge"><div class="live-dot"></div> AO VIVO</div>
     <h2 class="program-title" id="programTitle">Praise FM</h2>
 
     <button class="play-button" id="bigPlay">
-        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
         Play
     </button>
 
     <div class="upnext">
-        <div class="upnext-header">Up next</div>
-        <div class="upnext-items">
-            <div class="upnext-item" id="upnext1">
-                <img id="upnextImg1" src="/image/middaygracelogo.webp" class="upnext-img">
+        <div class="upnext-header">Em breve</div>
+        <div class="upnext-items" style="display:flex;gap:20px;flex-wrap:wrap;">
+            <div class="upnext-item" id="upnext1" style="flex:1;min-width:280px;display:flex;gap:16px;align-items:center;">
+                <img id="upnextImg1" src="/image/middaygracelogo.webp" style="width:70px;height:70px;border-radius:14px;">
                 <div>
-                    <div class="upnext-title" id="upnextTitle1">-</div>
-                    <div class="upnext-time" id="upnextTime1">-</div>
+                    <div class="upnext-title" id="upnextTitle1" style="font-weight:800;font-size:17px;">-</div>
+                    <div id="upnextTime1" style="color:var(--orange);font-weight:600;">-</div>
                 </div>
             </div>
-            <div class="upnext-item" id="upnext2">
-                <img id="upnextImg2" src="/image/middaygracelogo.webp" class="upnext-img">
+            <div class="upnext-item" id="upnext2" style="flex:1;min-width:280px;display:flex;gap:16px;align-items:center;">
+                <img id="upnextImg2" src="/image/middaygracelogo.webp" style="width:70px;height:70px;border-radius:14px;">
                 <div>
-                    <div class="upnext-title" id="upnextTitle2">-</div>
-                    <div class="upnext-time" id="upnextTime2">-</div>
+                    <div class="upnext-title" id="upnextTitle2" style="font-weight:800;font-size:17px;">-</div>
+                    <div id="upnextTime2" style="color:var(--orange);font-weight:600;">-</div>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="recently">
-        <div class="recently-header">Recently played</div>
+        <div class="recently-header">Tocadas recentemente</div>
         <div id="recentList"></div>
     </div>
 </div>
 
+<!-- MINI PLAYER GIGANTE -->
 <div class="mini-player" id="miniPlayer">
     <img id="miniImg" src="/image/logopraisefm.webp" class="mini-cover">
     <div class="mini-info">
@@ -157,23 +172,9 @@
         <div class="mini-artist" id="miniArtist">Praise & Worship</div>
     </div>
     <div class="mini-controls">
-        <button class="mini-btn" id="miniRewind">
-            <svg viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg>
-        </button>
         <button class="mini-play" id="miniPlayPause">
-            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            Play
         </button>
-        <button class="mini-btn" id="miniForward">
-            <svg viewBox="0 0 24 24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg>
-        </button>
-        <div class="mini-volume">
-            <button class="mini-btn" id="miniVolumeIcon">
-                <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
-            </button>
-            <div class="mini-volume-bar" id="miniVolumeBar">
-                <div class="mini-volume-fill" id="miniVolumeFill"></div>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -194,10 +195,8 @@
         sunday: "/image/sundaymorninglogo.webp"
     };
 
-    // SCHEDULE CORRIGIDO E ORDENADO (sem conflitos!)
     const schedule = [
         {start:"07:00", end:"12:00", name:"Sunday With Christ", img:images.sunday, days:[0]},
-
         {start:"00:00", end:"06:00", name:"Midnight Grace", img:images.midnight},
         {start:"06:00", end:"07:00", name:"Music Only", img:images.default},
         {start:"07:00", end:"12:00", name:"Morning Show With Stancy Campbell", img:images.morning},
@@ -205,12 +204,8 @@
         {start:"12:00", end:"18:00", name:"Midday Grace", img:images.midday},
         {start:"18:00", end:"20:00", name:"Praise FM Carpool", img:images.carpool, days:[1,2,3,4,5]},
         {start:"22:00", end:"23:59", name:"Praise FM POP", img:images.pop},
-
-        // Seg/Qua/Sex
         {start:"12:00", end:"13:00", name:"Praise FM Future Artists", img:images.future, days:[1,3,5]},
         {start:"20:00", end:"21:00", name:"Praise FM Future Artists (Replay)", img:images.future, days:[1,3,5]},
-
-        // Ter/Qui/Sáb
         {start:"12:00", end:"13:00", name:"Praise FM Classics", img:images.classic, days:[2,4,6]},
         {start:"20:00", end:"21:00", name:"Praise FM Classics (Replay)", img:images.classic, days:[2,4,6]}
     ];
@@ -219,39 +214,21 @@
     function timeToMins(t) { const [h,m]=t.split(":").map(Number); return h*60+m; }
 
     function getCurrentAndNext() {
-        const now = getChicagoTime();
-        const day = now.getDay();
-        const mins = timeToMins(now.toTimeString().slice(0,5));
-
-        let current = null;
-        let next = [];
+        const now = getChicagoTime(), day = now.getDay(), mins = timeToMins(now.toTimeString().slice(0,5));
+        let current = null, next = [];
 
         for (const p of schedule) {
             if (p.days && !p.days.includes(day)) continue;
-            const startMins = timeToMins(p.start);
-            const endMins = timeToMins(p.end);
-            const end = endMins < startMins ? endMins + 1440 : endMins;
-            const currentMins = mins + (mins < startMins ? 1440 : 0);
-
-            if (currentMins >= startMins && currentMins < end) {
-                if (!current || endMins > timeToMins(current.end)) {
-                    current = p;
-                }
-            }
+            const s = timeToMins(p.start), e = timeToMins(p.end);
+            if (mins >= s && mins < e) current = p;
         }
 
-        // Próximos dois programas
         for (const p of schedule) {
-            if (p.days && !p.days.includes(day) && !p.days.includes((day+1)%7)) continue;
+            if (next.length >= 2) break;
             const s = timeToMins(p.start);
-            if (s > mins || (s < mins && next.length < 2)) {
-                if (next.length < 2) next.push(p);
-            }
+            if ((p.days ? p.days.includes(day) : true) && s > mins) next.push(p);
         }
-        if (next.length < 2) {
-            const tomorrow = schedule.filter(p => !p.days || p.days.includes((day+1)%7));
-            next = next.concat(tomorrow.slice(0, 2-next.length));
-        }
+        if (next.length < 2) next.push(...schedule.filter(p => !p.days || p.days.includes((day+1)%7)).slice(0,2-next.length));
 
         return {
             current: current || {name:"Praise FM", img:images.default},
@@ -260,53 +237,44 @@
         };
     }
 
-    let currentTrack = {title:"", artist:""};
+    let currentTrack = {title:"", artist:"", cover:""};
     const recents = [];
 
     function updateDisplay() {
         const {current, next1, next2} = getCurrentAndNext();
-        const isMusic = currentTrack.title && !currentTrack.title.toLowerCase().includes("commercial") && !currentTrack.title.toLowerCase().includes("ad");
+        const isMusic = currentTrack.title && !currentTrack.title.toLowerCase().includes("commercial");
 
-        // Imagens principais
         document.querySelectorAll("#mainImg, #miniImg").forEach(el => el.src = current.img);
-        document.getElementById("upnextImg1").src = next1.img || images.default;
-        document.getElementById("upnextImg2").src = next2.img || images.default;
-
-        // Textos
         document.getElementById("programTitle").textContent = current.name;
-        document.getElementById("currentProgramName").textContent = current.name;
-
-        // Mini player melhorado
         document.getElementById("miniTitle").textContent = isMusic ? currentTrack.title : current.name;
         document.getElementById("miniArtist").textContent = isMusic ? currentTrack.artist : "Praise & Worship";
 
-        // Up next
-        document.getElementById("upnextTitle1").textContent = next1.name || "-";
-        document.getElementById("upnextTime1").textContent = (next1.start || "--:--") + " Chicago";
-        document.getElementById("upnextTitle2").textContent = next2.name || "-";
-        document.getElementById("upnextTime2").textContent = (next2.start || "--:--") + " Chicago";
+        document.getElementById("upnextImg1").src = next1.img;
+        document.getElementById("upnextTitle1").textContent = next1.name;
+        document.getElementById("upnextTime1").textContent = next1.start + " Chicago";
 
-        // Anel de progresso
-        if (current.start && current.end) {
-            const s = timeToMins(current.start);
-            const e = timeToMins(current.end);
-            const n = timeToMins(getChicagoTime().toTimeString().slice(0,5));
-            let pct = ((n - s + 1440) % 1440) / ((e - s + 1440) % 1440) * 100;
+        document.getElementById("upnextImg2").src = next2.img;
+        document.getElementById("upnextTitle2").textContent = next2.name;
+        document.getElementById("upnextTime2").textContent = next2.start + " Chicago";
+
+        if (current.start) {
+            const s = timeToMins(current.start), e = timeToMins(current.end), n = timeToMins(getChicagoTime().toTimeString().slice(0,5));
+            const pct = ((n - s + 1440) % 1440) / ((e - s + 1440) % 1440) * 100;
             document.getElementById("progressRing").style.background = `conic-gradient(var(--orange) ${pct}%, transparent ${pct}%)`;
         }
     }
 
-    function processMetadata(artist, title) {
+    function processMetadata(artist, title, cover = null) {
         if (title.toLowerCase().includes("commercial") || title.toLowerCase().includes("ad")) {
-            currentTrack = {title:"", artist:""};
+            currentTrack = {title:"", artist:"", cover:""};
         } else {
-            currentTrack = {title, artist};
-            if (title && recents.length < 6 && !recents.some(r => r.title === title && r.artist === artist)) {
-                recents.unshift({title, artist});
-                if (recents.length > 6) recents.pop();
+            currentTrack = {title, artist, cover: cover || images.default};
+            if (title && !recents.find(r => r.title === title && r.artist === artist)) {
+                recents.unshift(currentTrack);
+                if (recents.length > 8) recents.pop();
                 document.getElementById("recentList").innerHTML = recents.map(t => `
                     <div class="recent-item">
-                        <img src="${images.default}" class="recent-cover">
+                        <img src="${t.cover}" class="recent-cover" onerror="this.src='${images.default}'">
                         <div>
                             <div class="recent-title">${t.title}</div>
                             <div class="recent-artist">${t.artist}</div>
@@ -318,7 +286,6 @@
         updateDisplay();
     }
 
-    // Metadata do Zeno
     const es = new EventSource("https://api.zeno.fm/mounts/metadata/subscribe/hvwifp8ezc6tv");
     es.onmessage = e => {
         try {
@@ -327,40 +294,27 @@
                 const parts = d.streamTitle.split(" - ");
                 const artist = parts[0] || "";
                 const title = parts.slice(1).join(" - ") || "";
-                processMetadata(artist, title);
+                const cover = d.artworkUrl || null; // Zeno às vezes manda capa!
+                processMetadata(artist, title, cover);
             }
-        } catch(err) {}
+        } catch{}
     };
 
-    // Controles
     function togglePlay() {
-        if (audio.paused) {
-            audio.play();
-            document.getElementById("miniPlayer").classList.add("show");
-        } else {
-            audio.pause();
-        }
+        if (audio.paused) audio.play(); else audio.pause();
         const playing = !audio.paused;
-        const playSvg = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
-        const pauseSvg = '<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
+        document.getElementById("miniPlayer").classList.toggle("show", playing);
 
-        document.querySelector("#bigPlay").innerHTML = playing ? pauseSvg + ' Pause' : playSvg + ' Play';
+        const playSvg = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="white"/></svg>';
+        const pauseSvg = '<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" fill="white"/></svg>';
+
+        document.getElementById("bigPlay").innerHTML = playing ? pauseSvg + ' Pausar' : playSvg + ' Tocar';
         document.getElementById("miniPlayPause").innerHTML = playing ? pauseSvg : playSvg;
     }
 
     document.getElementById("bigPlay").onclick = togglePlay;
     document.getElementById("miniPlayPause").onclick = togglePlay;
-    document.getElementById("miniRewind").onclick = () => audio.currentTime = Math.max(0, audio.currentTime - 15);
-    document.getElementById("miniForward").onclick = () => audio.currentTime += 15;
 
-    document.getElementById("miniVolumeBar").onclick = e => {
-        const rect = e.currentTarget.getBoundingClientRect();
-        const percent = (e.clientX - rect.left) / rect.width;
-        audio.volume = Math.max(0, Math.min(1, percent));
-        document.getElementById("miniVolumeFill").style.width = (audio.volume * 100) + '%';
-    };
-
-    // Atualização automática
     setInterval(updateDisplay, 8000);
     updateDisplay();
 </script>
