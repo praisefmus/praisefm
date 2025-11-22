@@ -1,124 +1,476 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport"
-     content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>Praise FM</title>
-  <style>
-    :root {
-      --accent: #ff4d00;
-      --bg: #0b0b0b;
-      --border: #222;
-      --panel: #111;
-      --muted: #aaa;
-    }
-    * { box-sizing: border-box; }
-    body { margin: 0; padding-bottom: 160px; background: var(--bg); color: #fff; font-family: sans-serif; }
-    .container { max-width: 900px; margin: 0 auto; padding: 20px; text-align: center; }
-    .program-circle { position: relative; width: 300px; height: 300px; margin: 0 auto; border-radius: 50%; border: 2px solid var(--border); overflow: hidden; background: var(--panel); }
-    .program-img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; z-index: 2; position: relative; }
-    .progress-ring { position: absolute; inset: 0; transform: rotate(-90deg); }
-    .progress-ring circle { fill: transparent; stroke: var(--accent); stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset .6s linear; }
-    #programTitle { margin-top: 16px; font-size: 22px; font-weight: bold; }
-    #programHost { font-size: 14px; color: var(--muted); margin-top: 4px; }
-    #programTime { color: var(--accent); margin-top: 8px; }
-    .nowplaying { margin-top: 12px; width: 90%; overflow: hidden; margin-left: auto; margin-right: auto; }
-    .marquee { display: inline-block; white-space: nowrap; animation: scroll 10s linear infinite; }
-    @keyframes scroll { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
-    #playBtn { margin-top: 16px; padding: 12px 24px; background: var(--accent); border: none; border-radius: 50px; color: #fff; font-size: 16px; cursor: pointer; }
-    #recently { margin-top: 24px; width: 90%; margin-left: auto; margin-right: auto; text-align: left; }
-    .recent-item { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--border); }
-    .rec-cover { width: 48px; height: 48px; object-fit: cover; border-radius: 6px; }
-    .rec-meta { font-size: 14px; }
-    .rec-artist { font-size: 12px; color: var(--muted); }
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Praise FM — Praise & Worship</title>
+<style>
+:root{
+  --accent:#ff4d00;
+  --bg:#070707;
+  --muted:#bfbfbf;
+  --panel:#0e0e0e;
+  --border:#232323;
+}
+*{box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+body{margin:0;background:var(--bg);color:#fff;padding:18px 12px 160px}
+.container{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:18px}
 
-    /* Bottom player */
-    #bottomPlayer { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: 800px; background: var(--panel); border: 1px solid var(--border); border-radius: 12px; display: flex; align-items: center; padding: 10px; opacity: 0; pointer-events: none; transition: opacity .3s; }
-    #bottomPlayer.active { opacity: 1; pointer-events: auto; }
-    .bp-cover { width: 56px; height: 56px; object-fit: cover; border-radius: 8px; }
-    .bp-meta { margin-left: 12px; text-align: left; }
-    .bp-title { font-weight: bold; }
-    .bp-sub { font-size: 12px; color: var(--muted); }
+/* Header */
+.station{ text-align:center }
+.station h1{ margin:0;font-size:28px;color:var(--accent);font-weight:800 }
+.station p{ margin:4px 0 0;color:var(--muted) }
 
-  </style>
-  <body>
-  <div class="container">
-    <div class="station-title">Praise FM</div>
-    <div class="station-desc">Praise & Worship</div>
+/* Program circle */
+.program-area{display:flex;flex-direction:column;align-items:center;gap:10px;width:100%}
+.program-circle{position:relative;border-radius:50%;overflow:hidden;border:2px solid var(--border);background:linear-gradient(180deg,#0b0b0b,#101010);box-shadow:0 18px 40px rgba(0,0,0,0.6)}
+.program-img{width:100%;height:100%;object-fit:cover;display:block;}
 
-    <div class="program-circle">
-      <svg class="progress-ring" width="300" height="300">
-        <circle id="prog" cx="150" cy="150" r="140" />
+/* progress ring uses SVG overlay */
+.progress-ring{position:absolute;inset:0;transform:rotate(-90deg);pointer-events:none}
+
+/* program meta */
+.program-meta{text-align:center}
+.program-time{color:var(--accent);font-weight:700;font-size:13px}
+.program-title{font-weight:800;font-size:22px}
+.program-host{color:var(--muted);font-size:13px;margin-top:4px}
+
+/* now playing (top area) - shows but main now playing in bottom player */
+.nowplaying{width:92%;overflow:hidden;margin-top:6px}
+.nowplaying .marquee{display:inline-block;white-space:nowrap;animation:marquee 14s linear infinite}
+@keyframes marquee{from{transform:translateX(100%)}to{transform:translateX(-100%)}}
+
+/* play button */
+.play-btn{background:var(--accent);border:none;color:#fff;padding:12px 20px;border-radius:999px;font-weight:800;cursor:pointer;box-shadow:0 10px 24px rgba(255,77,0,0.18)}
+
+/* recently (numbered BBC style) */
+.recents{width:94%;margin-top:10px}
+.recents h3{font-size:13px;color:var(--muted);text-transform:uppercase}
+.recents-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.recent-item{display:grid;grid-template-columns:28px 56px 1fr;gap:10px;align-items:center;padding:8px;border-radius:8px;background:linear-gradient(180deg,#0b0b0b,#0f0f0f);border:1px solid var(--border)}
+.recent-index{color:var(--muted);font-weight:800}
+.recent-cover{width:56px;height:56px;border-radius:8px;object-fit:cover}
+.recent-title{font-weight:800}
+.recent-artist{font-size:13px;color:var(--muted);margin-top:4px}
+
+/* schedule area */
+.schedule{width:94%;display:flex;gap:12px;flex-wrap:wrap;margin-top:10px}
+.card{flex:1;min-width:260px;background:var(--panel);border-radius:12px;padding:12px;border:1px solid var(--border)}
+.card h4{font-size:12px;color:var(--muted);text-transform:uppercase;margin:0 0 8px}
+
+/* bottom player (BBC style) */
+.bottom-player{position:fixed;left:16px;right:16px;bottom:18px;height:84px;background:linear-gradient(180deg,#0b0b0b,#0f0f0f);border-radius:14px;display:flex;align-items:center;gap:14px;padding:10px 14px;border:1px solid var(--border);box-shadow:0 18px 40px rgba(0,0,0,0.6);transform:translateY(120%);opacity:0;transition:transform .36s,opacity .28s;z-index:9999}
+.bottom-player.visible{transform:translateY(0);opacity:1}
+.bp-cover{width:64px;height:64px;border-radius:8px;object-fit:cover;flex-shrink:0}
+.bp-meta{min-width:0}
+.bp-title{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bp-sub{font-size:13px;color:var(--muted);margin-top:4px}
+.bp-controls{display:flex;align-items:center;gap:10px;justify-content:center;flex:1}
+.bp-btn{background:none;border:0;color:#fff;font-size:20px;cursor:pointer}
+.bp-seek{width:240px;height:6px;background:#1b1b1b;border-radius:6px;overflow:hidden}
+.bp-progress{height:100%;background:var(--accent);width:0%}
+.bp-volume{width:120px}
+
+/* responsive sizes */
+@media(min-width:1200px){
+  .program-circle{width:420px;height:420px}
+}
+@media(max-width:820px){
+  .program-circle{width:62vw;height:62vw}
+  .bp-seek{width:120px}
+  .bp-volume{width:80px}
+}
+@media(max-width:520px){
+  .program-circle{width:52vw;height:52vw}
+  .recent-cover{width:48px;height:48px}
+  .bp-seek{width:90px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <header class="station">
+    <h1>Praise FM</h1>
+    <p>Praise & Worship</p>
+  </header>
+
+  <section class="program-area">
+    <div id="progCircleWrap" class="program-circle" aria-hidden="false">
+      <!-- SVG ring (we'll size/update via JS) -->
+      <svg id="svgRing" class="progress-ring" viewBox="0 0 240 240" preserveAspectRatio="xMidYMid meet">
+        <circle id="ringStroke" cx="120" cy="120" r="112" />
       </svg>
-      <img id="circleImg" class="program-img" src="/image/logopraisefm.webp" alt="Program">
+      <img id="programImg" class="program-img" src="/image/logopraisefm.webp" alt="Program artwork">
     </div>
 
-    <div id="programTitle"></div>
-    <div id="programHost"></div>
-    <div id="programTime"></div>
-
-    <div class="nowplaying"><div id="nowPlaying" class="marquee">…</div></div>
-
-    <button id="playBtn">▶ Play</button>
-
-    <div id="recently"></div>
-  </div>
-
-  <div id="bottomPlayer">
-    <img id="bpCover" class="bp-cover" src="/image/logopraisefm.webp">
-    <div class="bp-meta">
-      <div id="bpTitle">Praise FM</div>
-      <div id="bpSub">Live</div>
+    <div class="program-meta">
+      <div id="programTime" class="program-time">--:-- - --:--</div>
+      <div id="programTitle" class="program-title">Loading Program</div>
+      <div id="programHost" class="program-host"></div>
+      <div class="nowplaying"><div id="nowPlayingTop" style="display:none"></div></div>
     </div>
+
+    <button id="mainPlay" class="play-btn" aria-pressed="false">▶ Play</button>
+  </section>
+
+  <section class="recents">
+    <h3>Recent Tracks</h3>
+    <div id="recentsList" class="recents-list recents-list"></div>
+  </section>
+
+  <section class="schedule">
+    <div class="card">
+      <h4>Up Next</h4>
+      <div id="upNext" style="display:flex;gap:10px;align-items:center"></div>
+    </div>
+    <div class="card">
+      <h4>Later Today</h4>
+      <div id="laterList"></div>
+    </div>
+  </section>
+</div>
+
+<!-- Bottom player -->
+<div id="bottomPlayer" class="bottom-player" aria-hidden="true">
+  <img id="bpCover" class="bp-cover" src="/image/logopraisefm.webp" alt="cover">
+  <div class="bp-meta">
+    <div id="bpTitle" class="bp-title">Praise FM</div>
+    <div id="bpSub" class="bp-sub">Live</div>
   </div>
+
+  <div class="bp-controls" role="group" aria-label="player controls">
+    <button id="bpRew" class="bp-btn" title="Rewind 20s">⟲</button>
+    <button id="bpPlay" class="bp-btn" title="Play/Pause">▶</button>
+    <button id="bpFwd" class="bp-btn" title="Forward 20s">⟳</button>
+    <div class="bp-seek" aria-hidden="true"><div id="bpProgress" class="bp-progress"></div></div>
+  </div>
+
+  <input id="bpVolume" class="bp-volume" type="range" min="0" max="1" step="0.01" value="0.8" aria-label="volume">
+</div>
+
+<!-- audio element (stream) -->
+<audio id="stream" preload="none"></audio>
 
 <script>
-// lógica simplificada para testes iniciais de UI
-function nowChicago(){ return new Date(new Date().toLocaleString("en-US",{timeZone: "America/Chicago"})); }
-function formatTime(f){ const h=Math.floor(f), m=Math.round((f-h)*60); return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`; }
+/* ========== CONFIG ========== */
+const ZENO_ID = "hvwifp8ezc6tv";
+const STREAM_URL = `https://stream.zeno.fm/${ZENO_ID}`;
+const LASTFM_API_KEY = "7744c8f90ee053fc761e0e23bfa00b89";
+const TZ = "America/Chicago";
 
-const programs = [
-  { name:"Morning Show", host:"with Stancy Campbell", start:7, end:12, img:"/image/morningshowlogo.webp" },
-  { name:"Midday Grace", host:"with Michael Grace", start:12.5, end:16, img:"/image/middaygracelogo.webp" }
+/* Program definitions (with hosts & images you confirmed) */
+/* Midnight Grace now goes until 07:00 as requested */
+const PROGRAMS = [
+  { name:"Midnight Grace", host:"Praise FM Hosts", start:0, end:7, img:"/image/midnightgracelogo.webp", desc:"Worship to rest your soul." },
+  { name:"Music Block", host:"", start:7, end:7.999, img:"/image/logopraisefm.webp", desc:"Music" }, // placeholder (6-7 originally; adjusted since Midnight until 7)
+  { name:"Morning Show", host:"with Stancy Campbell", start:7, end:12, img:"/image/morningshowlogo.webp", desc:"Start your day with joy, community and praise!" },
+  { name:"Midday Grace", host:"with Michael Grace", start:12.5, end:16, img:"/image/middaygracelogo.webp", desc:"Inspiration and encouragement through your afternoon." },
+  { name:"Praise FM Non Stop", host:"", start:16, end:17, img:"/image/praisefmnonstop.webp", desc:"Continuous praise" },
+  { name:"Praise FM Carpool", host:"with Rachael Harris", start:18, end:20, img:"/image/praisefmcarpoollogo.webp", desc:"Praise FM drives you home!" },
+  { name:"Praise FM POP", host:"", start:22, end:22.5, img:"/image/praisefmpoplogo.webp", desc:"Today’s top Christian hits." }
 ];
 
-function getCurrent(){
-  const d = nowChicago(), h = d.getHours()+d.getMinutes()/60;
-  for(const p of programs){
-    if(h >= p.start && h < p.end) return p;
-  }
-  return programs[0];
-}
+/* 30-min specials (priority) */
+const TIMES = [
+  { name:"Future Artists", host:"with Sarah Jordan", days:[1,3,5], slots:[{s:12,e:12.5},{s:20,e:20.5}], img:"/image/praisefmfutureartistslogo.webp", desc:"Discover the next voices of Praise FM." },
+  { name:"Classics", host:"with Scott Turner", days:[2,4,6], slots:[{s:12,e:12.5},{s:20,e:20.5}], img:"/image/praisefmclassiclogo.webp", desc:"Remember the worship that marked generations." },
+  { name:"Living The Message", host:"", days:null, slots:[{s:10,e:10.5},{s:21,e:21.5}], img:"/image/livingthemessage.webp", desc:"Daily messages to strengthen faith." },
+  { name:"Sunday With Christ", host:"with Matt Riley", days:[0], slots:[{s:7,e:12}], img:"/image/sundaywithchristlogo.webp", desc:"A special Sunday worship block." }
+];
 
-function updateProg(){
-  const p = getCurrent();
-  document.getElementById("programTitle").textContent = p.name;
-  document.getElementById("programHost").textContent = p.host;
-  document.getElementById("programTime").textContent = formatTime(p.start) + " – " + formatTime(p.end);
-  document.getElementById("circleImg").src = p.img;
+/* ========== DOM ========== */
+const svgRing = document.getElementById("svgRing");
+const ringStroke = document.getElementById("ringStroke");
+const programImg = document.getElementById("programImg");
+const programTitle = document.getElementById("programTitle");
+const programHost = document.getElementById("programHost");
+const programTime = document.getElementById("programTime");
 
+const nowPlayingTop = document.getElementById("nowPlayingTop");
+const mainPlay = document.getElementById("mainPlay");
+
+const bottomPlayer = document.getElementById("bottomPlayer");
+const bpCover = document.getElementById("bpCover");
+const bpTitle = document.getElementById("bpTitle");
+const bpSub = document.getElementById("bpSub");
+const bpPlay = document.getElementById("bpPlay");
+const bpRew = document.getElementById("bpRew");
+const bpFwd = document.getElementById("bpFwd");
+const bpProgress = document.getElementById("bpProgress");
+const bpVolume = document.getElementById("bpVolume");
+
+const recentsList = document.getElementById("recentsList");
+const upNextEl = document.getElementById("upNext");
+const laterList = document.getElementById("laterList");
+
+const streamEl = document.getElementById("stream");
+
+/* ========== State ========== */
+let RECENTS = []; // {track,artist,cover}
+const MAX_RECENTS = 4;
+
+/* Helpers */
+function nowChicago(){ return new Date(new Date().toLocaleString("en-US",{timeZone:TZ})); }
+function floatHour(date){ return date.getHours() + date.getMinutes()/60 + date.getSeconds()/3600; }
+function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
+function fmtFloat(f){ const h=Math.floor(f), m=Math.round((f-h)*60); return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`; }
+
+/* Find current program with TIMES priority, Sunday rules */
+function findCurrentProgram(){
   const now = nowChicago();
-  const elapsed = ((now.getHours()+now.getMinutes()/60) - p.start) * 3600;
-  const total = (p.end - p.start) * 3600;
-  const progCircle = document.getElementById("prog");
-  const radius = progCircle.r.baseVal.value;
-  const circumference = 2 * Math.PI * radius;
-  progCircle.style.strokeDasharray = circumference;
-  progCircle.style.strokeDashoffset = circumference - (elapsed / total) * circumference;
+  const day = now.getDay();
+  const h = floatHour(now);
+
+  // TIMES first (30-min blocks)
+  for(const t of TIMES){
+    if(t.slots){
+      for(const slot of t.slots){
+        if(h >= slot.s && h < slot.e){
+          if(t.days && !t.days.includes(day)) continue;
+          return { name: t.name, host: t.host, start: slot.s, end: slot.e, img: t.img, desc: t.desc, isProgram: true };
+        }
+      }
+    }
+  }
+
+  // Sunday override - Sunday With Christ replaces Morning Show if in its slot (already in TIMES)
+  // MAIN PROGRAMS
+  for(const p of PROGRAMS){
+    if(h >= p.start && h < p.end){
+      return { name: p.name, host: p.host, start: p.start, end: p.end, img: p.img, desc: p.desc, isProgram: p.name !== "Music Block" };
+    }
+  }
+  // fallback
+  return { name: "Praise FM", host: "", start: 0, end: 24, img: "/image/logopraisefm.webp", desc: "", isProgram:false };
 }
 
-updateProg();
-setInterval(updateProg, 30000);
+/* Update Program UI (title, host, image, up next, later) */
+function updateProgramUI(){
+  const p = findCurrentProgram();
+  programTitle.textContent = p.host ? `${p.name} ${p.host}` : p.name;
+  programHost.textContent = ""; // host shown in title already per spec
+  programTime.textContent = `${fmtFloat(p.start)} - ${fmtFloat(p.end)}`;
+  // program image fixed on top always
+  programImg.src = p.img || "/image/logopraisefm.webp";
 
-// dummy metadata
-document.getElementById("playBtn").addEventListener("click", ()=>{
-  document.getElementById("bottomPlayer").classList.add("active");
-  document.getElementById("bpTitle").textContent = "Artista Exemplo";
-  document.getElementById("bpSub").textContent = "Música Exemplo";
-  document.getElementById("bpCover").src = "/image/logopraisefm.webp";
+  // up next
+  const next = findNextProgram();
+  if(next){
+    upNextEl.innerHTML = `<img src="${next.img}" class="s-img" style="width:72px;height:72px;border-radius:8px;object-fit:cover"><div style="flex:1;text-align:left"><div style="font-weight:800">${next.host? next.name+' '+next.host : next.name}</div><div style="color:var(--muted);margin-top:6px">${fmtFloat(next.start)} - ${fmtFloat(next.end)}</div></div>`;
+  } else upNextEl.innerHTML = `<div style="color:var(--muted)">—</div>`;
+
+  // later today
+  buildLaterList();
+
+  // update bottom player fallback if not playing music
+  if(!currentTrack.artist || !currentTrack.track){
+    setBottomToProgram(p);
+  }
+
+  updateProgressRing();
+}
+
+/* find next program after now */
+function findNextProgram(){
+  const now = nowChicago();
+  const day = now.getDay();
+  const h = floatHour(now);
+  const candidates = [];
+
+  for(const t of TIMES){
+    if(t.slots){
+      for(const slot of t.slots){
+        if(t.days && !t.days.includes(day)) continue;
+        if(slot.s > h) candidates.push({ name:t.name, host:t.host, start:slot.s, end:slot.e, img:t.img, desc:t.desc });
+      }
+    }
+  }
+  for(const p of PROGRAMS) if(p.start > h) candidates.push({ name:p.name, host:p.host, start:p.start, end:p.end, img:p.img, desc:p.desc });
+  candidates.sort((a,b)=>a.start-b.start);
+  return candidates[0] || null;
+}
+
+/* build later list */
+function buildLaterList(){
+  laterList.innerHTML = "";
+  const now = nowChicago();
+  const day = now.getDay();
+  const h = floatHour(now);
+  const items = [];
+
+  for(const t of TIMES){
+    if(t.slots){
+      for(const slot of t.slots){
+        if(t.days && !t.days.includes(day)) continue;
+        if(slot.s > h) items.push({start:slot.s,end:slot.e,name:t.name,host:t.host,img:t.img,desc:t.desc});
+      }
+    }
+  }
+  for(const p of PROGRAMS) if(p.start > h) items.push({start:p.start,end:p.end,name:p.name,host:p.host,img:p.img,desc:p.desc});
+  items.sort((a,b)=>a.start-b.start);
+  items.slice(0,6).forEach(it=>{
+    const el = document.createElement("div");
+    el.style.padding = "8px 0";
+    el.innerHTML = `<div style="font-weight:800">${fmtFloat(it.start)} — ${fmtFloat(it.end)} · ${it.name} ${it.host||""}</div><div style="color:var(--muted);font-size:13px">${it.desc||""}</div>`;
+    laterList.appendChild(el);
+  });
+}
+
+/* ========== Progress ring (program progress) ========== */
+function updateProgressRing(){
+  const p = findCurrentProgram();
+  const now = nowChicago();
+  const h = floatHour(now);
+
+  // hide ring if not a program
+  if(!p.isProgram){
+    svgRing.style.display = "none";
+    return;
+  }
+  svgRing.style.display = "block";
+
+  // compute progress
+  const totalSec = (p.end - p.start) * 3600;
+  const elapsedSec = clamp((h - p.start) * 3600, 0, totalSec);
+  const progress = clamp(elapsedSec / totalSec, 0, 1);
+
+  // compute dimensions based on actual SVG rendered size
+  const bbox = svgRing.getBoundingClientRect();
+  const size = Math.min(bbox.width, bbox.height);
+  const padding = 8; // stroke space
+  const radius = (size / 2) - padding;
+  const circumference = 2 * Math.PI * radius;
+
+  // set attributes
+  ringStroke.setAttribute("r", radius);
+  ringStroke.setAttribute("cx", bbox.width / 2);
+  ringStroke.setAttribute("cy", bbox.height / 2);
+  ringStroke.style.strokeDasharray = `${circumference} ${circumference}`;
+  ringStroke.style.strokeDashoffset = (circumference - progress * circumference);
+}
+
+/* ========== Bottom player behavior ========== */
+/* current track state */
+let currentTrack = { artist: "", track: "", cover: "" };
+
+function setBottomToProgram(program){
+  bpCover.src = program.img || "/image/logopraisefm.webp";
+  bpTitle.textContent = program.name;
+  bpSub.textContent = program.host || "Praise FM";
+}
+
+/* update bottom with music metadata */
+function setBottomToMusic(artist, track, cover){
+  bpCover.src = cover || "/image/logopraisefm.webp";
+  bpTitle.textContent = artist || "Unknown Artist";
+  bpSub.textContent = track || "";
+}
+
+/* add to recents */
+function addRecent(track, artist, cover){
+  if(!track || !artist) return;
+  // avoid duplicates same top
+  if(RECENTS.length && RECENTS[0].track === track && RECENTS[0].artist === artist) return;
+  RECENTS.unshift({ track, artist, cover });
+  if(RECENTS.length > MAX_RECENTS) RECENTS.splice(MAX_RECENTS);
+  renderRecents();
+}
+function renderRecents(){
+  recentsList.innerHTML = "";
+  RECENTS.forEach((r,i) => {
+    const div = document.createElement("div");
+    div.className = "recent-item";
+    div.innerHTML = `<div class="recent-index">${i+1}</div><img class="recent-cover" src="${r.cover}" alt=""><div><div class="recent-title">${r.track}</div><div class="recent-artist">${r.artist}</div></div>`;
+    recentsList.appendChild(div);
+  });
+}
+
+/* ========== Metadata listener (Zeno) & Last.fm cover fetch ========== */
+function setupMetadata(){
+  try{
+    const es = new EventSource(`https://api.zeno.fm/mounts/metadata/subscribe/${ZENO_ID}`);
+    es.onmessage = async (e) => {
+      try{
+        const d = JSON.parse(e.data);
+        if(!d.streamTitle) return;
+        const parts = d.streamTitle.split(" - ");
+        const artist = parts[0]?.trim() || "";
+        const track = parts.slice(1).join(" - ").trim();
+
+        // detect non-music items
+        const token = (artist + " " + track).toLowerCase();
+        const non = ["commercial","spot","promo","jingle","station id","ad break"];
+        const isMusic = track && !non.some(k => token.includes(k));
+
+        if(!isMusic){
+          // restore bottom to program image
+          currentTrack = { artist: "", track: "", cover: "" };
+          const p = findCurrentProgram();
+          setBottomToProgram(p);
+          return;
+        }
+
+        // fetch cover from Last.fm (best-effort)
+        let cover = "/image/logopraisefm.webp";
+        try{
+          const res = await fetch(`https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${LASTFM_API_KEY}&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}&format=json`);
+          const data = await res.json();
+          const imgs = data?.track?.album?.image;
+          if(imgs && imgs.length){
+            const imgObj = imgs.find(i=>i.size==="extralarge") || imgs[imgs.length-1];
+            if(imgObj && imgObj["#text"]) cover = imgObj["#text"];
+          }
+        }catch(err){
+          console.warn("Last.fm failed", err);
+        }
+
+        // update bottom player and recents
+        currentTrack = { artist, track, cover };
+        setBottomToMusic(artist, track, cover);
+        addRecent(track, artist, cover);
+
+        // ensure bottom is visible
+        showBottom();
+      }catch(err){}
+    };
+    es.onerror = (err)=>{ /* silent */ };
+  }catch(e){
+    console.warn("EventSource unsupported", e);
+  }
+}
+
+/* ========== Bottom player UI controls ========== */
+function showBottom(){ bottomPlayer.classList.add("visible"); bottomPlayer.setAttribute("aria-hidden","false"); }
+function hideBottom(){ bottomPlayer.classList.remove("visible"); bottomPlayer.setAttribute("aria-hidden","true"); }
+
+document.getElementById("mainPlay").addEventListener("click", async () => {
+  try{
+    if(streamEl.src !== STREAM_URL) streamEl.src = STREAM_URL;
+    await streamEl.play();
+    showBottom();
+    bpPlay.textContent = "❚❚";
+    document.getElementById("mainPlay").textContent = "Pause";
+  }catch(e){
+    // autoplay blocked — show UI so user can tap
+    showBottom();
+  }
 });
-</script>
+bpPlay.addEventListener("click", ()=>{
+  if(streamEl.paused) { streamEl.play(); bpPlay.textContent = "❚❚"; document.getElementById("mainPlay").textContent = "Pause"; }
+  else { streamEl.pause(); bpPlay.textContent = "▶"; document.getElementById("mainPlay").textContent = "Play"; }
+});
+bpRew.addEventListener("click", ()=>{ try{ streamEl.currentTime = Math.max(0,(streamEl.currentTime||0)-20); }catch(e){} });
+bpFwd.addEventListener("click", ()=>{ try{ streamEl.currentTime = (streamEl.currentTime||0)+20; }catch(e){} });
+bpVolume.addEventListener("input",(e)=>{ streamEl.volume = Number(e.target.value); });
 
+/* ========== Init & intervals ========= */
+updateProgramUI();
+updateProgressRing();
+setupMetadata();
+setInterval(()=>{ updateProgramUI(); updateProgressRing(); }, 15000); // refresh program UI & ring every 15s
+
+/* Expose debug */
+window._PraiseFM = { findCurrentProgram, RECENTS };
+</script>
 </body>
 </html>
