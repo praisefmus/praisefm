@@ -39,13 +39,45 @@
         .recent-title { font-weight:600; font-size:15px; }
         .recent-artist { font-size:13px; color:var(--light-grey); }
         .mini-player { position:fixed; bottom:0; left:0; right:0; background:#fff; border-top:1px solid var(--border-color);
-            box-shadow:0 -4px 20px rgba(0,0,0,.1); padding:12px 16px; display:none; align-items:center; gap:12px; z-index:999; }
+            box-shadow:0 -4px 20px rgba(0,0,0,.1); padding:14px 20px; display:none; align-items:flex-start; flex-wrap:wrap; gap:12px; z-index:999; }
         .mini-player.show { display:flex; }
         .mini-cover { width:56px; height:56px; border-radius:8px; object-fit:cover; background:#eee; }
-        .mini-info { flex:1; min-width:0; }
+        .mini-info { flex:1; min-width:200px; max-width:280px; }
         .mini-title { font-weight:700; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
         .mini-artist { font-size:13px; color:var(--grey); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-        .mini-controls { display:flex; align-items:center; gap:16px; }
+        .mini-track-progress {
+            width:100%;
+            padding:6px 0;
+        }
+        .mini-track-bar {
+            width:100%;
+            height:4px;
+            background:#ddd;
+            border-radius:2px;
+            position:relative;
+            cursor:pointer;
+        }
+        .mini-track-fill {
+            height:100%;
+            background:var(--orange);
+            border-radius:2px;
+            width:0%;
+        }
+        .mini-track-time {
+            display:flex;
+            justify-content:space-between;
+            font-size:11px;
+            color:var(--light-grey);
+            margin-top:4px;
+        }
+        .mini-controls {
+            display:flex;
+            align-items:center;
+            gap:16px;
+            justify-content:center;
+            margin-top:8px;
+            width:100%;
+        }
         .mini-btn { background:none; border:none; cursor:pointer; padding:8px; }
         .mini-btn svg { width:24px; height:24px; fill:var(--grey); }
         .mini-play { background:var(--orange); width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center;
@@ -101,22 +133,43 @@
         <div id="recentList"></div>
     </div>
 </div>
+
 <div class="mini-player" id="miniPlayer">
     <img id="miniImg" src="/image/logopraisefm.webp" class="mini-cover">
     <div class="mini-info">
         <div class="mini-title" id="miniTitle">Praise FM</div>
         <div class="mini-artist" id="miniArtist">Praise & Worship</div>
+        <div class="mini-track-progress">
+            <div class="mini-track-bar" id="miniTrackBar">
+                <div class="mini-track-fill" id="miniTrackFill" style="width:0%"></div>
+            </div>
+            <div class="mini-track-time">
+                <span id="miniTrackCurrent">0:00</span>
+                <span id="miniTrackDuration">0:00</span>
+            </div>
+        </div>
     </div>
     <div class="mini-controls">
-        <button class="mini-btn" id="miniRewind"><svg viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg></button>
-        <button class="mini-play" id="miniPlayPause"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
-        <button class="mini-btn" id="miniForward"><svg viewBox="0 0 24 24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg></button>
+        <button class="mini-btn" id="miniRewind">
+            <svg viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg>
+        </button>
+        <button class="mini-play" id="miniPlayPause">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+        <button class="mini-btn" id="miniForward">
+            <svg viewBox="0 0 24 24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg>
+        </button>
         <div class="mini-volume">
-            <button class="mini-btn" id="miniVolumeIcon"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
-            <div class="mini-volume-bar" id="miniVolumeBar"><div class="mini-volume-fill" id="miniVolumeFill"></div></div>
+            <button class="mini-btn" id="miniVolumeIcon">
+                <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+            </button>
+            <div class="mini-volume-bar" id="miniVolumeBar">
+                <div class="mini-volume-fill" id="miniVolumeFill"></div>
+            </div>
         </div>
     </div>
 </div>
+
 <script>
     const STREAM_URL = "https://stream.zeno.fm/hvwifp8ezc6tv";
     const audio = new Audio(STREAM_URL);
@@ -128,13 +181,13 @@
         midday: "/image/middaygracelogo.webp",
         midnight: "/image/midnightgracelogo.webp",
         carpool: "/image/praisefmcarpoollogo.webp",
-        classic: "/image/praisefmclassicslogo.webp",
+        classic: "/image/praisefmclassicslogo.webp",      // ✅ 2 "s" — conforme GitHub
         future: "/image/praisefmfutureartistslogo.webp",
         pop: "/image/praisefmpoplogo.webp",
-        sunday: "/image/sundaymorninglogo.webp",
-        nonstop: "/image/logopraisefm.webp"
+        sunday: "/image/sundaywithchrist.png",            // ✅ conforme GitHub
+        nonstop: "/image/praisefmnonstop.png",            // ✅ conforme GitHub
+        living: "/image/livingthemessage.png"             // ✅ Nova capa
     };
-    // 👇 APRESENTADORES ATUALIZADOS
     const hosts = {
         "Morning Show": "Stancy Campbell",
         "Midday Grace": "Michael Ray",
@@ -151,7 +204,7 @@
         {start:"00:00", end:"06:00", name:"Midnight Grace", img:images.midnight},
         {start:"06:00", end:"07:00", name:"Music Only", img:images.default},
         {start:"07:00", end:"12:00", name:"Morning Show", img:images.morning},
-        {start:"10:00", end:"10:30", name:"Living The Message", img:images.default},
+        {start:"10:00", end:"10:30", name:"Living The Message", img:images.living}, // ✅ Usando a nova imagem
         {start:"12:00", end:"18:00", name:"Midday Grace", img:images.midday},
         {start:"16:00", end:"17:00", name:"Praise FM Non Stop", img:images.nonstop},
         {start:"18:00", end:"20:00", name:"Praise FM Carpool", img:images.carpool, days:[1,2,3,4,5]},
@@ -160,9 +213,10 @@
         {start:"20:00", end:"21:00", name:"Praise FM Future Artists (Replay)", img:images.future, days:[1,3,5]},
         {start:"12:00", end:"13:00", name:"Praise FM Classics", img:images.classic, days:[2,4,6]},
         {start:"20:00", end:"21:00", name:"Praise FM Classics (Replay)", img:images.classic, days:[2,4,6]},
-        {start:"21:00", end:"21:30", name:"Living The Message (Replay)", img:images.default},
+        {start:"21:00", end:"21:30", name:"Living The Message (Replay)", img:images.living}, // ✅ Também para o replay
         {start:"07:00", end:"12:00", name:"Sunday With Christ", img:images.sunday, days:[0]}
     ];
+
     function getChicagoTime() { return new Date(new Date().toLocaleString("en-US",{timeZone:"America/Chicago"})); }
     function timeToMins(t) { const [h,m]=t.split(":").map(Number); return h*60+m; }
     function getCurrentAndNext() {
@@ -194,6 +248,7 @@
             next2: future[1]?.prog || schedule[1]
         };
     }
+
     let currentTrack = {title:"", artist:""};
     const recents = [];
     async function fetchAlbumCover(artist, title) {
@@ -207,7 +262,7 @@
     function formatProgramName(p) {
         if (!p) return "Praise FM";
         const base = p.name.replace(/ \([^)]*\)$/, '').trim();
-        if (base === "Music Only") return base;
+        if (base === "Music Only" || base === "Praise FM Non Stop") return base;
         const host = hosts[base] || "DJ Praise";
         return `${base} With ${host}`;
     }
@@ -228,7 +283,8 @@
             d.setDate(d.getDate() + offset);
             const [h,m] = p.start.split(":");
             d.setHours(+h, +m, 0, 0);
-            return d.toLocaleTimeString("en-US", {hour:"2-digit", minute:"2-digit", timeZone:"America/Chicago"});
+            // Força o formato 12h com AM/PM
+            return d.toLocaleTimeString("en-US", {hour:"2-digit", minute:"2-digit", hour12:true, timeZone:"America/Chicago"});
         };
         const todayNext = schedule.filter(p => (!p.days || p.days.includes(now.getDay())) && timeToMins(p.start) > timeToMins(now.toTimeString().slice(0,5)));
         const off1 = todayNext.length > 0 ? 0 : 1;
@@ -272,6 +328,7 @@
         }
         updateDisplay();
     }
+
     const es = new EventSource("https://api.zeno.fm/mounts/metadata/subscribe/hvwifp8ezc6tv");
     es.onmessage = e => {
         try {
@@ -282,6 +339,7 @@
             }
         } catch {}
     };
+
     function togglePlay() {
         if (audio.paused) { audio.play(); document.getElementById("miniPlayer").classList.add("show"); }
         else audio.pause();
@@ -291,6 +349,19 @@
         document.querySelector("#bigPlay").innerHTML = playing ? pauseSvg + ' Pause' : playSvg + ' Play';
         document.getElementById("miniPlayPause").innerHTML = playing ? pauseSvg : playSvg;
     }
+
+    // Barra de progresso da música
+    function updateTrackProgress() {
+        if (audio.duration && !isNaN(audio.duration)) {
+            const progress = (audio.currentTime / audio.duration) * 100;
+            document.getElementById("miniTrackFill").style.width = `${progress}%`;
+            const current = new Date(audio.currentTime * 1000).toISOString().substr(14, 5);
+            const total = new Date(audio.duration * 1000).toISOString().substr(14, 5);
+            document.getElementById("miniTrackCurrent").textContent = current;
+            document.getElementById("miniTrackDuration").textContent = total;
+        }
+    }
+
     document.getElementById("bigPlay").onclick = togglePlay;
     document.getElementById("miniPlayPause").onclick = togglePlay;
     document.getElementById("miniRewind").onclick = () => audio.currentTime = Math.max(0, audio.currentTime - 15);
@@ -301,7 +372,14 @@
         audio.volume = Math.max(0, Math.min(1, percent));
         document.getElementById("miniVolumeFill").style.width = (audio.volume*100)+'%';
     };
+    document.getElementById("miniTrackBar").onclick = (e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const percent = (e.clientX - rect.left) / rect.width;
+        if (audio.duration) audio.currentTime = percent * audio.duration;
+    };
+
     setInterval(updateDisplay, 8000);
+    setInterval(updateTrackProgress, 1000);
     updateDisplay();
 </script>
 </body>
