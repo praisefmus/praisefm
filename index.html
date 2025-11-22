@@ -18,72 +18,78 @@
     <style>
         /* --- CSS --- */
         :root {
-            --primary-color: #fff;
-            --secondary-color: #e0e0e0;
+            --primary-color: #000; /* Texto escuro */
+            --secondary-color: #333;
             --accent-color: #ff4d00; /* Orange */
-            --bg-dark: #121212;
-            --glass-bg: rgba(20, 20, 20, 0.7);
+            --bg-light: #fff; /* Fundo branco */
+            --card-bg: #f5f5f5; /* Fundo dos cards */
+            --border-color: #e0e0e0; /* Cor da borda */
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
-        /* AJUSTE 1: body centraliza verticalmente */
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            -webkit-tap-highlight-color: transparent; 
+        }
         body {
-            background-color: #000;
+            background-color: var(--bg-light); /* Fundo branco */
             height: 100vh;
             width: 100vw;
             display: flex;
             justify-content: center;
-            align-items: center; /* CENTRALIZA VERTICALMENTE */
+            align-items: flex-start; /* Alinha ao topo para permitir scroll */
             overflow-y: auto; 
-            color: var(--primary-color);
+            color: var(--primary-color); /* Texto escuro */
+            padding: 20px;
         }
         .background-blur {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            background: radial-gradient(circle at 50% 30%, #222, #000);
+            background: radial-gradient(circle at 50% 30%, #fff, #f0f0f0); /* Fundo branco com gradiente */
             filter: blur(90px); 
             opacity: 0.6; 
             transition: background 1s ease;
         }
-        /* AJUSTE 2: player-container com min-height: 100vh; REMOVIDO */
         .player-container {
             width: 100%; 
             max-width: 600px; 
             display: flex; 
             flex-direction: column;
-            align-items: center; /* CENTER THE MAIN COLUMN HORIZONTALLY */
-            justify-content: flex-start; /* ALINHA OS ITENS AO TOPO PARA SCROLL (Mobile) */
+            align-items: flex-start; /* Alinha itens à esquerda */
+            justify-content: flex-start; 
             padding: 20px;
             position: relative;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
-            gap: 15px; 
+            text-shadow: 0 2px 10px rgba(0,0,0,0.1); /* Sombra mais sutil */
+            gap: 20px; 
         }
-        /* --- 1. PROGRAM CIRCLE (Centralized) --- */
+        /* --- 1. PROGRAM CIRCLE (Centralizado no topo) --- */
         .program-area {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            width: 100%;
             margin-bottom: 10px;
-            align-self: center; 
         }
         .program-circle {
             width: min(60vw, 260px); 
             height: min(60vw, 260px);
             border-radius: 50%;
-            background-color: #000;
+            background-color: #f0f0f0; /* Fundo cinza claro para o círculo */
             position: relative;
             z-index: 2;
-            box-shadow: 0 15px 50px rgba(0,0,0,0.6);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); /* Sombra mais sutil */
             transition: all 0.3s ease;
             --progress-deg: 0deg;
+            border: 2px solid var(--border-color); /* Borda */
         }
         .program-img {
             width: 100%; height: 100%;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid #111; 
             position: relative; z-index: 2;
         }
-        /* Progress Ring */
+        /* Progress Ring - Cor ajustada para fundo branco */
         .program-circle.is-playing::before {
             content: '';
             position: absolute;
@@ -92,94 +98,90 @@
             z-index: -1;
             background: conic-gradient(
                 var(--accent-color) var(--progress-deg), 
-                rgba(255, 255, 255, 0.05) var(--progress-deg)
+                rgba(255, 255, 255, 0.1) var(--progress-deg) /* Cor mais clara para combinar com o fundo */
             );
             -webkit-mask: radial-gradient(transparent 68%, black 69%);
             mask: radial-gradient(transparent 68%, black 69%);
             transition: all 1s linear; 
         }
-        .program-label { margin-top: 20px; text-align: center; }
+        .program-label { margin-top: 15px; text-align: center; width: 100%; }
         .program-status { 
-            font-size: 12px; color: var(--accent-color); font-weight: 800; letter-spacing: 2px; 
+            font-size: 12px; color: var(--accent-color); font-weight: 600; letter-spacing: 1px; 
             text-transform: uppercase; display: flex; align-items: center; justify-content: center; 
-            gap: 8px; animation: flash 2s infinite ease-in-out;
+            gap: 8px;
         }
         .live-dot { width: 8px; height: 8px; background-color: var(--accent-color); border-radius: 50%; box-shadow: 0 0 8px var(--accent-color); }
-        @keyframes flash {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(0.98); }
-        }
-        .program-name { font-size: 24px; font-weight: 800; margin-top: 5px; letter-spacing: -0.5px; line-height: 1.1;}
-        /* --- 2. CONTROLS (Centralized) --- */
+        .program-name { font-size: 24px; font-weight: 800; margin-top: 5px; letter-spacing: -0.5px; line-height: 1.1; color: var(--primary-color); }
+        /* --- 2. CONTROLS (Centralizado no topo) --- */
         .controls-area {
             display: flex; justify-content: center; align-items: center; gap: 30px; 
             margin: 10px 0;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
-            align-self: center; /* KEEP CONTROLS CENTERED */
             width: 100%;
         }
-        .control-btn { background: none; border: none; color: #fff; cursor: pointer; transition: transform 0.2s; display: flex; align-items: center; justify-content: center;}
+        .control-btn { background: none; border: none; color: var(--primary-color); cursor: pointer; transition: transform 0.2s; display: flex; align-items: center; justify-content: center;}
         .control-btn:active { transform: scale(0.9); }
         .play-btn { 
-            width: 70px; height: 70px; background: var(--accent-color); border-radius: 50%; 
-            box-shadow: 0 8px 20px rgba(255, 77, 0, 0.4); color: white;
+            width: 150px; height: 50px; background: var(--accent-color); border-radius: 6px; 
+            box-shadow: 0 4px 10px rgba(255, 77, 0, 0.3); color: white;
             display: flex; align-items: center; justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
         }
-        .play-btn svg { width: 30px; height: 30px; fill: white; }
-        .play-btn svg.play-icon { margin-left: 4px; }
-        .skip-btn svg { width: 28px; height: 28px; opacity: 0.8; }
+        .play-btn svg { width: 24px; height: 24px; fill: white; margin-right: 8px; }
+        .skip-btn svg { width: 22px; height: 22px; opacity: 0.8; }
         .skip-btn:hover svg { opacity: 1; }
-        /* --- 3. NOW PLAYING CARD (Left Aligned) --- */
+        /* --- 3. NOW PLAYING CARD (Alinhado à esquerda) --- */
         .now-playing-card {
             width: 100%; 
-            background-color: var(--glass-bg);
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border-radius: 12px; padding: 12px 18px; 
+            background-color: var(--card-bg); /* Fundo branco */
+            border-radius: 10px; padding: 12px 18px; 
             display: flex; align-items: center;
-            border: 1px solid rgba(255,255,255,0.1); 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            align-self: flex-start; /* ALIGNED LEFT */
+            border: 1px solid var(--border-color); /* Borda */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08); /* Sombra */
+            align-self: flex-start; /* Alinhado à esquerda */
         }
-        .song-cover { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; background-color: #333; margin-right: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+        .song-cover { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; background-color: #e0e0e0; margin-right: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         .song-info { flex: 1; overflow: hidden; text-shadow: none; }
-        .song-title { font-size: 16px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; margin-bottom: 2px; }
-        .song-artist { font-size: 14px; color: #ccc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .lyrics-btn { opacity: 0.8; cursor: pointer; background:none; border:none; color:white; padding: 8px; transition: opacity 0.2s; }
+        .song-title { font-size: 16px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--primary-color); margin-bottom: 2px; }
+        .song-artist { font-size: 14px; color: var(--secondary-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .lyrics-btn { opacity: 0.8; cursor: pointer; background:none; border:none; color:var(--primary-color); padding: 8px; transition: opacity 0.2s; }
         .lyrics-btn:hover { opacity: 1; }
-        /* --- EXTRAS (Volume - Left Aligned) --- */
+        /* --- EXTRAS (Volume - Alinhado à esquerda) --- */
         .volume-container { 
             width: 80%; 
             display: flex; align-items: center; gap: 12px; 
-            background-color: rgba(0,0,0,0.4); 
+            background-color: #f0f0f0; 
             padding: 8px 15px;
             border-radius: 20px;
-            opacity: 1; 
-            align-self: flex-start; /* ALIGNED LEFT */
+            border: 1px solid var(--border-color);
+            align-self: flex-start; /* Alinhado à esquerda */
             margin-left: 20px; 
         }
-        .volume-slider { flex: 1; -webkit-appearance: none; background: rgba(255,255,255,0.3); height: 4px; border-radius: 2px; outline: none; }
-        .volume-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: #fff; cursor: pointer; }
-        /* --- 4. RECENTLY PLAYED (Left Aligned) --- */
+        .volume-slider { flex: 1; -webkit-appearance: none; background: rgba(0,0,0,0.1); height: 4px; border-radius: 2px; outline: none; }
+        .volume-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--primary-color); cursor: pointer; }
+        /* --- 4. RECENTLY PLAYED (Alinhado à esquerda) --- */
         .recents-container {
             width: 100%; 
-            margin-top: 20px;
+            margin-top: 10px;
             padding: 10px 0;
-            margin-bottom: 40px; 
-            align-self: flex-start; /* ALIGNED LEFT */
+            align-self: flex-start; /* Alinhado à esquerda */
         }
         .recents-title {
-            font-size: 14px; font-weight: 700; color: #999; text-transform: uppercase; margin-bottom: 10px; padding: 0 18px;
+            font-size: 14px; font-weight: 600; color: #666; text-transform: uppercase; margin-bottom: 10px; padding: 0 5px;
         }
         .recent-item {
-            display: flex; align-items: center; padding: 8px 18px; transition: background-color 0.2s; border-radius: 0;
+            display: flex; align-items: center; padding: 10px 15px; transition: background-color 0.2s; border-radius: 8px; margin-bottom: 8px;
+            background-color: var(--card-bg); /* Fundo branco */
+            border: 1px solid var(--border-color); /* Borda */
         }
-        .recent-item:hover { background-color: rgba(255, 255, 255, 0.05); }
+        .recent-item:hover { background-color: #e8e8e8; }
         .recent-cover {
-            width: 35px; height: 35px; border-radius: 4px; object-fit: cover; background-color: #333; margin-right: 15px;
+            width: 40px; height: 40px; border-radius: 6px; object-fit: cover; background-color: #e0e0e0; margin-right: 12px;
         }
         .recent-info { flex: 1; overflow: hidden; }
-        .recent-title { font-size: 14px; font-weight: 500; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .recent-artist { font-size: 12px; color: #aaa; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .recent-title { font-size: 14px; font-weight: 500; color: var(--primary-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .recent-artist { font-size: 12px; color: var(--secondary-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .recent-time { font-size: 11px; color: #888; margin-left: 10px; white-space: nowrap; }
         /* --- DESKTOP --- */
         @media (min-width: 768px) {
             .player-container { 
@@ -188,13 +190,12 @@
                 gap: 25px;
                 padding: 30px;
             }
-            .program-circle { width: 320px; height: 320px; }
-            .program-name { font-size: 36px; }
-            .play-btn { width: 80px; height: 80px; }
-            /* DESKTOP - Move all cards to the left edge of the centered column */
-            .now-playing-card, .recents-container {
-                align-self: flex-start; 
-                max-width: 500px;
+            .program-circle { width: 300px; height: 300px; }
+            .program-name { font-size: 32px; }
+            .play-btn { 
+                width: 200px; 
+                height: 60px; 
+                font-size: 20px;
             }
             .volume-container {
                 align-self: flex-start;
@@ -222,8 +223,8 @@
                 <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg>
             </button>
             <button class="control-btn play-btn" id="playPauseBtn" aria-label="Play / Pause">
-                <svg id="iconPlay" class="play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                <svg id="iconPause" class="pause-icon" style="display:none;" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                Play
             </button>
             <button class="control-btn skip-btn" onclick="skip(15)" aria-label="Skip Forward 15 Seconds">
                 <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg>
@@ -246,7 +247,24 @@
         <div class="recents-container">
             <div class="recents-title">Recently Played</div>
             <div id="recentsList">
+                <!-- Exemplo de item recente -->
+                <div class="recent-item">
+                    <img src="/image/logopraisefm.webp" class="recent-cover" alt="Recent Track Cover">
+                    <div class="recent-info">
+                        <div class="recent-title">Sample Song Title</div>
+                        <div class="recent-artist">Sample Artist</div>
+                    </div>
+                    <div class="recent-time">Now</div>
                 </div>
+                <div class="recent-item">
+                    <img src="/image/logopraisefm.webp" class="recent-cover" alt="Recent Track Cover">
+                    <div class="recent-info">
+                        <div class="recent-title">Another Sample</div>
+                        <div class="recent-artist">Another Artist</div>
+                    </div>
+                    <div class="recent-time">5 min ago</div>
+                </div>
+            </div>
         </div>
     </div>
     <canvas id="colorCanvas" style="display:none;"></canvas>
@@ -273,8 +291,6 @@
         // --- DOM ELEMENTS ---
         const audio = new Audio(STREAM_URL);
         const playBtn = document.getElementById('playPauseBtn');
-        const iconPlay = document.getElementById('iconPlay');
-        const iconPause = document.getElementById('iconPause');
         const programCircle = document.getElementById('programCircle');
         const programImg = document.getElementById('programImg');
         const programNameDisplay = document.getElementById('programNameDisplay');
@@ -284,17 +300,19 @@
         const bgBlur = document.getElementById('bgBlur');
         const colorCanvas = document.getElementById('colorCanvas');
         const ctx = colorCanvas.getContext('2d', {willReadFrequently: true});
+        const recentsList = document.getElementById('recentsList');
 
         // --- GLOBAL STATE ---
         let isPlaying = false;
         let progressInterval = null; 
         const RECENTLY_PLAYED = [];
-        const MAX_RECENTS = 5;
+        const MAX_RECENTS = 10; // Aumentado para mostrar mais itens como no BBC
         const CARPOOL_START_HOUR = 18; // 6 PM Chicago
         const CARPOOL_END_HOUR = 20;   // 8 PM Chicago
 
-        // --- TIME FUNCTIONS ---
+        // --- TIME FUNCTIONS (Simplificada: apenas para o Carpool) ---
         function isTimeBetween(startHour, endHour) {
+            // Cria um objeto Date baseado no fuso horário de Chicago para cálculo
             const nowChicago = new Date(new Date().toLocaleString("en-US", { timeZone: CHICAGO_TIMEZONE }));
             const start = new Date(nowChicago);
             start.setHours(startHour, 0, 0, 0);
@@ -303,34 +321,26 @@
             return nowChicago.getTime() >= start.getTime() && nowChicago.getTime() < end.getTime();
         }
 
-        function isMondayWedFri() {
-            const nowChicago = new Date(new Date().toLocaleString("en-US", { timeZone: CHICAGO_TIMEZONE }));
-            const dayOfWeek = nowChicago.getDay(); // 0 = Domingo, 1 = Segunda, ..., 6 = Sábado
-            return dayOfWeek === 1 || dayOfWeek === 3 || dayOfWeek === 5; // Seg, Qua, Sex
-        }
-
-        function isTuesdayThuSat() {
-            const nowChicago = new Date(new Date().toLocaleString("en-US", { timeZone: CHICAGO_TIMEZONE }));
-            const dayOfWeek = nowChicago.getDay(); // 0 = Domingo, 1 = Segunda, ..., 6 = Sábado
-            return dayOfWeek === 2 || dayOfWeek === 4 || dayOfWeek === 6; // Ter, Qui, Sáb
-        }
-
         // --- RECENT TRACKS FUNCTION ---
-        function updateRecents(track, artist, cover) {
+        function updateRecents(track, artist, cover, timeAgo = "Now") {
             if (track === "Loading..." || track.toLowerCase().includes("commercial") || track.toLowerCase().includes("station id")) return;
             if (RECENTLY_PLAYED.length > 0 && 
                 RECENTLY_PLAYED[0].title === track && 
                 RECENTLY_PLAYED[0].artist === artist) {
+                // Atualiza o tempo do item atual se for o mesmo
+                RECENTLY_PLAYED[0].timeAgo = timeAgo;
                 return;
             }
-            RECENTLY_PLAYED.unshift({ title: track, artist: artist, cover: cover || IMG_DEFAULT });
+            RECENTLY_PLAYED.unshift({ title: track, artist: artist, cover: cover || IMG_DEFAULT, timeAgo: timeAgo });
             if (RECENTLY_PLAYED.length > MAX_RECENTS) {
                 RECENTLY_PLAYED.pop();
             }
-            const recentsList = document.getElementById('recentsList');
+            renderRecents();
+        }
+
+        function renderRecents() {
             recentsList.innerHTML = '';
-            // Pula a música atual (index 0)
-            for (let i = 1; i < RECENTLY_PLAYED.length; i++) {
+            for (let i = 0; i < RECENTLY_PLAYED.length; i++) {
                 const item = RECENTLY_PLAYED[i];
                 const itemHtml = `
                     <div class="recent-item">
@@ -339,6 +349,7 @@
                             <div class="recent-title">${item.title}</div>
                             <div class="recent-artist">${item.artist}</div>
                         </div>
+                        <div class="recent-time">${item.timeAgo}</div>
                     </div>
                 `;
                 recentsList.innerHTML += itemHtml;
@@ -347,52 +358,53 @@
 
         // --- PROGRESS RING FUNCTION (Program or Music) ---
         function startProgressMonitor(totalDurationMs, isProgramProgress = false) {
-            if (isProgramProgress && progressInterval) return; // Não inicia se já estiver rodando um progresso de programa
-            if (isProgramProgress && !isPlaying) return; // Não inicia se não estiver tocando
+            if (isProgramProgress && progressInterval) return;
+            if (isProgramProgress && !isPlaying) return; 
             let totalDuration;
             let startTimeMs; 
             if (isProgramProgress) {
-                if (progressInterval) clearInterval(progressInterval); // Limpa o intervalo anterior
+                if (progressInterval) clearInterval(progressInterval);
                 const nowChicago = new Date(new Date().toLocaleString("en-US", { timeZone: CHICAGO_TIMEZONE }));
-                // Calcula o início do dia para o progresso de 24h (Future Artists / Classics)
                 const startOfProgram = new Date(nowChicago);
-                startOfProgram.setHours(0, 0, 0, 0); // Meia-noite
-                startTimeMs = startOfProgram.getTime();
-                totalDuration = 24 * 60 * 60 * 1000; // 24 horas em milissegundos
+                startOfProgram.setHours(CARPOOL_START_HOUR, 0, 0, 0);
+                if (nowChicago.getTime() >= startOfProgram.getTime()) {
+                    startTimeMs = startOfProgram.getTime();
+                } else {
+                    return; 
+                }
+                totalDuration = (CARPOOL_END_HOUR - CARPOOL_START_HOUR) * 60 * 60 * 1000; 
             } else {
                 // LOGICA DA MUSICA
-                if (progressInterval) clearInterval(progressInterval); // Limpa o intervalo anterior
-                totalDuration = totalDurationMs > 0 ? totalDurationMs : 210000; // Padrão 3:30 min se não tiver duração
+                if (progressInterval) clearInterval(progressInterval);
+                totalDuration = totalDurationMs > 0 ? totalDurationMs : 210000; 
                 startTimeMs = Date.now();
             }
             const startTime = startTimeMs;
             progressInterval = setInterval(() => {
-                if (!isPlaying) return; // Para se não estiver mais tocando
+                if (!isPlaying) return; 
                 let percentage;
                 if (isProgramProgress) {
                     const nowChicago = new Date(new Date().toLocaleString("en-US", { timeZone: CHICAGO_TIMEZONE }));
                     const endOfProgram = new Date(nowChicago);
-                    endOfProgram.setHours(24, 0, 0, 0); // Meia-noite do dia seguinte
+                    endOfProgram.setHours(CARPOOL_END_HOUR, 0, 0, 0);
                     const currentElapsed = nowChicago.getTime() - startTime;
                     percentage = Math.min(currentElapsed / totalDuration, 1);
                     if (nowChicago.getTime() >= endOfProgram.getTime()) {
-                        percentage = 1; // Garante que chegue a 100%
-                        clearInterval(progressInterval); // Para o intervalo
-                        progressInterval = null; // Reseta a variável
+                        percentage = 1; 
+                        clearInterval(progressInterval);
                     }
                 } else {
                     const elapsed = Date.now() - startTime;
                     percentage = Math.min(elapsed / totalDuration, 1); 
                     if (percentage >= 1) {
-                        clearInterval(progressInterval); // Para o intervalo quando a música termina
-                        progressInterval = null; // Reseta a variável
-                        // Opcional: Reiniciar para a próxima música ou limpar o anel
-                        // programCircle.classList.remove('is-playing'); // Descomente se quiser limpar o anel
+                        clearInterval(progressInterval);
+                        // Opcional: Reiniciar para a próxima música
+                        // setupZeno(); // Mesma consideração acima
                     }
                 }
                 const degrees = percentage * 360;
                 programCircle.style.setProperty('--progress-deg', `${degrees}deg`);
-            }, 1000); // Atualiza a cada segundo
+            }, 1000);
         }
 
         // --- VISUAL UPDATE AND RING LOGIC ---
@@ -407,33 +419,29 @@
             if (!songImage.startsWith('/image/') && !songImage.startsWith('data:')) {
                 safeSongImage = 'https://corsproxy.io/?' + encodeURIComponent(songImage);
             }
-            // Se a imagem da música for inválida ou ausente, usa o logo da rádio
-            if (!songImage || songImage === IMG_DEFAULT) {
-                 safeSongImage = IMG_DEFAULT; 
-            }
             if (songCover.src !== safeSongImage && !songCover.src.endsWith(safeSongImage)) {
                 songCover.src = safeSongImage;
-                updateBackground(safeSongImage);
+                // Atualizar fundo com cor da capa da música (opcional, mantendo o fundo branco)
+                // updateBackground(safeSongImage);
             }
             trackTitle.innerText = songTitle;
             trackArtist.innerText = songArtist;
             // 3. Progress Ring
-            // O anel de progresso agora só é ativado se for uma música (isMusicalTrack = true)
             if (isMusicalTrack) {
-                programCircle.classList.add('is-playing'); // Adiciona o anel para músicas
-                // O progresso da música já foi iniciado na função processMetadata
+                programCircle.classList.add('is-playing');
             } else {
-                programCircle.classList.remove('is-playing'); // Remove o anel para programas
+                programCircle.classList.remove('is-playing');
                 programCircle.style.setProperty('--progress-deg', '0deg');
                 if (progressInterval) clearInterval(progressInterval);
-                progressInterval = null;
             }
         }
 
-        // --- COLOUR BACKGROUND ---
+        // --- COLOUR BACKGROUND (Opcional para manter o fundo branco) ---
         function updateBackground(imgUrl) {
+            // Removido para manter o fundo branco
+            /*
             if(imgUrl.includes('/image/')) {
-                bgBlur.style.background = `radial-gradient(circle at 50% 30%, #222, #000)`;
+                bgBlur.style.background = `radial-gradient(circle at 50% 30%, #fff, #f0f0f0)`;
                 return;
             }
             const img = new Image();
@@ -444,57 +452,72 @@
                     colorCanvas.width = 1; colorCanvas.height = 1;
                     ctx.drawImage(img, 0, 0, 1, 1);
                     const [r,g,b] = ctx.getImageData(0,0,1,1).data;
-                    bgBlur.style.background = `radial-gradient(circle at 50% 30%, rgb(${r},${g},${b}), #000)`;
+                    bgBlur.style.background = `radial-gradient(circle at 50% 30%, rgb(${r},${g},${b}), #fff)`;
                 } catch(e) {}
             }
+            */
         }
 
         // --- MAIN LOGIC (Metadata) ---
         async function processMetadata(artist, track) {
             const artistLow = artist.toLowerCase();
             const trackLow = track.toLowerCase();
-            let currentSongImg = IMG_DEFAULT; // Valor padrão
+            let currentSongImg = IMG_DEFAULT;
             let songDuration = 0; 
             let finalCircleImg = IMG_DEFAULT;
             let finalCircleName = "Praise FM"; 
-            let finalRingStatus = false; // Inicialmente falso, muda para verdadeiro se for música
+            let finalRingStatus = true; 
             let isCarpoolTime = isTimeBetween(CARPOOL_START_HOUR, CARPOOL_END_HOUR);
 
-            // 0. VERIFICAÇÃO DE PROGRAMAS POR DIA DA SEMANA (fora do horário do Carpool)
-            if (!isCarpoolTime) { // Só verifica os programas por dia se NÃO for Carpool
-                if (isMondayWedFri()) {
-                    finalCircleImg = IMG_FUTURE_ARTISTS;
-                    finalCircleName = "Praise FM Future Artists";
-                    // NÃO ativa o anel para o programa, apenas exibe o logo
-                    if (isPlaying) startProgressMonitor(0, true); // Inicia progresso do dia (24h) se for um programa fixo
-                } else if (isTuesdayThuSat()) {
-                    finalCircleImg = IMG_CLASSIC;
-                    finalCircleName = "Praise FM Classics";
-                    // NÃO ativa o anel para o programa, apenas exibe o logo
-                    if (isPlaying) startProgressMonitor(0, true); // Inicia progresso do dia (24h) se for um programa fixo
-                }
-            } else if (isCarpoolTime) { // 0.1. FORCA O ESTADO CARPOOL (6 PM - 8 PM Chicago)
+            // 0. FORCA O ESTADO CARPOOL (6 PM - 8 PM Chicago)
+            if (isCarpoolTime) {
                 finalCircleImg = IMG_CARPOOL;
                 finalCircleName = "Carpool";
-                // NÃO ativa o anel para o programa, apenas exibe o logo
-                if (isPlaying) startProgressMonitor(0, true); // Inicia progresso do Carpool (2h)
-            }
+                finalRingStatus = false; // Não ativa o anel para o programa
+                if (progressInterval) clearInterval(progressInterval); // Para o anel se estiver ativo
+                programCircle.classList.remove('is-playing');
+                programCircle.style.setProperty('--progress-deg', '0deg');
+            } 
 
             // 1. CHECAGEM DE COMERCIAIS E IDENTIFICADORES
             if (trackLow.includes("commercial") || trackLow.includes("ad break")) {
                 updateDisplay(IMG_COMMERCIAL, "Commercial Break", IMG_COMMERCIAL, "Commercial Break", "Praise FM", false);
+                updateRecents("Commercial Break", "Praise FM", IMG_COMMERCIAL, "Now");
                 return;
             }
             if (trackLow.includes("station id") || trackLow.includes("spot") || (artistLow === "praise fm" && trackLow === "praise fm")) {
                 updateDisplay(IMG_SPOT, "Station ID", IMG_SPOT, "Station ID", "Praise FM", false);
+                updateRecents("Station ID", "Praise FM", IMG_SPOT, "Now");
                 return;
             }
 
-            // 2. CHECAGEM DE OUTROS PROGRAMAS (Apenas se não for Carpool ou os de dia da semana)
-            // Esta verificação foi removida pois os programas fixos agora são baseados em dia/hora
-            // ou quando não se encaixam em nenhum dos acima e são identificados por metadados.
+            // 2. CHECAGEM DE OUTROS PROGRAMAS (Apenas se não for Carpool)
+            if (!isCarpoolTime) { 
+                const programMap = {
+                    "midday": [IMG_MIDDAY_GRACE, "Midday Grace"],
+                    "midnight": [IMG_MIDNIGHT_GRACE, "Midnight Grace"],
+                    "morning show": [IMG_MORNING_SHOW, "The Morning Show"],
+                    "classic": [IMG_CLASSIC, "Praise FM Classic"],
+                    "future": [IMG_FUTURE_ARTISTS, "Future Artists"],
+                    "pop": [IMG_POP, "Praise FM Pop"],
+                    "sunday": [IMG_SUNDAY_MORNING, "Sunday Morning"]
+                };
+                let programMatch = null;
+                for (const key in programMap) {
+                    if (artistLow.includes(key) || trackLow.includes(key)) {
+                        programMatch = programMap[key]; 
+                        break;
+                    }
+                }
+                if (programMatch) {
+                    const [img, name] = programMatch;
+                    updateDisplay(img, name, img, name, "Praise FM", false); 
+                    updateRecents(name, "Praise FM", img, "Now");
+                    return;
+                }
+            }
 
-            // 3. SE CHEGAR AQUI, É MÚSICA (ou um identificador não detectado como "praise fm - praise fm").
+            // 3. SE CHEGAR AQUI, É MÚSICA.
             // A. Busca Detalhes da Música (Capa/Duração)
             try {
                 const res = await fetch(`https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${LASTFM_API_KEY}&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}&format=json`);
@@ -502,40 +525,36 @@
                 if (data.track) {
                     if (data.track.album && data.track.album.image) {
                         const img = data.track.album.image.find(i => i.size === 'extralarge')['#text'];
-                        if (img && img !== '') { // Verifica se a imagem existe e não é vazia
+                        if (img) {
                             currentSongImg = img;
-                            // O círculo não muda para a capa da música se for um programa fixo (Future Artists, Classics, Carpool)
-                        } else {
-                             // Se a LastFM não retornar uma capa válida, mantém o logo padrão
-                             currentSongImg = IMG_DEFAULT; 
+                            if (!isCarpoolTime) finalCircleImg = img; 
                         }
                     }
                     if (data.track.duration) {
                         songDuration = parseInt(data.track.duration);
                     }
                 }
-            } catch(e) { 
-                console.log("LastFM Error", e); 
-                // Se a busca na LastFM falhar, mantém o logo padrão
-                currentSongImg = IMG_DEFAULT; 
+            } catch(e) { console.log("LastFM Error", e); }
+
+            // B. Lógica do Anel de Progresso (Se NÃO for CARPOOL)
+            if (!isCarpoolTime && isPlaying) {
+                 programCircle.classList.add('is-playing'); // Ativa o anel para a música
+                 startProgressMonitor(songDuration, false); 
+            } else {
+                 // Se for Carpool ou não estiver tocando, remove o anel da música
+                 programCircle.classList.remove('is-playing');
+                 programCircle.style.setProperty('--progress-deg', '0deg');
+                 if (progressInterval) clearInterval(progressInterval);
             }
 
-            // B. Lógica do Anel de Progresso (Se NÃO for CARPOOL e NÃO for programa de dia da semana)
-            // Se for música e não for um dos programas fixos (Future Artists, Classics, Carpool), usa o progresso da música
-            // E ativa o status de anel para música
-            if (!isCarpoolTime && !isMondayWedFri() && !isTuesdayThuSat() && isPlaying) {
-                 finalRingStatus = true; // Ativa o status de anel para música
-                 startProgressMonitor(songDuration, false); // Inicia progresso da música
-            }
-
-            // C. Atualiza Recentes (Só para músicas)
-            updateRecents(track, artist, currentSongImg);
+            // C. Atualiza Recentes
+            updateRecents(track, artist, currentSongImg, "Now");
 
             // D. Chamada Final
             updateDisplay(
-                finalCircleImg, finalCircleName,   // Círculo (Programa ou Logo Padrão)
+                finalCircleImg, finalCircleName,   // Círculo (Programa ou Logo da Música)
                 currentSongImg, track, artist,     // Card Música
-                finalRingStatus, songDuration      // Anel (Status e Duração)
+                finalRingStatus, songDuration      // Anel (Status - agora ativo apenas para músicas)
             );
         }
 
@@ -552,8 +571,7 @@
             if (isPlaying) {
                 audio.pause();
                 isPlaying = false;
-                iconPlay.style.display = 'block';
-                iconPause.style.display = 'none';
+                playBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Play';
                 // Para o anel se estiver pausado
                 programCircle.classList.remove('is-playing');
                 if (progressInterval) clearInterval(progressInterval);
@@ -562,15 +580,10 @@
                 if (audio.src !== STREAM_URL) audio.src = STREAM_URL;
                 audio.play().then(() => {
                     isPlaying = true;
-                    iconPlay.style.display = 'none';
-                    iconPause.style.display = 'block';
-                    // Reinicia progresso se estiver em um dos programas fixos
+                    playBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg> Pause';
+                    // Reinicia progresso se estiver em CARPOOL
                     if (isTimeBetween(CARPOOL_START_HOUR, CARPOOL_END_HOUR)) {
-                        startProgressMonitor(0, true); // Carpool (2h)
-                    } else if (isMondayWedFri()) {
-                        startProgressMonitor(0, true); // Future Artists (24h)
-                    } else if (isTuesdayThuSat()) {
-                        startProgressMonitor(0, true); // Classics (24h)
+                        startProgressMonitor(0, true);
                     }
                 }).catch(e => {
                     console.error("Autoplay prevented", e);
@@ -605,6 +618,8 @@
 
         // Inicialização
         setupZeno();
+        // Inicializa a lista de recentes com um item padrão ou vazio
+        renderRecents();
     </script>
 </body>
 </html>
