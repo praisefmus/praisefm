@@ -32,7 +32,7 @@
 
         body {
             background-color: #000;
-            height: 100vh;
+            min-height: 100vh;
             width: 100vw;
             display: flex;
             justify-content: center;
@@ -52,17 +52,17 @@
         .player-container {
             width: 100%; 
             min-height: 100vh; 
-            max-width: 1100px; /* Wider container for desktop layout */
-            display: flex; 
-            flex-direction: column; /* Default: Vertical stack for mobile */
+            max-width: 1100px; 
+            display: flex; /* Flex is used for the mobile fallback (vertical stack) */
+            flex-direction: column; 
             align-items: center; 
             padding: 20px;
             position: relative;
             text-shadow: 0 2px 10px rgba(0,0,0,0.8);
             gap: 20px; 
         }
-
-        /* --- 1. PROGRAM AREA (Circle + Square) --- */
+        
+        /* === 1. PROGRAM AREA (Circle + Square) === */
         .program-area {
             position: relative;
             width: 100%;
@@ -72,7 +72,6 @@
             margin-bottom: 20px;
         }
 
-        /* --- NEW: SQUARE BEHIND CIRCLE --- */
         .program-square {
             position: absolute;
             top: 50%;
@@ -103,7 +102,6 @@
             background-color: #000;
             z-index: 2;
             box-shadow: 0 15px 50px rgba(0,0,0,0.6);
-            transition: all 0.3s ease;
             --progress-deg: 0deg;
         }
 
@@ -128,7 +126,6 @@
             );
             -webkit-mask: radial-gradient(transparent 68%, black 69%);
             mask: radial-gradient(transparent 68%, black 69%);
-            transition: all 1s linear; 
         }
 
         .program-label { margin-top: 20px; text-align: center; }
@@ -140,15 +137,9 @@
         }
         
         .live-dot { width: 8px; height: 8px; background-color: var(--accent-color); border-radius: 50%; box-shadow: 0 0 8px var(--accent-color); }
-
-        @keyframes flash {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(0.98); }
-        }
-
         .program-name { font-size: 24px; font-weight: 800; margin-top: 5px; letter-spacing: -0.5px; line-height: 1.1;}
 
-        /* --- 2. CONTROLS (Centralized on Mobile) --- */
+        /* === 2. CONTROLS === */
         .controls-area {
             display: flex; justify-content: center; align-items: center; gap: 30px; 
             margin: 10px 0;
@@ -156,30 +147,25 @@
             width: 100%;
             align-self: center;
         }
+        /* ... (Control buttons CSS remains the same) ... */
         .control-btn { background: none; border: none; color: #fff; cursor: pointer; transition: transform 0.2s; display: flex; align-items: center; justify-content: center;}
         .control-btn:active { transform: scale(0.9); }
-        
-        .play-btn { 
-            width: 70px; height: 70px; background: var(--accent-color); border-radius: 50%; 
-            box-shadow: 0 8px 20px rgba(255, 77, 0, 0.4); color: white;
-            display: flex; align-items: center; justify-content: center;
-        }
+        .play-btn { width: 70px; height: 70px; background: var(--accent-color); border-radius: 50%; box-shadow: 0 8px 20px rgba(255, 77, 0, 0.4); color: white; display: flex; align-items: center; justify-content: center; }
         .play-btn svg { width: 30px; height: 30px; fill: white; }
         .play-btn svg.play-icon { margin-left: 4px; }
-        
         .skip-btn svg { width: 28px; height: 28px; opacity: 0.8; }
-        .skip-btn:hover svg { opacity: 1; }
 
-        /* --- 3. METADATA WRAPPER (For Side Alignment on Desktop) --- */
+
+        /* === 3. METADATA WRAPPER (Mobile: Full Width) === */
         .metadata-wrapper {
             width: 100%;
             display: flex;
             flex-direction: column;
             gap: 20px;
-            align-self: flex-start; /* Aligns this block to the left edge of the main container */
+            align-self: flex-start;
         }
 
-        /* --- 3. NOW PLAYING CARD (Left Aligned) --- */
+        /* --- NOW PLAYING CARD --- */
         .now-playing-card {
             width: 100%; 
             background-color: var(--glass-bg);
@@ -189,74 +175,69 @@
             border: 1px solid rgba(255,255,255,0.1); 
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
+        /* ... (Song info CSS remains the same) ... */
         .song-cover { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; background-color: #333; margin-right: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
         .song-info { flex: 1; overflow: hidden; text-shadow: none; }
         .song-title { font-size: 16px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; margin-bottom: 2px; }
         .song-artist { font-size: 14px; color: #ccc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .lyrics-btn { opacity: 0.8; cursor: pointer; background:none; border:none; color:white; padding: 8px; transition: opacity 0.2s; }
-        .lyrics-btn:hover { opacity: 1; }
+        .lyrics-btn { opacity: 0.8; cursor: pointer; background:none; border:none; color:white; padding: 8px; }
 
-        /* --- EXTRAS (Volume - Left Aligned) --- */
+        /* --- VOLUME --- */
         .volume-container { 
-            width: 80%; /* Smaller on mobile */
+            width: 80%; 
             max-width: 300px;
             display: flex; align-items: center; gap: 12px; 
             background-color: rgba(0,0,0,0.4); 
             padding: 8px 15px;
             border-radius: 20px;
-            opacity: 1; 
-            align-self: flex-start; /* ALIGNED LEFT */
+            align-self: flex-start;
             margin-left: 20px; 
         }
+        /* ... (Volume slider CSS remains the same) ... */
         .volume-slider { flex: 1; -webkit-appearance: none; background: rgba(255,255,255,0.3); height: 4px; border-radius: 2px; outline: none; }
         .volume-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: #fff; cursor: pointer; }
-        
-        /* --- 4. RECENTLY PLAYED (Left Aligned) --- */
+
+        /* --- RECENTLY PLAYED --- */
         .recents-container {
             width: 100%; 
             padding: 10px 0;
             margin-bottom: 40px; 
         }
-        .recents-title {
-            font-size: 14px; font-weight: 700; color: #999; text-transform: uppercase; margin-bottom: 10px; padding: 0 18px;
-        }
-        .recent-item {
-            display: flex; align-items: center; padding: 8px 18px; transition: background-color 0.2s; border-radius: 0;
-        }
-        .recent-item:hover { background-color: rgba(255, 255, 255, 0.05); }
-        .recent-cover {
-            width: 35px; height: 35px; border-radius: 4px; object-fit: cover; background-color: #333; margin-right: 15px;
-        }
+        /* ... (Recents item CSS remains the same) ... */
+        .recents-title { font-size: 14px; font-weight: 700; color: #999; text-transform: uppercase; margin-bottom: 10px; padding: 0 18px; }
+        .recent-item { display: flex; align-items: center; padding: 8px 18px; transition: background-color 0.2s; border-radius: 0; }
+        .recent-cover { width: 35px; height: 35px; border-radius: 4px; object-fit: cover; background-color: #333; margin-right: 15px; }
         .recent-info { flex: 1; overflow: hidden; }
         .recent-title { font-size: 14px; font-weight: 500; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .recent-artist { font-size: 12px; color: #aaa; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* --- DESKTOP LAYOUT (The side-by-side view) --- */
+
+        /* === DESKTOP LAYOUT (CSS GRID) === */
         @media (min-width: 768px) {
             .player-container { 
-                flex-direction: row; /* Main container becomes horizontal */
-                align-items: flex-start; 
-                justify-content: space-between;
+                display: grid; 
+                grid-template-columns: 450px 1fr; /* Coluna 1 (Anel) com largura fixa, Coluna 2 (Metadata) flexível */
+                grid-template-rows: 1fr;
+                gap: 50px; 
                 padding: 40px;
-                min-height: 100vh;
             }
 
-            /* --- LEFT COLUMN: Circle + Controls --- */
+            /* --- LEFT COLUMN (Circle, Square, Controls) --- */
             .left-column {
-                width: 45%; 
+                grid-column: 1 / 2; /* Fica na primeira coluna */
                 display: flex;
                 flex-direction: column;
                 align-items: flex-start;
-                position: sticky; /* Keep it on the left */
+                position: sticky; /* Mantém na esquerda ao rolar a página */
                 top: 40px;
+                height: 100%;
             }
-            
+
             .program-area {
                 width: 100%;
                 margin-bottom: 0;
-                align-items: flex-start; /* Align circle/square area to the left */
+                align-items: flex-start;
                 padding-top: 100px; 
-                position: relative;
             }
 
             /* Reposition the Square and Circle to top-left */
@@ -264,7 +245,7 @@
                 top: 0; 
                 left: 0; 
                 transform: none; /* Align to top-left of the program-area */
-                width: 100%; 
+                width: 400px; 
                 height: 400px; 
                 max-width: 400px;
                 max-height: 400px;
@@ -284,22 +265,22 @@
                 width: 100%; 
                 justify-content: flex-start; /* Align controls to the left */
                 margin-top: 40px;
+                max-width: 400px;
             }
 
-            /* --- RIGHT COLUMN: Metadata --- */
+            /* --- RIGHT COLUMN (Metadata) --- */
             .metadata-wrapper {
-                width: 50%;
-                min-height: 700px; /* Ensure content stretches */
-            }
-            
-            .now-playing-card, .recents-container {
-                max-width: 450px;
-            }
-            
-            .volume-container {
-                margin-left: 0;
+                grid-column: 2 / 3; /* Fica na segunda coluna */
                 width: 100%;
-                max-width: 450px;
+                padding-top: 40px; /* Padding para alinhar com o topo do quadrado */
+            }
+            
+            .now-playing-card, .volume-container, .recents-container {
+                /* Garante que os cards preencham a largura da coluna, mas não sejam muito grandes */
+                width: 100%; 
+                max-width: 600px; 
+                align-self: flex-start;
+                margin-left: 0;
             }
         }
     </style>
@@ -376,7 +357,7 @@
         const LASTFM_API_KEY = "7744c8f90ee053fc761e0e23bfa00b89";
         const CHICAGO_TIMEZONE = "America/Chicago";
 
-        // --- LOCAL IMAGES ---
+        // --- LOCAL IMAGES (Assuming these paths are correct in your project) ---
         const IMG_DEFAULT = "/image/logopraisefm.webp"; 
         const IMG_COMMERCIAL = "/image/commercial break.png"; 
         const IMG_SPOT = "/image/spot.webp";
@@ -412,7 +393,7 @@
         const CARPOOL_START_HOUR = 18; // 6 PM Chicago
         const CARPOOL_END_HOUR = 20;   // 8 PM Chicago
         
-        // --- TIME FUNCTIONS (Kept simple, no display needed, but used for CARPOOL logic) ---
+        // --- TIME FUNCTIONS (Used only for CARPOOL program logic) ---
         function isTimeBetween(startHour, endHour) {
             const nowChicago = new Date(new Date().toLocaleString("en-US", { timeZone: CHICAGO_TIMEZONE }));
             
@@ -424,7 +405,6 @@
 
             return nowChicago.getTime() >= start.getTime() && nowChicago.getTime() < end.getTime();
         }
-
 
         // --- RECENT TRACKS FUNCTION ---
         function updateRecents(track, artist, cover) {
@@ -572,7 +552,6 @@
             }
         }
 
-
         // --- MAIN LOGIC (Metadata) ---
         async function processMetadata(artist, track) {
             const artistLow = artist.toLowerCase();
@@ -604,7 +583,6 @@
                 updateDisplay(IMG_SPOT, "Station ID", IMG_SPOT, "Station ID", "Praise FM", false);
                 return;
             }
-
 
             // 2. OTHER NON-PERSISTENT PROGRAMS CHECK (Only if not in Carpool Time)
             if (!isCarpoolTime) { 
@@ -687,6 +665,8 @@
                 isPlaying = false;
                 iconPlay.style.display = 'block';
                 iconPause.style.display = 'none';
+                programCircle.classList.remove('is-playing');
+                if (progressInterval) clearInterval(progressInterval);
             } else {
                 if (audio.src !== STREAM_URL) audio.src = STREAM_URL;
                 audio.play().then(() => {
@@ -696,6 +676,9 @@
                     // Restart progress if in CARPOOL
                     if (isTimeBetween(CARPOOL_START_HOUR, CARPOOL_END_HOUR)) {
                         startProgressMonitor(0, true);
+                    } else {
+                        // For music, force a metadata refresh to restart the music progress ring
+                        setupZeno(); 
                     }
                 }).catch(e => {
                     console.error("Autoplay prevented", e);
