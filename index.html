@@ -52,15 +52,15 @@
         .player-container {
             width: 100%; 
             height: 100%;
-            max-height: 100vh; /* Limita a altura máxima */
+            max-height: 100vh; 
             display: flex; 
             flex-direction: column;
             align-items: center;
-            justify-content: center; /* Centraliza o conteúdo */
+            justify-content: center; 
             padding: 20px;
             position: relative;
             text-shadow: 0 2px 10px rgba(0,0,0,0.8);
-            gap: 15px; /* Espaçamento consistente entre elementos */
+            gap: 15px; 
         }
 
         /* --- 1. CÍRCULO DO PROGRAMA --- */
@@ -73,7 +73,6 @@
         }
 
         .program-circle {
-            /* Tamanho responsivo: usa a menor dimensão para não estourar */
             width: min(60vw, 260px); 
             height: min(60vw, 260px);
             border-radius: 50%;
@@ -111,7 +110,7 @@
 
         .program-label { margin-top: 20px; text-align: center; }
 
-        /* LIVE PISCANDO (Texto todo) */
+        /* LIVE PISCANDO */
         .program-status { 
             font-size: 12px; 
             color: var(--accent-color); 
@@ -122,7 +121,7 @@
             align-items: center; 
             justify-content: center; 
             gap: 8px; 
-            animation: flash 2s infinite ease-in-out; /* Piscar suave */
+            animation: flash 2s infinite ease-in-out;
         }
         
         .live-dot { 
@@ -180,11 +179,10 @@
         .lyrics-btn:hover { opacity: 1; }
 
         /* --- EXTRAS (Volume) --- */
-        /* Garantindo que o volume seja visível com cor de fundo */
         .volume-container { 
             width: 80%; max-width: 350px; 
             display: flex; align-items: center; gap: 12px; 
-            background-color: rgba(0,0,0,0.4); /* Fundo para destacar */
+            background-color: rgba(0,0,0,0.4); 
             padding: 8px 15px;
             border-radius: 20px;
             opacity: 1; 
@@ -217,10 +215,9 @@
             line-height: 1;
         }
 
-        /* --- DESKTOP (AJUSTES PARA NÃO ESTOURAR A TELA) --- */
+        /* --- DESKTOP --- */
         @media (min-width: 768px) {
             .player-container { 
-                /* Reduzimos a altura máxima para garantir que tudo caiba em laptops */
                 max-width: 800px; 
                 height: auto;
                 min-height: 600px; 
@@ -230,16 +227,11 @@
                 padding: 30px;
             }
 
-            .program-circle { width: 320px; height: 320px; } /* Reduzido para caber melhor */
-            
+            .program-circle { width: 320px; height: 320px; }
             .program-name { font-size: 36px; }
-            
             .play-btn { width: 80px; height: 80px; }
-            
             .now-playing-card { max-width: 500px; padding: 20px; }
             .song-cover { width: 60px; height: 60px; }
-            
-            /* Relógio e Volume garantidos na tela */
             .clock-display { font-size: 42px; }
         }
     </style>
@@ -310,8 +302,6 @@
         const IMG_DEFAULT = "/image/logopraisefm.webp"; 
         const IMG_COMMERCIAL = "/image/commercial break.png"; 
         const IMG_SPOT = "/image/spot.webp";
-
-        // LOGOS DE PROGRAMAS 
         const IMG_MIDDAY_GRACE = "/image/middaygracelogo.webp"; 
         const IMG_MIDNIGHT_GRACE = "/image/midnightgracelogo.webp";
         const IMG_MORNING_SHOW = "/image/morningshowlogo.webp";
@@ -342,19 +332,40 @@
         let isPlaying = false;
         let progressInterval = null; 
 
-        // --- RELÓGIO E DATA CHICAGO ---
+        // --- FUNÇÕES DE HORA ---
         function updateChicagoTime() {
-            // Data atual com fuso horário de Chicago
             const now = new Date();
             const optionsTime = { timeZone: 'America/Chicago', hour: 'numeric', minute: '2-digit', hour12: true };
             const timeString = now.toLocaleTimeString('en-US', optionsTime);
-            // Formato da data: Friday, November 21
             const optionsDate = { timeZone: 'America/Chicago', weekday: 'long', month: 'long', day: 'numeric' };
             const dateString = now.toLocaleDateString('en-US', optionsDate);
 
             clockDisplay.innerText = timeString;
             dateDisplay.innerText = dateString;
         }
+
+        // Verifica se a hora atual de Chicago está entre startHour e endHour
+        function isTimeBetween(startHour, endHour) {
+            const nowChicago = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Chicago" }));
+            
+            const start = new Date(nowChicago);
+            start.setHours(startHour, 0, 0, 0);
+
+            const end = new Date(nowChicago);
+            end.setHours(endHour, 0, 0, 0);
+
+            // Se o intervalo atravessar a meia-noite (não relevante para 18h-20h, mas mantido)
+            if (startHour > endHour) {
+                if (nowChicago.getHours() < endHour) {
+                    start.setDate(start.getDate() - 1);
+                } else {
+                    end.setDate(end.getDate() + 1);
+                }
+            }
+            
+            return nowChicago.getTime() >= start.getTime() && nowChicago.getTime() < end.getTime();
+        }
+
 
         // --- ATUALIZAÇÃO VISUAL ---
         function updateDisplay(programImage, programName, songImage, songTitle, songArtist, isMusicalTrack, durationMs = 0) {
@@ -364,10 +375,9 @@
             }
             programNameDisplay.innerText = programName;
 
-            // 2. Cartão da Música
+            // 2. Cartão da Música / Fundo
             let safeSongImage = songImage;
             if (!songImage.startsWith('/image/') && !songImage.startsWith('data:')) {
-                // Usamos o proxy para evitar problemas de CORS com imagens externas
                 safeSongImage = 'https://corsproxy.io/?' + encodeURIComponent(songImage);
             }
             if (songCover.src !== safeSongImage && !songCover.src.endsWith(safeSongImage)) {
@@ -377,7 +387,7 @@
             trackTitle.innerText = songTitle;
             trackArtist.innerText = songArtist;
 
-            // 3. Anel de Progresso (SÓ PARA MÚSICAS)
+            // 3. Anel de Progresso (SÓ PARA MÚSICAS NO CARD)
             if (progressInterval) clearInterval(progressInterval);
             
             if (isMusicalTrack) {
@@ -391,7 +401,6 @@
 
         // --- FUNÇÃO DO ANEL ---
         function startProgressMonitor(durationMs) {
-            // Se a duração for 0 ou não vier, assume 3:30 (210 segundos)
             const totalDuration = durationMs > 0 ? durationMs : 210000; 
             const startTime = Date.now();
 
@@ -405,7 +414,6 @@
                 programCircle.style.setProperty('--progress-deg', `${degrees}deg`);
 
                 if (percentage >= 1) {
-                    // Reinicia a checagem de metadados para pegar a próxima música
                     clearInterval(progressInterval);
                     setTimeout(setupZeno, 5000); 
                 }
@@ -414,7 +422,6 @@
 
         // --- FUNDO COLORIDO ---
         function updateBackground(imgUrl) {
-            // Ignora cores para logos locais
             if(imgUrl.includes('/image/')) {
                 bgBlur.style.background = `radial-gradient(circle at 50% 30%, #222, #000)`;
                 return;
@@ -424,69 +431,83 @@
             img.src = imgUrl;
             img.onload = () => {
                 try {
-                    // Pega a cor média (apenas 1 pixel)
                     colorCanvas.width = 1; colorCanvas.height = 1;
                     ctx.drawImage(img, 0, 0, 1, 1);
                     const [r,g,b] = ctx.getImageData(0,0,1,1).data;
-                    // Aplica ao fundo com gradiente
                     bgBlur.style.background = `radial-gradient(circle at 50% 30%, rgb(${r},${g},${b}), #000)`;
                 } catch(e) {}
             }
         }
 
-        // --- LÓGICA PRINCIPAL (Metadados) ---
+
+        // --- LÓGICA PRINCIPAL (Metadados - Com Lógica de Persistência 18h-20h) ---
         async function processMetadata(artist, track) {
             const artistLow = artist.toLowerCase();
             const trackLow = track.toLowerCase();
             
-            let currentProgramImg = IMG_DEFAULT;
-            let currentProgramName = "Praise FM"; 
             let currentSongImg = IMG_DEFAULT;
-            let isMusic = true;
             let songDuration = 0; 
 
-            // console.log(`Zeno: ${artist} - ${track}`);
+            let finalCircleImg = IMG_DEFAULT;
+            let finalCircleName = "Praise FM"; 
+            let finalRingStatus = true; 
 
-            const programMap = {
-                "midday": [IMG_MIDDAY_GRACE, "Midday Grace"],
-                "mid-day": [IMG_MIDDAY_GRACE, "Midday Grace"],
-                "midnight": [IMG_MIDNIGHT_GRACE, "Midnight Grace"],
-                "morning show": [IMG_MORNING_SHOW, "The Morning Show"],
-                "carpool": [IMG_CARPOOL, "Carpool"],
-                "classic": [IMG_CLASSIC, "Praise FM Classic"],
-                "future": [IMG_FUTURE_ARTISTS, "Future Artists"],
-                "pop": [IMG_POP, "Praise FM Pop"],
-                "sunday": [IMG_SUNDAY_MORNING, "Sunday Morning"]
-            };
+            const CARPOOL_START_HOUR = 18;
+            const CARPOOL_END_HOUR = 20;
 
-            let foundProgram = false;
-            for (const key in programMap) {
-                if (artistLow.includes(key) || trackLow.includes(key)) {
-                    currentProgramImg = programMap[key][0];
-                    currentProgramName = programMap[key][1];
-                    currentSongImg = programMap[key][0];
-                    isMusic = false; 
-                    foundProgram = true;
-                    break;
-                }
+            let isCarpoolTime = isTimeBetween(CARPOOL_START_HOUR, CARPOOL_END_HOUR);
+
+            // 0. FORÇAR ESTADO DO CARPOOL (Prioridade Máxima 18h-20h)
+            if (isCarpoolTime) {
+                finalCircleImg = IMG_CARPOOL;
+                finalCircleName = "Carpool";
+                finalRingStatus = true; // Anel LIGADO no card para músicas.
             }
 
+            // 1. CHECAGEM DE COMERCIAIS E IDENTIFICADORES (RETORNO IMEDIATO - Sobrescreve TUDO)
             if (trackLow.includes("commercial") || trackLow.includes("ad break")) {
                 updateDisplay(IMG_COMMERCIAL, "Commercial Break", IMG_COMMERCIAL, "Commercial Break", "Praise FM", false);
                 return;
             }
-            if (trackLow.includes("station id") || trackLow.includes("spot")) {
+            if (trackLow.includes("station id") || trackLow.includes("spot") || (artistLow === "praise fm" && trackLow === "praise fm")) {
                 updateDisplay(IMG_SPOT, "Station ID", IMG_SPOT, "Station ID", "Praise FM", false);
                 return;
             }
 
-            // Se for um programa (não é música, não tem anel)
-            if (foundProgram) {
-                updateDisplay(currentProgramImg, currentProgramName, currentSongImg, track, artist, false);
-                return;
+
+            // 2. DETECÇÃO DE OUTROS PROGRAMAS NÃO-PERSISTENTES (Só checa se não for a hora do CARPOOL)
+            if (!isCarpoolTime) { 
+                const programMap = {
+                    "midday": [IMG_MIDDAY_GRACE, "Midday Grace"],
+                    "mid-day": [IMG_MIDDAY_GRACE, "Midday Grace"],
+                    "midnight": [IMG_MIDNIGHT_GRACE, "Midnight Grace"],
+                    "morning show": [IMG_MORNING_SHOW, "The Morning Show"],
+                    "classic": [IMG_CLASSIC, "Praise FM Classic"],
+                    "future": [IMG_FUTURE_ARTISTS, "Future Artists"],
+                    "pop": [IMG_POP, "Praise FM Pop"],
+                    "sunday": [IMG_SUNDAY_MORNING, "Sunday Morning"]
+                };
+
+                let programMatch = null;
+                for (const key in programMap) {
+                    if (artistLow.includes(key) || trackLow.includes(key)) {
+                        programMatch = programMap[key]; 
+                        break;
+                    }
+                }
+
+                // Se encontrou um programa não-persistente, exibe TUDO dele e retorna (anel off)
+                if (programMatch) {
+                    const [img, name] = programMatch;
+                    updateDisplay(img, name, img, name, "Praise FM", false); 
+                    return;
+                }
             }
 
-            // Se for música, busca dados do Last.fm para capa e duração
+
+            // 3. SE CHEGOU AQUI, É MÚSICA.
+
+            // A. Busca detalhes da música (Capa/Duração)
             try {
                 const res = await fetch(`https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${LASTFM_API_KEY}&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}&format=json`);
                 const data = await res.json();
@@ -496,7 +517,8 @@
                         const img = data.track.album.image.find(i => i.size === 'extralarge')['#text'];
                         if (img) {
                             currentSongImg = img;
-                            currentProgramImg = img; 
+                            // Se não estiver no CARPOOL, a capa da música vai para o círculo principal
+                            if (!isCarpoolTime) finalCircleImg = img; 
                         }
                     }
                     if (data.track.duration) {
@@ -505,8 +527,16 @@
                 }
             } catch(e) { console.log("Erro LastFM", e); }
 
-            // Atualiza com status de música (anel rodando)
-            updateDisplay(currentProgramImg, "Praise FM", currentSongImg, track, artist, true, songDuration);
+
+            // B. Chamada final (Comportamento de Duas Camadas)
+            
+            // O ring é LIGADO se for música OU se estiver no horário do CARPOOL (override 18h-20h)
+            
+            updateDisplay(
+                finalCircleImg, finalCircleName,   // Círculo fixo (CARPOOL) ou dinâmico (música/default)
+                currentSongImg, track, artist,     // Card de música (sempre dinâmico)
+                finalRingStatus, songDuration      // Anel rodando (Sempre true para música/CARPOOL)
+            );
         }
 
         // --- CONTROLES DE ÁUDIO ---
@@ -550,17 +580,19 @@
                 try {
                     const d = JSON.parse(e.data);
                     if (d.streamTitle) {
-                        const [artist, song] = d.streamTitle.split(' - ');
-                        processMetadata(artist?.trim() || "Praise FM", song?.trim() || "");
+                        const parts = d.streamTitle.split(' - ');
+                        // Garante que artist/track não fiquem undefined
+                        const artist = parts[0]?.trim() || "Praise FM";
+                        const track = parts.slice(1).join(' - ')?.trim() || "";
+                        processMetadata(artist, track);
                     }
                 } catch(err) {}
             };
         }
 
-        // Função vazia, mantém os botões no HTML
         function skip(sec) {}
 
-        // Inicia a checagem de metadados e o relógio
+        // Inicia
         setupZeno();
         setInterval(updateChicagoTime, 1000);
         updateChicagoTime(); 
