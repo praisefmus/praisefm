@@ -46,7 +46,6 @@
         /* AJUSTE 2: player-container com min-height: 100vh; REMOVIDO */
         .player-container {
             width: 100%; 
-            /* min-height: 100vh; <-- Removida para centralizar em desktop */
             max-width: 600px; 
             display: flex; 
             flex-direction: column;
@@ -185,7 +184,6 @@
         @media (min-width: 768px) {
             .player-container { 
                 max-width: 800px; 
-                /* min-height REMOVIDO AQUI TAMBÉM */
                 justify-content: flex-start; 
                 gap: 25px;
                 padding: 30px;
@@ -305,12 +303,6 @@
             return nowChicago.getTime() >= start.getTime() && nowChicago.getTime() < end.getTime();
         }
 
-        function isMondayToFriday() {
-            const nowChicago = new Date(new Date().toLocaleString("en-US", { timeZone: CHICAGO_TIMEZONE }));
-            const dayOfWeek = nowChicago.getDay(); // 0 = Domingo, 1 = Segunda, ..., 6 = Sábado
-            return dayOfWeek >= 1 && dayOfWeek <= 5; // Segunda (1) a Sexta (5)
-        }
-
         function isMondayWedFri() {
             const nowChicago = new Date(new Date().toLocaleString("en-US", { timeZone: CHICAGO_TIMEZONE }));
             const dayOfWeek = nowChicago.getDay(); // 0 = Domingo, 1 = Segunda, ..., 6 = Sábado
@@ -323,17 +315,9 @@
             return dayOfWeek === 2 || dayOfWeek === 4 || dayOfWeek === 6; // Ter, Qui, Sáb
         }
 
-        // --- RECENT TRACKS FUNCTION (Apenas para Músicas) ---
+        // --- RECENT TRACKS FUNCTION ---
         function updateRecents(track, artist, cover) {
-            // Só adiciona à lista se for uma música (não é comercial, spot ou identificador de programa)
-            if (track === "Loading..." || 
-                track.toLowerCase().includes("commercial") || 
-                track.toLowerCase().includes("ad break") || 
-                track.toLowerCase().includes("station id") || 
-                track.toLowerCase().includes("spot") || 
-                (artist.toLowerCase() === "praise fm" && track.toLowerCase() === "praise fm")) {
-                return;
-            }
+            if (track === "Loading..." || track.toLowerCase().includes("commercial") || track.toLowerCase().includes("station id")) return;
             if (RECENTLY_PLAYED.length > 0 && 
                 RECENTLY_PLAYED[0].title === track && 
                 RECENTLY_PLAYED[0].artist === artist) {
@@ -475,7 +459,6 @@
             let finalCircleName = "Praise FM"; 
             let finalRingStatus = false; // Inicialmente falso, muda para verdadeiro se for música
             let isCarpoolTime = isTimeBetween(CARPOOL_START_HOUR, CARPOOL_END_HOUR);
-            let isWeekday = isMondayToFriday(); // Verifica se é segunda a sexta
 
             // 0. VERIFICAÇÃO DE PROGRAMAS POR DIA DA SEMANA (fora do horário do Carpool)
             if (!isCarpoolTime) { // Só verifica os programas por dia se NÃO for Carpool
@@ -490,18 +473,11 @@
                     // NÃO ativa o anel para o programa, apenas exibe o logo
                     if (isPlaying) startProgressMonitor(0, true); // Inicia progresso do dia (24h) se for um programa fixo
                 }
-            } else if (isCarpoolTime && isWeekday) { // 0.1. FORCA O ESTADO CARPOOL (6 PM - 8 PM Chicago, Seg-Sex)
+            } else if (isCarpoolTime) { // 0.1. FORCA O ESTADO CARPOOL (6 PM - 8 PM Chicago)
                 finalCircleImg = IMG_CARPOOL;
                 finalCircleName = "Carpool";
                 // NÃO ativa o anel para o programa, apenas exibe o logo
                 if (isPlaying) startProgressMonitor(0, true); // Inicia progresso do Carpool (2h)
-            } else if (isCarpoolTime && !isWeekday) {
-                 // Se for horário do Carpool mas NÃO for segunda a sexta, volta ao padrão
-                 finalCircleImg = IMG_DEFAULT;
-                 finalCircleName = "Praise FM";
-                 finalRingStatus = false; // Não ativa o anel
-                 if (progressInterval) clearInterval(progressInterval);
-                 progressInterval = null;
             }
 
             // 1. CHECAGEM DE COMERCIAIS E IDENTIFICADORES
@@ -530,8 +506,8 @@
                             currentSongImg = img;
                             // O círculo não muda para a capa da música se for um programa fixo (Future Artists, Classics, Carpool)
                         } else {
-                             // Se a LastFM não retornar uma capa válida, mantém o logo padrão ou o logo do programa
-                             currentSongImg = IMG_DEFAULT; // ou finalCircleImg se quiser o logo do programa
+                             // Se a LastFM não retornar uma capa válida, mantém o logo padrão
+                             currentSongImg = IMG_DEFAULT; 
                         }
                     }
                     if (data.track.duration) {
@@ -540,8 +516,8 @@
                 }
             } catch(e) { 
                 console.log("LastFM Error", e); 
-                // Se a busca na LastFM falhar, mantém o logo padrão ou o logo do programa
-                currentSongImg = IMG_DEFAULT; // ou finalCircleImg se quiser o logo do programa
+                // Se a busca na LastFM falhar, mantém o logo padrão
+                currentSongImg = IMG_DEFAULT; 
             }
 
             // B. Lógica do Anel de Progresso (Se NÃO for CARPOOL e NÃO for programa de dia da semana)
@@ -589,7 +565,7 @@
                     iconPlay.style.display = 'none';
                     iconPause.style.display = 'block';
                     // Reinicia progresso se estiver em um dos programas fixos
-                    if (isTimeBetween(CARPOOL_START_HOUR, CARPOOL_END_HOUR) && isMondayToFriday()) {
+                    if (isTimeBetween(CARPOOL_START_HOUR, CARPOOL_END_HOUR)) {
                         startProgressMonitor(0, true); // Carpool (2h)
                     } else if (isMondayWedFri()) {
                         startProgressMonitor(0, true); // Future Artists (24h)
