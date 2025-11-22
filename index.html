@@ -612,8 +612,10 @@
 
                 if (progressType === 'program') {
                     programCircle.style.setProperty('--progress-deg', `${percentage * 3.6}deg`); // 360 degrees / 100 = 3.6
+                    barSeekProgress.style.width = `${percentage}%`;
+                } else if (progressType === 'song') {
+                    barSeekProgress.style.width = `${percentage}%`;
                 }
-                barSeekProgress.style.width = `${percentage}%`;
 
                 if (percentage >= 100) {
                     clearInterval(progressInterval);
