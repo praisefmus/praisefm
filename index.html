@@ -1,354 +1,279 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="pt">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Praise FM — Praise & Worship</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Praise FM - Live</title>
+    <meta name="theme-color" content="#ff4d00">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0RNK6G5WWL"></script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-0RNK6G5WWL');</script>
+    <link rel="icon" type="image/png" sizes="32x32" href="./image/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./image/apple-touch-icon.png">
+    <style>
+        :root{--orange:#ff4d00;--dark:#1a1a1a;--grey:#666;--light:#f6f6f6;--bg:#fff}
+        *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+        body{background:var(--bg);color:#000;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding-bottom:90px}
+        .container{width:100%;max-width:800px;padding:20px;text-align:center}
+        .station-title{font-size:28px;font-weight:900;color:var(--orange);margin-bottom:4px}
+        .station-subtitle{font-size:16px;color:var(--grey);margin-bottom:20px}
 
-  <!-- Favicons -->
-  <link rel="apple-touch-icon" sizes="180x180" href="/image/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/image/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/image/favicon-16x16.png">
-  <link rel="shortcut icon" href="/image/favicon.ico">
-  <meta name="theme-color" content="#ff4d00">
+        .now-playing{margin:30px 0;position:relative}
+        .circle-wrapper{width:min(70vw,280px);height:min(70vw,280px);margin:0 auto;position:relative}
+        .circle-bg{width:100%;height:100%;border-radius:50%;background:#f0f0f0;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.15)}
+        .circle-progress{position:absolute;inset:0;border-radius:50%;background:conic-gradient(var(--orange) 0%,transparent 0%);mask:radial-gradient(transparent 68%,black 70%);-webkit-mask:radial-gradient(transparent 68%,black 70%);transition:background 1s linear}
+        .circle-img{position:absolute;inset:4px;border-radius:50%;overflow:hidden;background:#000}
+        .circle-img img{width:100%;height:100%;object-fit:cover}
 
-  <style>
-    :root {
-      --accent: #ff4d00;
-      --bg: #070707;
-      --muted: #bfbfbf;
-      --panel: #0e0e0e;
-      --border: #232323;
-    }
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: #fff;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-      padding: 18px 12px 160px;
-    }
-    .container { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 18px; }
-    .station { text-align: center; }
-    .station h1 { font-size: 30px; font-weight: 900; color: var(--accent); }
-    .station p { color: var(--muted); margin-top: 4px; }
+        .program-info{margin-top:20px}
+        .live-badge{display:inline-flex;align-items:center;gap:8px;color:var(--orange);font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:1px}
+        .live-dot{width:8px;height:8px;background:var(--orange);border-radius:50%;animation:pulse 2s infinite}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+        .program-title{font-size:28px;font-weight:900;margin:10px 0;line-height:1.1}
+        .program-subtitle{font-size:16px;color:var(--grey)}
 
-    .program-area { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; }
-    .program-circle {
-      position: relative;
-      border-radius: 50%;
-      overflow: hidden;
-      width: 380px; height: 380px;
-      display: flex; align-items: center; justify-content: center;
-      background: radial-gradient(circle, #111 40%, #000);
-      border: 3px solid var(--border);
-      box-shadow: 0 12px 40px rgba(0,0,0,.6);
-    }
-    .program-img {
-      width: 90%; height: 90%;
-      object-fit: contain;
-      filter: drop-shadow(0 4px 12px rgba(0,0,0,.5));
-    }
+        .play-button{margin:30px auto;width:180px;height:56px;background:var(--orange);color:white;border:none;border-radius:8px;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:12px;box-shadow:0 4px 15px rgba(255,77,0,0.3)}
+        .play-button svg{width:24px;height:24px;fill:white}
 
-    .progress-ring { position: absolute; inset: 0; transform: rotate(-90deg); }
+        .upnext-section{background:#f8f8f8;border-radius:12px;padding:20px;margin:30px 0;text-align:left;overflow:hidden}
+        .upnext-header{font-size:13px;font-weight:700;color:var(--grey);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+        .upnext-item{display:flex;align-items:center;gap:16px}
+        .upnext-img{width:64px;height:64px;border-radius:8px;object-fit:cover}
+        .upnext-info{flex:1}
+        .upnext-title{font-size:18px;font-weight:800;color:var(--dark)}
+        .upnext-time{font-size:14px;color:var(--orange);font-weight:600;margin-top:4px}
 
-    .program-meta { text-align: center; }
-    .program-time { color: var(--accent); font-weight: 700; font-size: 14px; margin-bottom: 4px; }
-    .program-title { font-weight: 900; font-size: 24px; }
-    .program-host { color: var(--muted); font-size: 13px; margin-top: 4px; }
+        .recently-played{width:100%;margin-top:40px;text-align:left}
+        .recently-title{font-size:14px;font-weight:700;text-transform:uppercase;color:var(--grey);margin-bottom:12px}
+        .track-item{display:flex;align-items:center;padding:12px 0;border-bottom:1px solid #eee}
+        .track-cover{width:50px;height:50px;border-radius:6px;object-fit:cover;margin-right:12px}
+        .track-info{flex:1}
+        .track-name{font-weight:600;font-size:15px}
+        .track-artist{font-size:13px;color:var(--grey)}
 
-    .play-btn {
-      background: var(--accent);
-      border: none;
-      color: #fff;
-      padding: 14px 26px;
-      border-radius: 999px;
-      font-weight: 900;
-      font-size: 18px;
-      cursor: pointer;
-      box-shadow: 0 10px 24px rgba(255,77,0,.25);
-    }
+        .bottom-bar{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid #eee;padding:12px 16px;display:flex;align-items:center;gap:16px;box-shadow:0 -4px 12px rgba(0,0,0,0.1);z-index:1000;display:none}
+        .bottom-img{width:48px;height:48px;border-radius:50%;object-fit:cover}
+        .bottom-info{flex:1}
+        .bottom-title{font-weight:700;font-size:14px}
+        .bottom-subtitle{font-size:12px;color:var(--grey)}
 
-    .recents { width: 94%; margin-top: 14px; }
-    .recents h3 { font-size: 13px; color: var(--muted); text-transform: uppercase; }
-    .recents-list { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
-    .recent-item {
-      display: grid;
-      grid-template-columns: 28px 56px 1fr;
-      gap: 10px;
-      align-items: center;
-      background: #0a0a0a;
-      border: 1px solid var(--border);
-      padding: 8px;
-      border-radius: 10px;
-    }
-    .recent-index { color: var(--muted); font-weight: 900; }
-    .recent-cover { width: 56px; height: 56px; border-radius: 8px; object-fit: cover; }
-    .recent-title { font-weight: 900; }
-    .recent-artist { font-size: 13px; color: var(--muted); margin-top: 4px; }
-
-    .schedule { width: 94%; display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px; }
-    .card {
-      flex: 1;
-      min-width: 260px;
-      padding: 14px;
-      background: var(--panel);
-      border-radius: 12px;
-      border: 1px solid var(--border);
-    }
-    .card h4 { font-size: 12px; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
-
-    .bottom-player {
-      position: fixed;
-      bottom: 18px;
-      left: 16px;
-      right: 16px;
-      height: 88px;
-      background: linear-gradient(180deg, #0b0b0b, #0f0f0f);
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      box-shadow: 0 18px 44px rgba(0,0,0,.7);
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 10px 14px;
-      transform: translateY(120%);
-      opacity: 0;
-      transition: transform .36s, opacity .28s;
-      z-index: 99999;
-    }
-    .bottom-player.visible { transform: translateY(0); opacity: 1; }
-
-    .bp-cover { width: 64px; height: 64px; border-radius: 8px; object-fit: cover; flex-shrink: 0; }
-    .bp-meta { min-width: 0; flex: 1; }
-    .bp-title { font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .bp-sub { font-size: 13px; color: var(--muted); }
-
-    .bp-controls { display: flex; align-items: center; gap: 14px; justify-content: center; }
-    .bp-btn { background: none; border: 0; color: #fff; font-size: 20px; cursor: pointer; }
-
-    .vu-box { width: 80px; height: 6px; background: #1b1b1b; border-radius: 4px; overflow: hidden; }
-    .vu-level { height: 100%; width: 0; background: var(--accent); transition: width .08s linear; }
-
-    .bp-volume { width: 110px; }
-
-    @media(max-width:760px){
-      .program-circle { width: 70vw; height: 70vw; }
-      .bp-volume { width: 80px; }
-    }
-    @media(max-width:480px){
-      .program-circle { width: 58vw; height: 58vw; }
-    }
-  </style>
+        @media(max-width:480px){
+            .circle-wrapper{width:200px;height:200px}
+            .program-title{font-size:22px}
+            .upnext-title{font-size:16px}
+        }
+    </style>
 </head>
-
 <body>
-  <div class="container">
-    <header class="station">
-      <h1>Praise FM</h1>
-      <p>Praise & Worship</p>
-    </header>
 
-    <section class="program-area">
-      <div id="progCircle" class="program-circle">
-        <svg id="progressSvg" class="progress-ring">
-          <circle id="progressRing" stroke="#ff4d00" stroke-width="6" fill="transparent"/>
-        </svg>
-        <img id="programImg" class="program-img" src="/image/morningshowlogo.webp" alt="program">
-      </div>
-      <div class="program-meta">
-        <div id="programTime" class="program-time"></div>
-        <div id="programTitle" class="program-title"></div>
-        <div id="programHost" class="program-host"></div>
-      </div>
-      <button id="mainPlay" class="play-btn">▶ PLAY</button>
-    </section>
+<div class="container">
+    <div class="station-title">Praise FM</div>
+    <div class="station-subtitle">Praise & Worship</div>
 
-    <section class="recents">
-      <h3>Recent Tracks</h3>
-      <div id="recentsList" class="recents-list"></div>
-    </section>
+    <div class="now-playing">
+        <div class="circle-wrapper">
+            <div class="circle-bg"></div>
+            <div class="circle-progress" id="progressRing"></div>
+            <div class="circle-img"><img id="currentImage" src="/image/logopraisefm.webp" alt="Now Playing"></div>
+        </div>
 
-    <section class="schedule">
-      <div class="card">
-        <h4>Up Next</h4>
-        <div id="upNext"></div>
-      </div>
-      <div class="card">
-        <h4>Later Today</h4>
-        <div id="laterList"></div>
-      </div>
-    </section>
-  </div>
-
-  <div id="bottomPlayer" class="bottom-player">
-    <img id="bpCover" class="bp-cover" src="/image/logopraisefm.webp" alt="cover">
-    <div class="bp-meta">
-      <div id="bpTitle" class="bp-title">Praise FM</div>
-      <div id="bpSub" class="bp-sub"></div>
+        <div class="program-info">
+            <div class="live-badge"><div class="live-dot"></div><span id="liveText">LIVE</span></div>
+            <div class="program-title" id="programTitle">Praise FM</div>
+            <div class="program-subtitle" id="programSubtitle">Various Artists</div>
+        </div>
     </div>
-    <div class="bp-controls">
-      <button id="bpPlay" class="bp-btn">▶</button>
-      <div class="vu-box"><div id="vu" class="vu-level"></div></div>
+
+    <button class="play-button" id="playBtn">
+        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <span>Play</span>
+    </button>
+
+    <!-- UP NEXT -->
+    <div class="upnext-section">
+        <div class="upnext-header">Up next</div>
+        <div class="upnext-item" id="upnextItem">
+            <img id="upnextImg" src="/image/middaygracelogo.webp" class="upnext-img" alt="Up Next">
+            <div class="upnext-info">
+                <div class="upnext-title" id="upnextTitle">Midday Grace</div>
+                <div class="upnext-time" id="upnextTime">12:00 – 18:00</div>
+            </div>
+        </div>
     </div>
-    <input id="bpVolume" type="range" min="0" max="1" step=".01" value="0.8" class="bp-volume">
-  </div>
 
-  <audio id="stream" preload="none"></audio>
+    <div class="recently-played">
+        <div class="recently-title">Recently played</div>
+        <div id="recentList"></div>
+    </div>
+</div>
 
-  <script>
+<div class="bottom-bar" id="bottomBar">
+    <img id="bottomImg" src="/image/logopraisefm.webp" class="bottom-img" alt="Now Playing">
+    <div class="bottom-info">
+        <div class="bottom-title" id="bottomTitle">Praise FM</div>
+        <div class="bottom-subtitle" id="bottomSubtitle">Various Artists</div>
+    </div>
+    <button id="bottomPlay">
+        <svg viewBox="0 0 24 24" width="32" height="32"><path d="M8 5v14l11-7z"/></svg>
+    </button>
+</div>
+
+<script>
     const STREAM_URL = "https://stream.zeno.fm/hvwifp8ezc6tv";
-    const LASTFM_KEY = "7744c8f90ee053fc761e0e23bfa00b89";
-    const TZ = "America/Chicago";
+    const audio = new Audio(STREAM_URL);
+    audio.preload = "none";
 
-    const stream = document.getElementById("stream");
-    const mainPlay = document.getElementById("mainPlay");
-    const bottomPlayer = document.getElementById("bottomPlayer");
-    const bpTitle = document.getElementById("bpTitle");
-    const bpSub = document.getElementById("bpSub");
-    const bpCover = document.getElementById("bpCover");
-    const bpPlay = document.getElementById("bpPlay");
-    const bpVolume = document.getElementById("bpVolume");
-    const vu = document.getElementById("vu");
-
-    const programTitle = document.getElementById("programTitle");
-    const programTime = document.getElementById("programTime");
-    const programImg = document.getElementById("programImg");
-    const upNextEl = document.getElementById("upNext");
-    const laterList = document.getElementById("laterList");
-    const recentsList = document.getElementById("recentsList");
-
-    const svgRing = document.getElementById("progressSvg");
-    const ring = document.getElementById("progressRing");
-
-    function nowChicago(){ return new Date(new Date().toLocaleString("en-US",{ timeZone: TZ })); }
-    function floatHour(d){ return d.getHours() + d.getMinutes()/60 + d.getSeconds()/3600; }
-    function fmtTime(f){ const h=Math.floor(f), m=Math.round((f-h)*60); return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`; }
-    function clamp(v,min,max){ return Math.max(min,Math.min(max,v)); }
-
-    const PROGRAMS = [
-      {name:"Midnight Grace",host:"Praise FM Hosts",start:0,end:7,img:"/image/midnightgracelogo.webp"},
-      {name:"Morning Show with Stancy Campbell",start:7,end:12,img:"/image/morningshowlogo.webp"},
-      {name:"Midday Grace with Michael Grace",start:12,end:16,img:"/image/middaygracelogo.webp"},
-      {name:"Praise FM Non Stop",start:16,end:17,img:"/image/praisefmnonstop.webp"},
-      {name:"Praise FM Carpool with Rachael Harris",start:18,end:20,img:"/image/praisefmcarpoollogo.webp"},
-      {name:"Praise FM POP",start:22,end:22.5,img:"/image/praisefmpoplogo.webp"}
-    ];
-
-    const SPECIALS = [
-      {name:"Future Artists",host:"with Sarah Jordan",days:[1,3,5],slots:[{s:12,e:12.5},{s:20,e:20.5}],img:"/image/praisefmfutureartistslogo.webp"},
-      {name:"Classics",host:"with Scott Turner",days:[2,4,6],slots:[{s:12,e:12.5},{s:20,e:20.5}],img:"/image/praisefmclassiclogo.webp"},
-      {name:"Living The Message",days:null,slots:[{s:10,e:10.5},{s:21,e:21.5}],img:"/image/logopraisefm.webp"},
-      {name:"Sunday With Christ with Matt Riley",days:[0],slots:[{s:7,e:12}],img:"/image/sundaywithchristlogo.webp"}
-    ];
-
-    function currentProgram(){
-      const d = nowChicago(), day = d.getDay(), h = floatHour(d);
-      for(const s of SPECIALS){
-        for(const sl of s.slots){
-          if(h >= sl.s && h < sl.e && (!s.days || s.days.includes(day))){
-            return {...s, start: sl.s, end: sl.e, isProg: true};
-          }
-        }
-      }
-      for(const p of PROGRAMS){
-        if(h >= p.start && h < p.end){
-          return {...p, isProg: true};
-        }
-      }
-      return {name:"Music", start:0, end:24, img:"/image/logopraisefm.webp", isProg:false};
-    }
-
-    function updateProgram(){
-      const p = currentProgram();
-      programTitle.textContent = p.name;
-      programTime.textContent = `${fmtTime(p.start)} - ${fmtTime(p.end)}`;
-      programImg.src = p.img;
-      updateRing();
-    }
-
-    function updateRing(){
-      const p = currentProgram();
-      const box = svgRing.getBoundingClientRect();
-      const size = Math.min(box.width, box.height);
-      const r = (size / 2) - 10;
-      const c = 2 * Math.PI * r;
-
-      ring.setAttribute("r", r);
-      ring.setAttribute("cx", size / 2);
-      ring.setAttribute("cy", size / 2);
-      ring.style.strokeDasharray = c;
-
-      if (!p.isProg){
-        svgRing.style.display = "none";
-        return;
-      }
-      svgRing.style.display = "block";
-      const h = floatHour(nowChicago());
-      const prog = clamp((h - p.start) / (p.end - p.start), 0, 1);
-      ring.style.strokeDashoffset = c - (c * prog);
-    }
-
-    function showBottom(){ bottomPlayer.classList.add("visible"); }
-    function togglePlay(){
-      if(stream.paused){
-        stream.src = STREAM_URL;
-        stream.play();
-        bpPlay.textContent = "❚❚";
-        showBottom();
-      } else {
-        stream.pause();
-        bpPlay.textContent = "▶";
-      }
-    }
-    mainPlay.onclick = togglePlay;
-    bpPlay.onclick = togglePlay;
-    bpVolume.oninput = e => stream.volume = e.target.value;
-
-    setInterval(()=>{
-      if (!stream.paused){
-        vu.style.width = (40 + Math.random() * 60) + "%";
-      }
-    }, 120);
-
-    let RECENTS = [];
-    function addRecent(a, t, c){
-      if(RECENTS.length && RECENTS[0].a === a && RECENTS[0].t === t) return;
-      RECENTS.unshift({a, t, c});
-      if (RECENTS.length > 4) RECENTS.pop();
-      recentsList.innerHTML = "";
-      RECENTS.forEach((r, i)=>{
-        recentsList.innerHTML += `<div class="recent-item"><div class="recent-index">${i+1}</div>
-          <img class="recent-cover" src="${r.c}">
-          <div><div class="recent-title">${r.t}</div><div class="recent-artist">${r.a}</div></div></div>`;
-      });
-    }
-
-    function fetchCover(artist, track){
-      return fetch(`https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${LASTFM_KEY}&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}&format=json`)
-        .then(r => r.json())
-        .then(j => j.track?.album?.image?.pop()?.["#text"] || "/image/logopraisefm.webp")
-        .catch(() => "/image/logopraisefm.webp");
-    }
-
-    const es = new EventSource(`https://api.zeno.fm/mounts/metadata/subscribe/hvwifp8ezc6tv`);
-    es.onmessage = async (e) => {
-      const d = JSON.parse(e.data);
-      if (!d.streamTitle) return;
-      const [artist, ...rt] = d.streamTitle.split(" - ");
-      const track = rt.join(" - ").trim();
-      if (!artist || !track) return;
-
-      const cover = await fetchCover(artist, track);
-      bpTitle.textContent = artist;
-      bpSub.textContent = track;
-      bpCover.src = cover;
-      addRecent(artist, track, cover);
-      showBottom();
+    // TODAS AS IMAGENS COM NOMES EXATOS DO SEU SERVIDOR
+    const images = {
+        default: "/image/logopraisefm.webp",
+        morning: "/image/morningshowlogo.webp",
+        midday: "/image/middaygracelogo.webp",
+        midnight: "/image/midnightgracelogo.webp",
+        carpool: "/image/praisefmcarpoollogo.webp",
+        classic: "/image/praisefmclassiclogo.webp",
+        future: "/image/praisefmfutureartistslogo.webp",
+        pop: "/image/praisefmpoplogo.webp",
+        sunday: "/image/sundaymorninglogo.webp",
+        commercial: "/image/commercial break.png"
     };
 
-    updateProgram();
-    setInterval(updateProgram, 15000);
-  </script>
+    const schedule = [
+        {start:"00:00",end:"06:00",name:"Midnight Grace",img:images.midnight},
+        {start:"06:00",end:"07:00",name:"Music Only",img:images.default},
+        {start:"07:00",end:"12:00",name:"Morning Show",img:images.morning},
+        {start:"10:00",end:"10:30",name:"Living The Message",img:images.default},
+        {start:"12:00",end:"18:00",name:"Midday Grace",img:images.midday},
+        {start:"18:00",end:"20:00",name:"Praise FM Carpool",img:images.carpool,days:[1,2,3,4,5]}, // seg–sex
+        {start:"12:00",end:"13:00",name:"Praise FM Future Artists",img:images.future,days:[1,3,5]}, // seg, qua, sex
+        {start:"20:00",end:"21:00",name:"Praise FM Future Artists (Replay)",img:images.future,days:[1,3,5]},
+        {start:"12:00",end:"13:00",name:"Praise FM Classics",img:images.classic,days:[2,4,6]}, // ter, qui, sáb
+        {start:"20:00",end:"21:00",name:"Praise FM Classics (Replay)",img:images.classic,days:[2,4,6]},
+        {start:"22:00",end:"23:59",name:"Praise FM POP",img:images.pop},
+        {start:"07:00",end:"12:00",name:"Sunday With Christ",img:images.sunday,days:[0]} // domingo
+    ];
 
+    const recents = [];
+    let currentTrack = {title:"",artist:""};
+
+    function getChicagoTime(){return new Date(new Date().toLocaleString("en-US",{timeZone:"America/Chicago"}))}
+    function timeToMinutes(t){const [h,m]=t.split(":").map(Number);return h*60+m}
+
+    function getCurrentAndNext(){
+        const now = getChicagoTime();
+        const day = now.getDay();
+        const mins = timeToMinutes(now.toTimeString().slice(0,5));
+        let current = null;
+        let next = null;
+        let nextStart = 24*60 + 100;
+
+        for(const p of schedule){
+            if(p.days && !p.days.includes(day)) continue;
+            const start = timeToMinutes(p.start);
+            const end = timeToMinutes(p.end);
+            const wrappedEnd = end < start ? end + 1440 : end;
+
+            if(mins >= start && mins < wrappedEnd){
+                current = p;
+            }
+            if(start > mins && start < nextStart){
+                next = p;
+                nextStart = start;
+            }
+        }
+
+        // Se acabou o dia, pega o primeiro do próximo dia
+        if(!next){
+            const tomorrowDay = (day + 1) % 7;
+            next = schedule.find(p => !p.days || p.days.includes(tomorrowDay)) || schedule[0];
+        }
+
+        return {current: current || {name:"Praise FM",img:images.default}, next};
+    }
+
+    function updateAll(){
+        const {current, next} = getCurrentAndNext();
+
+        // Atualiza imagem atual
+        document.getElementById("currentImage").src = current.img;
+        document.getElementById("bottomImg").src = current.img;
+
+        // Título e subtítulo
+        const isMusic = currentTrack.title && !currentTrack.title.toLowerCase().includes("commercial");
+        document.getElementById("programTitle").textContent = isMusic ? currentTrack.title : current.name;
+        document.getElementById("programSubtitle").textContent = isMusic ? currentTrack.artist : "Praise FM";
+        document.getElementById("bottomTitle").textContent = document.getElementById("programTitle").textContent;
+        document.getElementById("bottomSubtitle").textContent = document.getElementById("programSubtitle").textContent;
+
+        // Progresso circular (só em programas com horário definido)
+        if(current.start && current.end){
+            const startM = timeToMinutes(current.start);
+            const endM = timeToMinutes(current.end);
+            const nowM = timeToMinutes(getChicagoTime().toTimeString().slice(0,5));
+            let percent = ((nowM - startM + 1440) % 1440) / ((endM - startM + 1440) % 1440) * 100;
+            document.getElementById("progressRing").style.background = `conic-gradient(var(--orange) ${percent}%, transparent ${percent}%)`;
+        }else{
+            document.getElementById("progressRing").style.background = "conic-gradient(var(--orange) 0%, transparent 0%)";
+        }
+
+        // UP NEXT
+        document.getElementById("upnextImg").src = next.img;
+        document.getElementById("upnextTitle").textContent = next.name;
+        document.getElementById("upnextTime").textContent = next.start + (next.end && next.end < next.start ? " (amanhã)" : "") + " Chicago";
+    }
+
+    function processMetadata(artist, title){
+        if(title.toLowerCase().includes("commercial") || title.toLowerCase().includes("ad break")){
+            currentTrack = {title:"Commercial Break", artist:""};
+        }else{
+            currentTrack = {title, artist};
+            // Recently played
+            if(title && !title.toLowerCase().includes("praise fm")){
+                recents.unshift({title, artist});
+                if(recents.length > 5) recents.pop();
+                document.getElementById("recentList").innerHTML = recents.map(t=>`
+                    <div class="track-item">
+                        <img src="${images.default}" class="track-cover" alt="Cover">
+                        <div class="track-info">
+                            <div class="track-name">${t.title}</div>
+                            <div class="track-artist">${t.artist}</div>
+                        </div>
+                    </div>`).join("");
+            }
+        }
+        updateAll();
+    }
+
+    // Zeno FM metadata
+    const es = new EventSource("https://api.zeno.fm/mounts/metadata/subscribe/hvwifp8ezc6tv");
+    es.onmessage = e => {
+        try{
+            const d = JSON.parse(e.data);
+            if(d.streamTitle){
+                const parts = d.streamTitle.split(" - ");
+                const artist = parts[0]?.trim() || "";
+                const title = parts.slice(1).join(" - ").trim();
+                processMetadata(artist, title);
+            }
+        }catch(err){}
+    };
+
+    // Controles de play/pause
+    document.getElementById("playBtn").addEventListener("click",()=>{
+        if(audio.paused){
+            audio.play();
+            document.getElementById("bottomBar").style.display="flex";
+        }else audio.pause();
+
+        const isPlaying = !audio.paused;
+        document.querySelector("#playBtn span").textContent = isPlaying ? "Pause" : "Play";
+        const path = isPlaying ? "M6 19h4V5H6v14zm8-14v14h4V5h-4z" : "M8 5v14l11-7z";
+        document.querySelector("#playBtn svg path").setAttribute("d", path);
+        document.querySelector("#bottomPlay svg path").setAttribute("d", path);
+    });
+    document.getElementById("bottomPlay").addEventListener("click",()=>document.getElementById("playBtn").click());
+
+    // Atualiza tudo a cada 10 segundos
+    setInterval(updateAll, 10000);
+    updateAll();
+</script>
 </body>
 </html>
