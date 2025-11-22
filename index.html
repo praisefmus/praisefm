@@ -25,7 +25,6 @@
             --glass-bg: rgba(20, 20, 20, 0.7);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
-        /* AJUSTE 1: body centraliza verticalmente */
         body {
             background-color: #000;
             height: 100vh;
@@ -43,14 +42,12 @@
             opacity: 0.6; 
             transition: background 1s ease;
         }
-        /* AJUSTE 2: player-container com min-height: 100vh; REMOVIDO */
         .player-container {
             width: 100%; 
-            /* min-height: 100vh; <-- Removida para centralizar em desktop */
             max-width: 600px; 
             display: flex; 
             flex-direction: column;
-            align-items: center; /* CENTER THE MAIN COLUMN HORIZONTALLY */
+            align-items: center; /* CENTRALIZA HORIZONTALMENTE TODOS OS ITENS */
             justify-content: flex-start; /* ALINHA OS ITENS AO TOPO PARA SCROLL (Mobile) */
             padding: 20px;
             position: relative;
@@ -64,7 +61,6 @@
             justify-content: center;
             align-items: center;
             margin-bottom: 10px;
-            align-self: center; 
         }
         .program-circle {
             width: min(60vw, 260px); 
@@ -116,7 +112,6 @@
             display: flex; justify-content: center; align-items: center; gap: 30px; 
             margin: 10px 0;
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
-            align-self: center; /* KEEP CONTROLS CENTERED */
             width: 100%;
         }
         .control-btn { background: none; border: none; color: #fff; cursor: pointer; transition: transform 0.2s; display: flex; align-items: center; justify-content: center;}
@@ -130,7 +125,7 @@
         .play-btn svg.play-icon { margin-left: 4px; }
         .skip-btn svg { width: 28px; height: 28px; opacity: 0.8; }
         .skip-btn:hover svg { opacity: 1; }
-        /* --- 3. NOW PLAYING CARD (Left Aligned) --- */
+        /* --- 3. NOW PLAYING CARD (Centralized) --- */
         .now-playing-card {
             width: 100%; 
             background-color: var(--glass-bg);
@@ -139,7 +134,7 @@
             display: flex; align-items: center;
             border: 1px solid rgba(255,255,255,0.1); 
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            align-self: flex-start; /* ALIGNED LEFT */
+            align-self: center; /* CENTRALIZA O CARD */
         }
         .song-cover { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; background-color: #333; margin-right: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
         .song-info { flex: 1; overflow: hidden; text-shadow: none; }
@@ -147,7 +142,7 @@
         .song-artist { font-size: 14px; color: #ccc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .lyrics-btn { opacity: 0.8; cursor: pointer; background:none; border:none; color:white; padding: 8px; transition: opacity 0.2s; }
         .lyrics-btn:hover { opacity: 1; }
-        /* --- EXTRAS (Volume - Left Aligned) --- */
+        /* --- EXTRAS (Volume - Centralized) --- */
         .volume-container { 
             width: 80%; 
             display: flex; align-items: center; gap: 12px; 
@@ -155,24 +150,26 @@
             padding: 8px 15px;
             border-radius: 20px;
             opacity: 1; 
-            align-self: flex-start; /* ALIGNED LEFT */
-            margin-left: 20px; 
+            align-self: center; /* CENTRALIZA O CONTAINER DE VOLUME */
         }
         .volume-slider { flex: 1; -webkit-appearance: none; background: rgba(255,255,255,0.3); height: 4px; border-radius: 2px; outline: none; }
         .volume-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: #fff; cursor: pointer; }
-        /* --- 4. RECENTLY PLAYED (Left Aligned) --- */
+        /* --- 4. RECENTLY PLAYED (Centralized) --- */
         .recents-container {
             width: 100%; 
             margin-top: 20px;
             padding: 10px 0;
             margin-bottom: 40px; 
-            align-self: flex-start; /* ALIGNED LEFT */
+            align-self: center; /* CENTRALIZA O CONTAINER DOS RECENTES */
         }
         .recents-title {
             font-size: 14px; font-weight: 700; color: #999; text-transform: uppercase; margin-bottom: 10px; padding: 0 18px;
+            text-align: center; /* CENTRALIZA O TÍTULO */
         }
         .recent-item {
             display: flex; align-items: center; padding: 8px 18px; transition: background-color 0.2s; border-radius: 0;
+            width: 100%; /* LARGURA TOTAL DO CONTAINER */
+            justify-content: center; /* CENTRALIZA O ITEM */
         }
         .recent-item:hover { background-color: rgba(255, 255, 255, 0.05); }
         .recent-cover {
@@ -185,7 +182,6 @@
         @media (min-width: 768px) {
             .player-container { 
                 max-width: 800px; 
-                /* min-height REMOVIDO AQUI TAMBÉM */
                 justify-content: flex-start; 
                 gap: 25px;
                 padding: 30px;
@@ -193,16 +189,10 @@
             .program-circle { width: 320px; height: 320px; }
             .program-name { font-size: 36px; }
             .play-btn { width: 80px; height: 80px; }
-            /* DESKTOP - Move all cards to the left edge of the centered column */
-            .now-playing-card, .recents-container {
-                align-self: flex-start; 
+            /* DESKTOP - Mantém todos os elementos centralizados */
+            .now-playing-card, .recents-container, .volume-container {
+                align-self: center; 
                 max-width: 500px;
-            }
-            .volume-container {
-                align-self: flex-start;
-                margin-left: 0;
-                width: 50%;
-                max-width: 350px;
             }
         }
     </style>
@@ -267,8 +257,8 @@
         const IMG_MIDNIGHT_GRACE = "/image/midnightgracelogo.webp";
         const IMG_MORNING_SHOW = "/image/morningshowlogo.webp";
         const IMG_CARPOOL = "/image/praisefmcarpoollogo.webp"; 
-        const IMG_CLASSIC = "/image/praisefmclassicslogo.webp"; // Corrigido o nome
-        const IMG_FUTURE_ARTISTS = "/image/praisefmfutureartistslogo.webp"; // Corrigido o nome
+        const IMG_CLASSIC = "/image/praisefmclassicslogo.webp";
+        const IMG_FUTURE_ARTISTS = "/image/praisefmfutureartistslogo.webp";
         const IMG_POP = "/image/praisefmpoplogo.webp";
         const IMG_SUNDAY_MORNING = "/image/sundaymorninglogo.webp";
 
@@ -319,7 +309,15 @@
 
         // --- RECENT TRACKS FUNCTION ---
         function updateRecents(track, artist, cover) {
-            if (track === "Loading..." || track.toLowerCase().includes("commercial") || track.toLowerCase().includes("station id")) return;
+            // Só adiciona à lista se for uma música (não é comercial, spot ou identificador de programa)
+            if (track === "Loading..." || 
+                track.toLowerCase().includes("commercial") || 
+                track.toLowerCase().includes("ad break") || 
+                track.toLowerCase().includes("station id") || 
+                track.toLowerCase().includes("spot") || 
+                (artist.toLowerCase() === "praise fm" && track.toLowerCase() === "praise fm")) {
+                return;
+            }
             if (RECENTLY_PLAYED.length > 0 && 
                 RECENTLY_PLAYED[0].title === track && 
                 RECENTLY_PLAYED[0].artist === artist) {
@@ -416,13 +414,15 @@
             trackTitle.innerText = songTitle;
             trackArtist.innerText = songArtist;
             // 3. Progress Ring
+            // O anel de progresso agora só é ativado se for um programa (isMusicalTrack = false)
             if (isMusicalTrack) {
-                programCircle.classList.add('is-playing');
-            } else {
-                programCircle.classList.remove('is-playing');
+                programCircle.classList.remove('is-playing'); // Remove o anel para músicas
                 programCircle.style.setProperty('--progress-deg', '0deg');
                 if (progressInterval) clearInterval(progressInterval);
-                progressInterval = null; // Garante que a variável seja limpa
+                progressInterval = null;
+            } else {
+                programCircle.classList.add('is-playing'); // Adiciona o anel para programas
+                // O progresso do programa já foi iniciado na função processMetadata
             }
         }
 
@@ -509,12 +509,10 @@
 
             // B. Lógica do Anel de Progresso (Se NÃO for CARPOOL e NÃO for programa de dia da semana)
             // Se for música e não for um dos programas fixos (Future Artists, Classics, Carpool), usa o progresso da música
-            if (!isCarpoolTime && !isMondayWedFri() && !isTuesdayThuSat() && isPlaying) {
-                 programCircle.classList.add('is-playing');
-                 startProgressMonitor(songDuration, false); // Inicia progresso da música
-            }
+            // Mas, conforme solicitado, o anel de progresso NÃO será ativado para músicas.
+            // Portanto, não chamamos startProgressMonitor aqui para músicas.
 
-            // C. Atualiza Recentes
+            // C. Atualiza Recentes (Só para músicas)
             updateRecents(track, artist, currentSongImg);
 
             // D. Chamada Final
