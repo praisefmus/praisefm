@@ -8,134 +8,151 @@
     <link rel="icon" type="image/png" sizes="32x32" href="./image/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="./image/apple-touch-icon.png">
     <style>
-        :root{--orange:#ff4d00;--dark:#111;--grey:#555;--light:#f8f8f8;--bg:#fff}
-        *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
-        body{background:var(--bg);color:#000;line-height:1.4;padding-bottom:90px}
-        .container{max-width:800px;margin:0 auto;padding:20px;text-align:center}
+        :root {
+            --orange: #ff4d00;
+            --dark: #111;
+            --grey: #555;
+            --light-grey: #888;
+            --bg: #fff;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; }
+        body { background:var(--bg); color:#000; min-height:100vh; padding-bottom:100px; display:flex; flex-direction:column; align-items:center; }
+        
+        .container { width:100%; max-width:800px; padding:20px; text-align:center; }
+        .station-title { font-size:32px; font-weight:900; color:var(--orange); margin:20px 0 4px; }
+        .station-subtitle { font-size:17px; color:var(--grey); margin-bottom:30px; }
 
-        .station-title{font-size:28px;font-weight:900;color:var(--orange);margin-bottom:4px}
-        .station-subtitle{font-size:16px;color:var(--grey);margin-bottom:20px}
+        /* Círculo grande como BBC */
+        .circle-container { 
+            width:min(80vw, 320px); 
+            height:min(80vw, 320px); 
+            margin:0 auto 30px; 
+            position:relative; 
+        }
+        .circle-border {
+            position:absolute; inset:0; border-radius:50%; 
+            background:conic-gradient(var(--orange) 0%, transparent 0%);
+            mask:radial-gradient(transparent 68%, black 70%);
+            -webkit-mask:radial-gradient(transparent 68%, black 70%);
+        }
+        .circle-img {
+            position:absolute; inset:6px; border-radius:50%; overflow:hidden; background:#000;
+        }
+        .circle-img img { width:100%; height:100%; object-fit:cover; }
 
-        .now-playing{margin:30px 0;position:relative}
-        .circle-wrapper{width:min(70vw,280px);height:min(70vw,280px);margin:0 auto;position:relative}
-        .circle-bg{width:100%;height:100%;border-radius:50%;background:#eee;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.15)}
-        .circle-progress{position:absolute;inset:0;border-radius:50%;background:conic-gradient(var(--orange) 0%,transparent 0%);mask:radial-gradient(transparent 68%,black 70%);-webkit-mask:radial-gradient(transparent 68%,black 70%);transition:background .8s linear}
-        .circle-img{position:absolute;inset:4px;border-radius:50%;overflow:hidden}
-        .circle-img img{width:100%;height:100%;object-fit:cover}
+        .live-badge {
+            display:inline-flex; align-items:center; gap:8px; 
+            color:var(--orange); font-weight:700; font-size:14px; text-transform:uppercase; letter-spacing:1px;
+            margin-bottom:12px;
+        }
+        .live-dot { width:9px; height:9px; background:var(--orange); border-radius:50%; animation:pulse 2s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
-        .live-badge{display:inline-flex;align-items:center;gap:8px;color:var(--orange);font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:1px;margin-top:20px}
-        .live-dot{width:8px;height:8px;background:var(--orange);border-radius:50%;animation:pulse 2s infinite}
-        @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+        .program-title { font-size:28px; font-weight:800; margin:10px 0; line-height:1.2; }
+        .program-subtitle { font-size:17px; color:var(--light-grey); }
 
-        .program-title{font-size:28px;font-weight:900;margin:10px 0}
-        .program-subtitle{font-size:16px;color:var(--grey)}
+        /* Botão Play idêntico ao da BBC */
+        .play-button {
+            margin:40px auto; width:200px; height:56px; background:var(--orange); color:#fff;
+            border:none; border-radius:8px; font-size:18px; font-weight:700; cursor:pointer;
+            display:flex; align-items:center; justify-content:center; gap:12px; box-shadow:0 6px 20px rgba(255,77,0,.4);
+        }
+        .play-button svg { width:28px; height:28px; fill:#fff; margin-left:-8px; }
 
-        .play-big{margin:30px auto;width:180px;height:56px;background:var(--orange);color:#fff;border:none;border-radius:8px;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:12px;box-shadow:0 4px 15px rgba(255,77,0,.4)}
+        /* Up Next */
+        .upnext {
+            background:#f8f8f8; border-radius:12px; padding:20px; margin:40px 0; text-align:left;
+        }
+        .upnext-header { font-size:13px; font-weight:700; color:var(--grey); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; }
+        .upnext-item { display:flex; align-items:center; gap:16px; }
+        .upnext-img { width:60px; height:60px; border-radius:8px; object-fit:cover; }
+        .upnext-title { font-size:18px; font-weight:800; }
+        .upnext-time { font-size:14px; color:var(--orange); font-weight:600; }
 
-        .upnext-section{background:var(--light);border-radius:12px;padding:20px;margin:30px 0;text-align:left}
-        .upnext-header{font-size:13px;font-weight:700;color:var(--grey);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
-        .upnext-item{display:flex;gap:16px;align-items:center}
-        .upnext-img{width:64px;height:64px;border-radius:8px;object-fit:cover}
-        .upnext-title{font-size:18px;font-weight:800}
-        .upnext-time{font-size:14px;color:var(--orange);font-weight:600}
+        /* Recently Played */
+        .recently { margin-top:40px; text-align:left; }
+        .recently-header { font-size:13px; font-weight:700; color:var(--grey); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; }
+        .recent-item { display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid #eee; }
+        .recent-cover { width:48px; height:48px; border-radius:6px; object-fit:cover; }
+        .recent-title { font-weight:600; font-size:15px; }
+        .recent-artist { font-size:13px; color:var(--light-grey); }
 
-        .recently-played{margin-top:40px;text-align:left}
-        .recently-title{font-size:14px;font-weight:700;color:var(--grey);text-transform:uppercase;margin-bottom:12px}
-        .track-item{display:flex;align-items:center;padding:12px 0;border-bottom:1px solid #eee}
-        .track-cover{width:50px;height:50px;border-radius:6px;object-fit:cover;margin-right:12px}
-        .track-name{font-weight:600;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-        .track-artist{font-size:13px;color:var(--grey);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        /* Player fixo só aparece quando toca (igual BBC) */
+        .mini-player {
+            position:fixed; bottom:0; left:0; right:0; background:#fff; border-top:1px solid #ddd;
+            box-shadow:0 -4px 20px rgba(0,0,0,.1); padding:12px 16px; display:none; align-items:center; gap:16px; z-index:999;
+        }
+        .mini-player.show { display:flex; }
+        .mini-cover { width:56px; height:56px; border-radius:8px; object-fit:cover; }
+        .mini-info { flex:1; min-width:0; }
+        .mini-title { font-weight:700; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .mini-artist { font-size:13px; color:var(--grey); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .mini-play { background:var(--orange); width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; }
+        .mini-play svg { width:20px; height:20px; fill:#fff; }
 
-        /* BOTTOM PLAYER 100% IGUAL BBC RADIO 1 */
-        .bbc-player{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #ddd;box-shadow:0 -4px 12px rgba(0,0,0,.1);z-index:9999;padding:10px 16px;display:none;align-items:center;gap:16px;font-size:14px}
-        .bbc-player.show{display:flex}
-        .player-cover{width:56px;height:56px;border-radius:8px;object-fit:cover;flex-shrink:0}
-        .player-info{flex:1;min-width:0}
-        .player-title{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-        .player-artist{color:var(--grey);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-        .player-controls{display:flex;align-items:center;gap:12px}
-        .btn-rewind,.btn-forward{background:none;border:none;cursor:pointer;padding:8px}
-        .btn-rewind svg,.btn-forward svg{width:28px;height:28px;fill:#000}
-        .btn-playpause{background:var(--orange);color:#fff;width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;box-shadow:0 4px 12px rgba(255,77,0,.4)}
-        .btn-playpause svg{width:20px;height:20px;fill:#fff}
-        .seek-volume{display:flex;align-items:center;gap:12px;flex:1;max-width:300px}
-        .seek-bar{flex:1;height:4px;background:#ddd;border-radius:2px;position:relative;cursor:pointer}
-        .seek-fill{height:100%;background:var(--orange);border-radius:2px;width:0%}
-        .seek-thumb{position:absolute;top:50%;left:0;transform:translate(-50%,-50%);width:14px;height:14px;background:var(--orange);border-radius:50%;opacity:0;transition:opacity .2s}
-        .seek-bar:hover .seek-thumb{opacity:1}
-        .volume-container{position:relative;width:100px}
-        .volume-bar{height:4px;background:#ddd;border-radius:2px;position:relative;cursor:pointer}
-        .volume-fill{height:100%;background:var(--orange);border-radius:2px;width:70%}
-        .live-text{color:var(--orange);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:1px}
-
-        @media(max-width:480px){ .seek-volume{max-width:none;flex:1} .volume-container{width:80px} }
+        @media (max-width:480px) {
+            .circle-container { width:260px; height:260px; }
+            .program-title { font-size:24px; }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="station-title">Praise FM</div>
-    <div class="station-subtitle">Praise & Worship</div>
+    <h1 class="station-title">Praise FM</h1>
+    <p class="station-subtitle">Praise & Worship</p>
 
-    <div class="now-playing">
-        <div class="circle-wrapper">
-            <div class="circle-bg"></div>
-            <div class="circle-progress" id="progressRing"></div>
-            <div class="circle-img"><img id="mainImg" src="/image/logopraisefm.webp" alt="Now Playing"></div>
+    <div class="circle-container">
+        <div class="circle-border" id="progressRing"></div>
+        <div class="circle-img">
+            <img id="mainImg" src="/image/logopraisefm.webp" alt="Now Playing">
         </div>
-        <div class="live-badge"><div class="live-dot"></div> LIVE</div>
-        <div class="program-title" id="mainTitle">Praise FM</div>
-        <div class="program-subtitle" id="mainSubtitle">Various Artists</div>
     </div>
 
-    <button class="play-big" id="bigPlay">
-        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Play
+    <div class="live-badge"><div class="live-dot"></div> LIVE</div>
+    <h2 class="program-title" id="programTitle">Praise FM</h2>
+    <p class="program-subtitle" id="programSubtitle">Various Artists</p>
+
+    <button class="play-button" id="bigPlay">
+        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        Play
     </button>
 
-    <div class="upnext-section">
+    <!-- Up Next -->
+    <div class="upnext">
         <div class="upnext-header">Up next</div>
         <div class="upnext-item">
             <img id="upnextImg" src="/image/middaygracelogo.webp" class="upnext-img">
             <div>
                 <div class="upnext-title" id="upnextTitle">Midday Grace</div>
-                <div class="upnext-time" id="upnextTime">12:00 – 18:00</div>
+                <div class="upnext-time" id="upnextTime">12:00 Chicago</div>
             </div>
         </div>
     </div>
 
-    <div class="recently-played">
-        <div class="recently-title">Recently played</div>
+    <!-- Recently Played -->
+    <div class="recently">
+        <div class="recently-header">Recently played</div>
         <div id="recentList"></div>
     </div>
 </div>
 
-<!-- PLAYER FIXO IGUAL BBC RADIO 1 -->
-<div class="bbc-player" id="bbcPlayer">
-    <img id="playerCover" src="/image/logopraisefm.webp" class="player-cover" alt="">
-    <div class="player-info">
-        <div class="player-title" id="playerTitle">Praise FM</div>
-        <div class="player-artist" id="playerArtist">Various Artists</div>
+<!-- Mini player (só aparece ao tocar) -->
+<div class="mini-player" id="miniPlayer">
+    <img id="miniImg" src="/image/logopraisefm.webp" class="mini-cover">
+    <div class="mini-info">
+        <div class="mini-title" id="miniTitle">Praise FM</div>
+        <div class="mini-artist" id="miniArtist">Various Artists</div>
     </div>
-    <div class="player-controls">
-        <button class="btn-rewind" id="rewind15"><svg viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg></button>
-        <button class="btn-playpause" id="playPauseBtn">
-            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-        </button>
-        <button class="btn-forward" id="forward15"><svg viewBox="0 0 24 24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg></button>
-    </div>
-    <div class="seek-volume">
-        <div class="seek-bar" id="seekBar"><div class="seek-fill" id="seekFill"></div><div class="seek-thumb"></div></div>
-        <div class="volume-container">
-            <div class="volume-bar" id="volumeBar"><div class="volume-fill" id="volumeFill"></div></div>
-        </div>
-    </div>
-    <div class="live-text">LIVE</div>
+    <button class="mini-play" id="miniPlayPause">
+        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+    </button>
 </div>
 
 <script>
     const STREAM_URL = "https://stream.zeno.fm/hvwifp8ezc6tv";
     const audio = new Audio(STREAM_URL);
-    audio.volume = 0.7;
+    audio.volume = 0.8;
 
     const images = {
         default:"/image/logopraisefm.webp", morning:"/image/morningshowlogo.webp", midday:"/image/middaygracelogo.webp",
@@ -143,7 +160,7 @@
         future:"/image/praisefmfutureartistslogo.webp", pop:"/image/praisefmpoplogo.webp", sunday:"/image/sundaymorninglogo.webp"
     };
 
-    const schedule = [ /* mesmo schedule da versão anterior – não mudei para não ficar gigante */ 
+    const schedule = [
         {start:"00:00",end:"06:00",name:"Midnight Grace",img:images.midnight},
         {start:"06:00",end:"07:00",name:"Music Only",img:images.default},
         {start:"07:00",end:"12:00",name:"Morning Show",img:images.morning},
@@ -158,109 +175,97 @@
         {start:"07:00",end:"12:00",name:"Sunday With Christ",img:images.sunday,days:[0]}
     ];
 
-    // === FUNÇÕES DE HORÁRIO E ATUALIZAÇÃO (mesmas da versão anterior) ===
-    function getChicagoTime(){return new Date(new Date().toLocaleString("en-US",{timeZone:"America/Chicago"}))}
-    function timeToMinutes(t){const [h,m]=t.split(":").map(Number);return h*60+m}
-    function getCurrentAndNext(){ /* código completo da versão anterior – mantido igual */ 
-        const now=getChicagoTime(), day=now.getDay(), mins=timeToMinutes(now.toTimeString().slice(0,5));
-        let current=null, next=null, nextStart=99999;
-        for(const p of schedule){
-            if(p.days && !p.days.includes(day))continue;
-            const s=timeToMinutes(p.start), e=timeToMinutes(p.end), end=e<s?e+1440:e;
-            if(mins>=s && mins<end) current=p;
-            if(s>mins && s<nextStart){next=p;nextStart=s;}
+    function getChicagoTime() { return new Date(new Date().toLocaleString("en-US",{timeZone:"America/Chicago"})) }
+    function timeToMins(t) { const [h,m]=t.split(":").map(Number); return h*60+m; }
+
+    function getCurrentAndNext() {
+        const now = getChicagoTime(), day = now.getDay(), mins = timeToMins(now.toTimeString().slice(0,5));
+        let current = null, next = null, nextMins = 9999;
+        for (const p of schedule) {
+            if (p.days && !p.days.includes(day)) continue;
+            const s = timeToMins(p.start), e = timeToMins(p.end), end = e < s ? e + 1440 : e;
+            if (mins >= s && mins < end) current = p;
+            if (s > mins && s < nextMins) { next = p; nextMins = s; }
         }
-        if(!next) next=schedule.find(p=>!p.days||p.days.includes((day+1)%7))||schedule[0];
-        return {current:current||{name:"Praise FM",img:images.default},next};
+        if (!next) next = schedule.find(p => !p.days || p.days.includes((day+1)%7)) || schedule[0];
+        return {current: current || {name:"Praise FM", img:images.default}, next};
     }
 
-    let currentTrack={title:"",artist:""};
-    const recents=[];
+    let currentTrack = {title:"", artist:""};
+    const recents = [];
 
-    function updateAll(){
-        const {current,next}=getCurrentAndNext();
-        const isMusic=!!currentTrack.title && !currentTrack.title.toLowerCase().includes("commercial");
+    function updateDisplay() {
+        const {current, next} = getCurrentAndNext();
+        const isMusic = currentTrack.title && !currentTrack.title.toLowerCase().includes("commercial");
 
         // Imagens
-        ["mainImg","playerCover"].forEach(id=>document.getElementById(id).src=current.img);
-        document.getElementById("upnextImg").src=next.img;
+        document.querySelectorAll("#mainImg, #miniImg").forEach(el => el.src = current.img);
+        document.getElementById("upnextImg").src = next.img;
 
         // Textos
-        const title=isMusic?currentTrack.title:current.name;
-        const subtitle=isMusic?currentTrack.artist:"Praise FM";
-        document.getElementById("mainTitle").textContent=title;
-        document.getElementById("mainSubtitle").textContent=subtitle;
-        document.getElementById("playerTitle").textContent=title;
-        document.getElementById("playerArtist").textContent=subtitle;
+        const title = isMusic ? currentTrack.title : current.name;
+        const subtitle = isMusic ? currentTrack.artist : "Praise & Worship";
+        document.getElementById("programTitle").textContent = title;
+        document.getElementById("programSubtitle").textContent = subtitle;
+        document.getElementById("miniTitle").textContent = title;
+        document.getElementById("miniArtist").textContent = subtitle;
 
         // Up next
-        document.getElementById("upnextTitle").textContent=next.name;
-        document.getElementById("upnextTime").textContent=next.start+" Chicago";
+        document.getElementById("upnextTitle").textContent = next.name;
+        document.getElementById("upnextTime").textContent = next.start + " Chicago";
 
-        // Progresso circular (programas)
-        if(current.start){
-            const s=timeToMinutes(current.start), e=timeToMinutes(current.end), n=timeToMinutes(getChicagoTime().toTimeString().slice(0,5));
-            let pct=((n-s+1440)%1440)/((e-s+1440)%1440)*100;
-            document.getElementById("progressRing").style.background=`conic-gradient(var(--orange) ${pct}%, transparent ${pct}%)`;
+        // Progresso da borda laranja
+        if (current.start) {
+            const s = timeToMins(current.start), e = timeToMins(current.end), n = timeToMins(getChicagoTime().toTimeString().slice(0,5));
+            const pct = ((n - s + 1440) % 1440) / ((e - s + 1440) % 1440) * 100;
+            document.getElementById("progressRing").style.background = `conic-gradient(var(--orange) ${pct}%, transparent ${pct}%)`;
         }
     }
 
-    function processMetadata(artist,title){
-        if(title.toLowerCase().includes("commercial")||title.toLowerCase().includes("ad")){
-            currentTrack={title:"Commercial Break",artist:""};
-        }else{
-            currentTrack={title,artist};
-            if(title && recents.length<5 && !recents.find(r=>r.title===title)){
-                recents.unshift({title,artist});
-                document.getElementById("recentList").innerHTML=recents.map(t=>`
-                    <div class="track-item"><img src="${images.default}" class="track-cover">
-                    <div><div class="track-name">${t.title}</div><div class="track-artist">${t.artist}</div></div></div>`).join("");
+    function processMetadata(artist, title) {
+        if (title.toLowerCase().includes("commercial") || title.toLowerCase().includes("ad")) {
+            currentTrack = {title:"Commercial Break", artist:""};
+        } else {
+            currentTrack = {title, artist};
+            if (title && recents.length < 5 && !recents.some(r => r.title === title)) {
+                recents.unshift({title, artist});
+                document.getElementById("recentList").innerHTML = recents.map(t => `
+                    <div class="recent-item">
+                        <img src="${images.default}" class="recent-cover">
+                        <div>
+                            <div class="recent-title">${t.title}</div>
+                            <div class="recent-artist">${t.artist}</div>
+                        </div>
+                    </div>
+                `).join("");
             }
         }
-        updateAll();
+        updateDisplay();
     }
 
     // Zeno metadata
-    const es=new EventSource("https://api.zeno.fm/mounts/metadata/subscribe/hvwifp8ezc6tv");
-    es.onmessage=e=>{try{const d=JSON.parse(e.data);if(d.streamTitle){const p=d.streamTitle.split(" - "); processMetadata(p[0]||"",p.slice(1).join(" - ")||"");}}catch{}};
+    const es = new EventSource("https://api.zeno.fm/mounts/metadata/subscribe/hvwifp8ezc6tv");
+    es.onmessage = e => { try { const d = JSON.parse(e.data); if (d.streamTitle) { const p = d.streamTitle.split(" - "); processMetadata(p[0]||"", p.slice(1).join(" - ")||""); } } catch {} };
 
-    // === CONTROLES DO PLAYER BBC ===
-    const player=document.getElementById("bbcPlayer");
-    const playBtns=[document.getElementById("bigPlay"),document.getElementById("playPauseBtn")];
-    const seekFill=document.getElementById("seekFill");
-    const volumeFill=document.getElementById("volumeFill");
+    // Play/Pause
+    function togglePlay() {
+        if (audio.paused) {
+            audio.play();
+            document.getElementById("miniPlayer").classList.add("show");
+        } else audio.pause();
 
-    function togglePlay(){
-        if(audio.paused){audio.play(); player.classList.add("show");}
-        else audio.pause();
-        const playing=!audio.paused;
-        document.querySelectorAll(".btn-playpause svg path,.play-big svg path").forEach(p=>p.setAttribute("d",playing?"M6 19h4V5H6v14zm8-14v14h4V5h-4z":"M8 5v14l11-7z"));
-        document.querySelector(".play-big").textContent=playing?"Pause":"Play";
-        document.querySelector(".play-big svg").innerHTML=playing?'<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>':'<path d="M8 5v14l11-7z"/>';
+        const playing = !audio.paused;
+        document.querySelectorAll("#bigPlay span, #miniPlayPause").forEach(el => el.innerHTML = playing ?
+            '<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>' :
+            '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>');
+        document.getElementById("bigPlay").firstElementChild.nextSibling.textContent = playing ? "Pause" : "Play";
     }
-    playBtns.forEach(b=>b.addEventListener("click",togglePlay));
-
-    document.getElementById("rewind15").addEventListener("click",()=>{audio.currentTime=Math.max(0,audio.currentTime-15);});
-    document.getElementById("forward15").addEventListener("click",()=>{audio.currentTime+=15;});
-
-    // Seek
-    document.getElementById("seekBar").addEventListener("click",e=>{
-        const rect=e.target.getBoundingClientRect();
-        const percent=(e.clientX-rect.left)/rect.width;
-        audio.currentTime=percent*audio.duration||0;
-    });
-
-    // Volume
-    document.getElementById("volumeBar").addEventListener("click",e=>{
-        const rect=e.target.getBoundingClientRect();
-        const percent=(e.clientX-rect.left)/rect.width;
-        audio.volume=Math.max(0,Math.min(1,percent));
-        volumeFill.style.width=(audio.volume*100)+"%";
-    });
+    document.getElementById("bigPlay").onclick = togglePlay;
+    document.getElementById("miniPlayPause").onclick = togglePlay;
 
     // Atualiza tudo
-    setInterval(updateAll,10000);
-    updateAll();
+    setInterval(updateDisplay, 10000);
+    updateDisplay();
 </script>
 </body>
 </html>
