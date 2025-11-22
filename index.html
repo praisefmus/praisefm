@@ -35,8 +35,8 @@
             height: 100vh;
             width: 100vw;
             display: flex;
-            justify-content: center;
-            align-items: flex-start; 
+            justify-content: center; /* Centraliza horizontalmente */
+            align-items: center; /* Centraliza verticalmente */
             overflow-y: auto; 
             color: var(--primary-color);
         }
@@ -51,36 +51,44 @@
 
         .player-container {
             width: 100%; 
-            min-height: 100vh; 
-            max-width: 600px; 
+            max-width: 450px; /* Limita a largura para mobile e centraliza o bloco */
             display: flex; 
-            flex-direction: column;
-            align-items: center; /* CENTER THE MAIN COLUMN */
+            flex-direction: column; /* Coloca os itens um abaixo do outro */
+            align-items: center; /* Centraliza os itens dentro do container */
             padding: 20px;
             position: relative;
             text-shadow: 0 2px 10px rgba(0,0,0,0.8);
-            gap: 15px; 
+            gap: 20px; /* Espaço entre os principais blocos */
         }
-
-        /* --- 1. PROGRAM CIRCLE (Centralized) --- */
+        
+        /* === 1. PROGRAM AREA (Only Circle) === */
         .program-area {
+            position: relative;
+            width: 100%;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 10px;
-            align-self: center; 
+            align-items: center; /* Centraliza o círculo e o texto */
+            margin-bottom: 20px;
+        }
+
+        /* --- REMOVED: .program-square --- */
+
+        .program-circle-wrapper {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Centraliza o círculo e o texto */
+            margin-top: 0; /* Não precisa de margin-top extra */
         }
         
         .program-circle {
-            width: min(60vw, 260px); 
-            height: min(60vw, 260px);
+            width: min(70vw, 300px); /* Tamanho do círculo para mobile e desktop */
+            height: min(70vw, 300px);
             border-radius: 50%;
             background-color: #000;
-            position: relative;
             z-index: 2;
             box-shadow: 0 15px 50px rgba(0,0,0,0.6);
-            transition: all 0.3s ease;
             --progress-deg: 0deg;
         }
 
@@ -105,7 +113,6 @@
             );
             -webkit-mask: radial-gradient(transparent 68%, black 69%);
             mask: radial-gradient(transparent 68%, black 69%);
-            transition: all 1s linear; 
         }
 
         .program-label { margin-top: 20px; text-align: center; }
@@ -117,135 +124,91 @@
         }
         
         .live-dot { width: 8px; height: 8px; background-color: var(--accent-color); border-radius: 50%; box-shadow: 0 0 8px var(--accent-color); }
-
-        @keyframes flash {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(0.98); }
-        }
-
         .program-name { font-size: 24px; font-weight: 800; margin-top: 5px; letter-spacing: -0.5px; line-height: 1.1;}
 
-        /* --- 2. CONTROLS (Centralized) --- */
+        /* === 2. CONTROLS === */
         .controls-area {
             display: flex; justify-content: center; align-items: center; gap: 30px; 
             margin: 10px 0;
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
-            align-self: center; /* KEEP CONTROLS CENTERED */
             width: 100%;
+            align-self: center;
         }
         .control-btn { background: none; border: none; color: #fff; cursor: pointer; transition: transform 0.2s; display: flex; align-items: center; justify-content: center;}
         .control-btn:active { transform: scale(0.9); }
-        
-        .play-btn { 
-            width: 70px; height: 70px; background: var(--accent-color); border-radius: 50%; 
-            box-shadow: 0 8px 20px rgba(255, 77, 0, 0.4); color: white;
-            display: flex; align-items: center; justify-content: center;
-        }
+        .play-btn { width: 70px; height: 70px; background: var(--accent-color); border-radius: 50%; box-shadow: 0 8px 20px rgba(255, 77, 0, 0.4); color: white; display: flex; align-items: center; justify-content: center; }
         .play-btn svg { width: 30px; height: 30px; fill: white; }
         .play-btn svg.play-icon { margin-left: 4px; }
-        
         .skip-btn svg { width: 28px; height: 28px; opacity: 0.8; }
-        .skip-btn:hover svg { opacity: 1; }
 
-        /* --- 3. NOW PLAYING CARD (Left Aligned) --- */
+
+        /* === 3. METADATA WRAPPER (Full Width, Centralized) === */
+        .metadata-wrapper {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center; /* Centraliza os cards de metadados */
+        }
+
+        /* --- NOW PLAYING CARD --- */
         .now-playing-card {
-            width: 100%; 
+            width: 90%; /* Ajuste a largura para o card */
+            max-width: 380px; /* Limita a largura máxima */
             background-color: var(--glass-bg);
             backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
             border-radius: 12px; padding: 12px 18px; 
             display: flex; align-items: center;
             border: 1px solid rgba(255,255,255,0.1); 
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            align-self: flex-start; /* ALIGNED LEFT */
         }
         .song-cover { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; background-color: #333; margin-right: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
         .song-info { flex: 1; overflow: hidden; text-shadow: none; }
         .song-title { font-size: 16px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; margin-bottom: 2px; }
         .song-artist { font-size: 14px; color: #ccc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .lyrics-btn { opacity: 0.8; cursor: pointer; background:none; border:none; color:white; padding: 8px; transition: opacity 0.2s; }
-        .lyrics-btn:hover { opacity: 1; }
+        .lyrics-btn { opacity: 0.8; cursor: pointer; background:none; border:none; color:white; padding: 8px; }
 
-        /* --- EXTRAS (Volume - Left Aligned) --- */
+        /* --- VOLUME --- */
         .volume-container { 
             width: 80%; 
+            max-width: 300px;
             display: flex; align-items: center; gap: 12px; 
             background-color: rgba(0,0,0,0.4); 
             padding: 8px 15px;
             border-radius: 20px;
-            opacity: 1; 
-            align-self: flex-start; /* ALIGNED LEFT */
-            margin-left: 20px; 
+            align-self: center; /* Centraliza o controle de volume */
+            margin-left: 0; /* Remove o margin-left */
         }
         .volume-slider { flex: 1; -webkit-appearance: none; background: rgba(255,255,255,0.3); height: 4px; border-radius: 2px; outline: none; }
         .volume-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: #fff; cursor: pointer; }
-        
-        /* --- 4. DATE AND TIME (Left Aligned) --- */
-        .datetime-container {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            justify-content: center;
-            width: 100%;
-            margin-top: 5px;
-            align-self: flex-start; /* ALIGNED LEFT */
-        }
-        .date-display {
-            font-size: 11px; color: #ccc; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;
-        }
-        .clock-display {
-            font-size: 24px; font-weight: 700; color: var(--primary-color); font-variant-numeric: tabular-nums; line-height: 1;
-        }
 
-        /* --- 5. RECENTLY PLAYED (Left Aligned) --- */
+        /* --- RECENTLY PLAYED --- */
         .recents-container {
             width: 100%; 
-            margin-top: 20px;
             padding: 10px 0;
             margin-bottom: 40px; 
-            align-self: flex-start; /* ALIGNED LEFT */
+            text-align: center; /* Centraliza o título */
         }
-        .recents-title {
-            font-size: 14px; font-weight: 700; color: #999; text-transform: uppercase; margin-bottom: 10px; padding: 0 18px;
+        .recents-title { font-size: 14px; font-weight: 700; color: #999; text-transform: uppercase; margin-bottom: 10px; padding: 0 18px; }
+        .recent-item { 
+            display: flex; align-items: center; padding: 8px 18px; 
+            transition: background-color 0.2s; border-radius: 0;
+            width: 90%; /* Ajusta a largura dos itens recentes */
+            max-width: 380px; /* Limita a largura máxima */
+            margin: 0 auto; /* Centraliza os itens recentes */
         }
-        .recent-item {
-            display: flex; align-items: center; padding: 8px 18px; transition: background-color 0.2s; border-radius: 0;
-        }
-        .recent-item:hover { background-color: rgba(255, 255, 255, 0.05); }
-        .recent-cover {
-            width: 35px; height: 35px; border-radius: 4px; object-fit: cover; background-color: #333; margin-right: 15px;
-        }
+        .recent-cover { width: 35px; height: 35px; border-radius: 4px; object-fit: cover; background-color: #333; margin-right: 15px; }
         .recent-info { flex: 1; overflow: hidden; }
         .recent-title { font-size: 14px; font-weight: 500; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .recent-artist { font-size: 12px; color: #aaa; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* --- DESKTOP --- */
-        @media (min-width: 768px) {
-            .player-container { 
-                max-width: 800px; 
-                min-height: 800px; 
-                justify-content: center;
-                gap: 25px;
-                padding: 30px;
-            }
 
-            .program-circle { width: 320px; height: 320px; }
-            .program-name { font-size: 36px; }
-            .play-btn { width: 80px; height: 80px; }
-            
-            /* DESKTOP - Move all cards to the left edge of the centered column */
-            .now-playing-card, .datetime-container, .recents-container {
-                align-self: flex-start; 
-                max-width: 500px;
-            }
-            .volume-container {
-                align-self: flex-start;
-                margin-left: 0;
-                width: 50%;
-                max-width: 350px;
-            }
+        /* === MOBILE FIRST: NO MEDIA QUERIES === */
+        /* Removidas as media queries para desktop, pois o layout agora é universalmente centralizado */
 
-            .clock-display { font-size: 32px; } 
-            .date-display { font-size: 13px; }
+        @keyframes flash {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.98); }
         }
     </style>
 </head>
@@ -255,56 +218,57 @@
 
     <div class="player-container">
         
-        <div class="program-area">
-            <div class="program-circle" id="programCircle">
-                <img src="/image/logopraisefm.webp" id="programImg" class="program-img" alt="Program Logo">
-            </div>
-            <div class="program-label">
-                <div class="program-status"><div class="live-dot"></div> LIVE ON AIR</div>
-                <div class="program-name" id="programNameDisplay">Praise FM</div>
-            </div>
-        </div>
-
-        <div class="controls-area">
-            <button class="control-btn skip-btn" onclick="skip(-15)" aria-label="Skip Back 15 Seconds">
-                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg>
-            </button>
-            
-            <button class="control-btn play-btn" id="playPauseBtn" aria-label="Play / Pause">
-                <svg id="iconPlay" class="play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                <svg id="iconPause" class="pause-icon" style="display:none;" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-            </button>
-
-            <button class="control-btn skip-btn" onclick="skip(15)" aria-label="Skip Forward 15 Seconds">
-                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg>
-            </button>
-        </div>
-
-        <div class="now-playing-card">
-            <img src="/image/logopraisefm.webp" id="songCover" class="song-cover" alt="Song Cover">
-            <div class="song-info">
-                <div class="song-title" id="trackTitle">Loading...</div>
-                <div class="song-artist" id="trackArtist">Praise FM</div>
-            </div>
-            <button class="lyrics-btn" id="lyricsBtn" aria-label="View Lyrics">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
-            </button>
-        </div>
-
-        <div class="volume-container">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="min-width:20px"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
-            <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.01" value="0.8" aria-label="Volume">
-        </div>
-
-        <div class="datetime-container">
-            <div class="date-display" id="dateDisplay">Loading Date...</div>
-            <div class="clock-display" id="clockDisplay">--:--</div>
-        </div>
-
-        <div class="recents-container">
-            <div class="recents-title">Recently Played</div>
-            <div id="recentsList">
+        <div class="left-column"> <div class="program-area">
+                <div class="program-circle-wrapper">
+                    <div class="program-circle" id="programCircle">
+                        <img src="/image/logopraisefm.webp" id="programImg" class="program-img" alt="Program Logo">
+                    </div>
+                    <div class="program-label">
+                        <div class="program-status"><div class="live-dot"></div> LIVE ON AIR</div>
+                        <div class="program-name" id="programNameDisplay">Praise FM</div>
+                    </div>
                 </div>
+            </div>
+
+            <div class="controls-area">
+                <button class="control-btn skip-btn" onclick="skip(-15)" aria-label="Skip Back 15 Seconds">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg>
+                </button>
+                
+                <button class="control-btn play-btn" id="playPauseBtn" aria-label="Play / Pause">
+                    <svg id="iconPlay" class="play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                    <svg id="iconPause" class="pause-icon" style="display:none;" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                </button>
+
+                <button class="control-btn skip-btn" onclick="skip(15)" aria-label="Skip Forward 15 Seconds">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="metadata-wrapper">
+            
+            <div class="now-playing-card">
+                <img src="/image/logopraisefm.webp" id="songCover" class="song-cover" alt="Song Cover">
+                <div class="song-info">
+                    <div class="song-title" id="trackTitle">Loading...</div>
+                    <div class="song-artist" id="trackArtist">Praise FM</div>
+                </div>
+                <button class="lyrics-btn" id="lyricsBtn" aria-label="View Lyrics">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                </button>
+            </div>
+
+            <div class="volume-container">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="min-width:20px"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+                <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.01" value="0.8" aria-label="Volume">
+            </div>
+
+            <div class="recents-container">
+                <div class="recents-title">Recently Played</div>
+                <div id="recentsList">
+                    </div>
+            </div>
         </div>
 
     </div>
@@ -318,7 +282,7 @@
         const LASTFM_API_KEY = "7744c8f90ee053fc761e0e23bfa00b89";
         const CHICAGO_TIMEZONE = "America/Chicago";
 
-        // --- LOCAL IMAGES ---
+        // --- LOCAL IMAGES (Assuming these paths are correct in your project) ---
         const IMG_DEFAULT = "/image/logopraisefm.webp"; 
         const IMG_COMMERCIAL = "/image/commercial break.png"; 
         const IMG_SPOT = "/image/spot.webp";
@@ -345,9 +309,6 @@
         const bgBlur = document.getElementById('bgBlur');
         const colorCanvas = document.getElementById('colorCanvas');
         const ctx = colorCanvas.getContext('2d', {willReadFrequently: true});
-        
-        const dateDisplay = document.getElementById('dateDisplay');
-        const clockDisplay = document.getElementById('clockDisplay');
 
         // --- GLOBAL STATE ---
         let isPlaying = false;
@@ -356,27 +317,8 @@
         const MAX_RECENTS = 5;
         const CARPOOL_START_HOUR = 18; // 6 PM Chicago
         const CARPOOL_END_HOUR = 20;   // 8 PM Chicago
-
-        // --- TIME FUNCTIONS ---
-        function updateChicagoTime() {
-            const now = new Date();
-            const optionsTime = { timeZone: CHICAGO_TIMEZONE, hour: 'numeric', minute: '2-digit', hour12: true };
-            const timeString = now.toLocaleTimeString('en-US', optionsTime);
-            
-            const optionsDate = { timeZone: CHICAGO_TIMEZONE, weekday: 'long', month: 'long', day: 'numeric' };
-            const dateString = now.toLocaleDateString('en-US', optionsDate); 
-            
-            clockDisplay.innerText = timeString; 
-            dateDisplay.innerText = dateString.toUpperCase();
-
-            if (isTimeBetween(CARPOOL_START_HOUR, CARPOOL_END_HOUR) && isPlaying) {
-                startProgressMonitor(0, true); 
-            } else if (programCircle.classList.contains('is-playing') && !isTimeBetween(CARPOOL_START_HOUR, CARPOOL_END_HOUR)) {
-                programCircle.classList.remove('is-playing');
-                if (progressInterval) clearInterval(progressInterval);
-            }
-        }
-
+        
+        // --- TIME FUNCTIONS (Used only for CARPOOL program logic) ---
         function isTimeBetween(startHour, endHour) {
             const nowChicago = new Date(new Date().toLocaleString("en-US", { timeZone: CHICAGO_TIMEZONE }));
             
@@ -535,7 +477,6 @@
             }
         }
 
-
         // --- MAIN LOGIC (Metadata) ---
         async function processMetadata(artist, track) {
             const artistLow = artist.toLowerCase();
@@ -567,7 +508,6 @@
                 updateDisplay(IMG_SPOT, "Station ID", IMG_SPOT, "Station ID", "Praise FM", false);
                 return;
             }
-
 
             // 2. OTHER NON-PERSISTENT PROGRAMS CHECK (Only if not in Carpool Time)
             if (!isCarpoolTime) { 
@@ -647,54 +587,4 @@
         playBtn.addEventListener('click', () => {
             if (isPlaying) {
                 audio.pause();
-                isPlaying = false;
-                iconPlay.style.display = 'block';
-                iconPause.style.display = 'none';
-            } else {
-                if (audio.src !== STREAM_URL) audio.src = STREAM_URL;
-                audio.play().then(() => {
-                    isPlaying = true;
-                    iconPlay.style.display = 'none';
-                    iconPause.style.display = 'block';
-                    // Restart progress if in CARPOOL
-                    if (isTimeBetween(CARPOOL_START_HOUR, CARPOOL_END_HOUR)) {
-                        startProgressMonitor(0, true);
-                    }
-                }).catch(e => {
-                    console.error("Autoplay prevented", e);
-                    trackTitle.innerText = "Click to Play";
-                });
-            }
-        });
-
-        document.getElementById('volumeSlider').addEventListener('input', (e) => { audio.volume = e.target.value; });
-
-        document.getElementById('lyricsBtn').addEventListener('click', () => {
-            const q = `${trackArtist.innerText} ${trackTitle.innerText}`;
-            window.open(`https://genius.com/search?q=${encodeURIComponent(q)}`, '_blank');
-        });
-
-        function setupZeno() {
-            const es = new EventSource(`https://api.zeno.fm/mounts/metadata/subscribe/${ZENO_ID}`);
-            es.onmessage = (e) => {
-                try {
-                    const d = JSON.parse(e.data);
-                    if (d.streamTitle) {
-                        const parts = d.streamTitle.split(' - ');
-                        const artist = parts[0]?.trim() || "Praise FM";
-                        const track = parts.slice(1).join(' - ')?.trim() || "";
-                        processMetadata(artist, track);
-                    }
-                } catch(err) {}
-            };
-        }
-
-        function skip(sec) {} // Function remains empty as skipping in live stream is not typical
-
-        // Initialization
-        setupZeno();
-        setInterval(updateChicagoTime, 1000);
-        updateChicagoTime(); 
-    </script>
-</body>
-</html>
+                isPlaying
