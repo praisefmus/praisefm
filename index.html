@@ -33,7 +33,7 @@
         .upnext-item { flex:1; min-width:200px; display:flex; align-items:center; gap:16px; }
         .upnext-img { width:60px; height:60px; border-radius:8px; object-fit:cover; background:#eee; }
         .recently { margin-top:40px; text-align:left; }
-        .recently-header { font-size:-shorter13px; font-weight:700; color:var(--grey); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; }
+        .recently-header { font-size:13px; font-weight:700; color:var(--grey); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; }
         .recent-item { display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--border-color); }
         .recent-cover { width:48px; height:48px; border-radius:6px; object-fit:cover; background:#eee; }
         .recent-title { font-weight:600; font-size:15px; }
@@ -144,12 +144,13 @@
         nonstop: "/image/logopraisefm.webp"
     };
 
+    // APRESENTADORES CORRETOS (conforme sua última correção)
     const hosts = {
         "Morning Show": "Stancy Campbell",
         "Midday Grace": "Michael Ray",
         "Praise FM Carpool": "DJ Praise",
         "Praise FM Future Artists": "DJ Future",
-        "Praise FM Classics": "DJ Classic",
+        "Praise FM Classics": "Scott Turner",        // ← Corrigido aqui
         "Praise FM POP": "DJ POP",
         "Sunday With Christ": "Pastor John",
         "Midnight Grace": "Pastor Grace",
@@ -157,7 +158,6 @@
         "Praise FM Non Stop": "Auto DJ"
     };
 
-    // PROGRAMAÇÃO 100% CONFORME O SEU TXT
     const schedule = [
         {start:"00:00", end:"06:00", name:"Midnight Grace", img:images.midnight},
         {start:"06:00", end:"07:00", name:"Music Only", img:images.default},
@@ -165,21 +165,17 @@
         {start:"10:00", end:"10:30", name:"Living The Message", img:images.default},
         {start:"12:00", end:"18:00", name:"Midday Grace", img:images.midday},
         {start:"16:00", end:"17:00", name:"Praise FM Non Stop", img:images.nonstop},
-        {start:"18:00", end:"20:00", name:"Praise FM Carpool", img:images.carpool, days:[1,2,3,4,5]}, // seg-sex
+        {start:"18:00", end:"20:00", name:"Praise FM Carpool", img:images.carpool, days:[1,2,3,4,5]},
         {start:"22:00", end:"23:59", name:"Praise FM POP", img:images.pop},
 
-        // Future Artists (seg, qua, sex)
         {start:"12:00", end:"13:00", name:"Praise FM Future Artists", img:images.future, days:[1,3,5]},
         {start:"20:00", end:"21:00", name:"Praise FM Future Artists (Replay)", img:images.future, days:[1,3,5]},
 
-        // Classics (ter, qui, sáb)
         {start:"12:00", end:"13:00", name:"Praise FM Classics", img:images.classic, days:[2,4,6]},
         {start:"20:00", end:"21:00", name:"Praise FM Classics (Replay)", img:images.classic, days:[2,4,6]},
 
-        // Living The Message replay às 21h todo dia
         {start:"21:00", end:"21:30", name:"Living The Message (Replay)", img:images.default},
 
-        // Domingo
         {start:"07:00", end:"12:00", name:"Sunday With Christ", img:images.sunday, days:[0]}
     ];
 
@@ -203,30 +199,26 @@
             if (mins >= s && mins < end) {
                 if (!current || e > timeToMins(current.end)) current = p;
             }
-            if (mins < s) {
-                future.push({prog:p, startMins:s});
-            }
+            if (mins < s) future.push({prog:p, startMins:s});
         }
 
-        // Se não tiver mais hoje, pega do amanhã
         if (future.length === 0) {
             const tomorrow = (day + 1) % 7;
             for (const p of schedule) {
-                if (!p.days || p.days.includes(tomorrow)) {
-                    future.push({prog:p, startMins:timeToMins(p.start)});
-                }
+                if (!p.days || p.days.includes(tomorrow)) future.push({prog:p, startMins:timeToMins(p.start)});
             }
         }
 
         future.sort((a,b) => a.startMins - b.startMins);
-        const next1 = future[0]?.prog || schedule[0];
-        const next2 = future[1]?.prog || schedule[1];
-
-        return { current: current || {name:"Praise FM", img:images.default}, next1, next2 };
+        return {
+            current: current || {name:"Praise FM", img:images.default},
+            next1: future[0]?.prog || schedule[0],
+            next2: future[1]?.prog || schedule[1]
+        };
     }
 
     let currentTrack = {title:"", artist:""};
-    const recents = []; // Máximo 3
+    const recents = []; // máximo 3
 
     async function fetchAlbumCover(artist, title) {
         if (!artist || !title) return images.default;
@@ -277,7 +269,6 @@
         document.getElementById("upnextTitle2").textContent = formatProgramName(next2);
         document.getElementById("upnextTime2").textContent = fmt(next2, off2) + " Chicago";
 
-        // Progress ring
         if (current.start && current.end) {
             const s = timeToMins(current.start);
             const e = timeToMins(current.end);
@@ -297,10 +288,10 @@
         } else {
             currentTrack = {title, artist};
             const cover = await fetchAlbumCover(artist, title);
-            const trackKey = `${artist} - ${title}`;
-            if (!recents.some(t => t.key === trackKey)) {
-                recents.unshift({title, artist, cover, key: trackKey});
-                if (recents.length > 3) recents.pop(); // Só 3 músicas
+            const key = `${artist}-${title}`;
+            if (!recents.some(t => t.key === key)) {
+                recents.unshift({title, artist, cover, key});
+                if (recents.length > 3) recents.pop();
                 document.getElementById("recentList").innerHTML = recents.map(t => `
                     <div class="recent-item">
                         <img src="${t.cover}" class="recent-cover" onerror="this.src='${images.default}'">
