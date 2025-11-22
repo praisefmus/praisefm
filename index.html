@@ -40,6 +40,8 @@
         }
         .circle-img img { width:100%; height:100%; object-fit:cover; }
 
+        .program-name-current { font-size:20px; font-weight:700; margin:-10px 0 20px; color:var(--dark); }
+
         .live-badge {
             display:inline-flex; align-items:center; gap:8px; 
             color:var(--orange); font-weight:700; font-size:14px; text-transform:uppercase; letter-spacing:1px;
@@ -59,12 +61,13 @@
         }
         .play-button svg { width:28px; height:28px; fill:#fff; margin-left:-8px; }
 
-        /* Up Next */
+        /* Up Next - agora com dois itens side by side */
         .upnext {
             background:#f8f8f8; border-radius:12px; padding:20px; margin:40px 0; text-align:left;
         }
         .upnext-header { font-size:13px; font-weight:700; color:var(--grey); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; }
-        .upnext-item { display:flex; align-items:center; gap:16px; }
+        .upnext-items { display:flex; gap:20px; flex-wrap:wrap; }
+        .upnext-item { flex:1; min-width:200px; display:flex; align-items:center; gap:16px; }
         .upnext-img { width:60px; height:60px; border-radius:8px; object-fit:cover; }
         .upnext-title { font-size:18px; font-weight:800; }
         .upnext-time { font-size:14px; color:var(--orange); font-weight:600; }
@@ -108,6 +111,7 @@
             <img id="mainImg" src="/image/logopraisefm.webp" alt="Now Playing">
         </div>
     </div>
+    <div class="program-name-current" id="currentProgramName"></div>
 
     <div class="live-badge"><div class="live-dot"></div> LIVE</div>
     <h2 class="program-title" id="programTitle">Praise FM</h2>
@@ -118,14 +122,23 @@
         Play
     </button>
 
-    <!-- Up Next -->
+    <!-- Up Next - agora com dois itens side by side -->
     <div class="upnext">
         <div class="upnext-header">Up next</div>
-        <div class="upnext-item">
-            <img id="upnextImg" src="/image/middaygracelogo.webp" class="upnext-img">
-            <div>
-                <div class="upnext-title" id="upnextTitle">Midday Grace</div>
-                <div class="upnext-time" id="upnextTime">12:00 Chicago</div>
+        <div class="upnext-items">
+            <div class="upnext-item" id="upnext1">
+                <img id="upnextImg1" src="/image/middaygracelogo.webp" class="upnext-img">
+                <div>
+                    <div class="upnext-title" id="upnextTitle1">Midday Grace</div>
+                    <div class="upnext-time" id="upnextTime1">12:00 Chicago</div>
+                </div>
+            </div>
+            <div class="upnext-item" id="upnext2">
+                <img id="upnextImg2" src="/image/middaygracelogo.webp" class="upnext-img">
+                <div>
+                    <div class="upnext-title" id="upnextTitle2">Midnight Grace</div>
+                    <div class="upnext-time" id="upnextTime2">00:00 Chicago</div>
+                </div>
             </div>
         </div>
     </div>
@@ -163,7 +176,7 @@
     const schedule = [
         {start:"00:00",end:"06:00",name:"Midnight Grace",img:images.midnight},
         {start:"06:00",end:"07:00",name:"Music Only",img:images.default},
-        {start:"07:00",end:"12:00",name:"Morning Show",img:images.morning},
+        {start:"07:00",end:"12:00",name:"Morning Show With Stancy Campbell",img:images.morning},
         {start:"10:00",end:"10:30",name:"Living The Message",img:images.default},
         {start:"12:00",end:"18:00",name:"Midday Grace",img:images.midday},
         {start:"18:00",end:"20:00",name:"Praise FM Carpool",img:images.carpool,days:[1,2,3,4,5]},
@@ -180,27 +193,30 @@
 
     function getCurrentAndNext() {
         const now = getChicagoTime(), day = now.getDay(), mins = timeToMins(now.toTimeString().slice(0,5));
-        let current = null, next = null, nextMins = 9999;
+        let current = null, next1 = null, next2 = null, nextMins1 = 9999, nextMins2 = 9999;
         for (const p of schedule) {
             if (p.days && !p.days.includes(day)) continue;
             const s = timeToMins(p.start), e = timeToMins(p.end), end = e < s ? e + 1440 : e;
             if (mins >= s && mins < end) current = p;
-            if (s > mins && s < nextMins) { next = p; nextMins = s; }
+            if (s > mins && s < nextMins1) { next2 = next1; nextMins2 = nextMins1; next1 = p; nextMins1 = s; }
+            else if (s > mins && s < nextMins2) { next2 = p; nextMins2 = s; }
         }
-        if (!next) next = schedule.find(p => !p.days || p.days.includes((day+1)%7)) || schedule[0];
-        return {current: current || {name:"Praise FM", img:images.default}, next};
+        if (!next1) next1 = schedule.find(p => !p.days || p.days.includes((day+1)%7)) || schedule[0];
+        if (!next2) next2 = schedule.find((p, i) => i > schedule.indexOf(next1) && (!p.days || p.days.includes((day+1)%7))) || schedule[0];
+        return {current: current || {name:"Praise FM", img:images.default}, next1, next2};
     }
 
     let currentTrack = {title:"", artist:""};
     const recents = [];
 
     function updateDisplay() {
-        const {current, next} = getCurrentAndNext();
+        const {current, next1, next2} = getCurrentAndNext();
         const isMusic = currentTrack.title && !currentTrack.title.toLowerCase().includes("commercial");
 
         // Imagens
         document.querySelectorAll("#mainImg, #miniImg").forEach(el => el.src = current.img);
-        document.getElementById("upnextImg").src = next.img;
+        document.getElementById("upnextImg1").src = next1.img;
+        document.getElementById("upnextImg2").src = next2.img;
 
         // Textos
         const title = isMusic ? currentTrack.title : current.name;
@@ -209,10 +225,13 @@
         document.getElementById("programSubtitle").textContent = subtitle;
         document.getElementById("miniTitle").textContent = title;
         document.getElementById("miniArtist").textContent = subtitle;
+        document.getElementById("currentProgramName").textContent = current.name;
 
         // Up next
-        document.getElementById("upnextTitle").textContent = next.name;
-        document.getElementById("upnextTime").textContent = next.start + " Chicago";
+        document.getElementById("upnextTitle1").textContent = next1.name;
+        document.getElementById("upnextTime1").textContent = next1.start + " Chicago";
+        document.getElementById("upnextTitle2").textContent = next2.name;
+        document.getElementById("upnextTime2").textContent = next2.start + " Chicago";
 
         // Progresso da borda laranja
         if (current.start) {
@@ -255,10 +274,12 @@
         } else audio.pause();
 
         const playing = !audio.paused;
-        document.querySelectorAll("#bigPlay span, #miniPlayPause").forEach(el => el.innerHTML = playing ?
+        document.querySelector("#bigPlay").innerHTML = playing ? 
+            '<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg> Pause' :
+            '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Play';
+        document.getElementById("miniPlayPause").innerHTML = playing ? 
             '<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>' :
-            '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>');
-        document.getElementById("bigPlay").firstElementChild.nextSibling.textContent = playing ? "Pause" : "Play";
+            '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
     }
     document.getElementById("bigPlay").onclick = togglePlay;
     document.getElementById("miniPlayPause").onclick = togglePlay;
