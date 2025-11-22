@@ -1,842 +1,589 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
     <title>Praise FM - Live Radio</title>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0RNK6G5WWL"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-0RNK6G5WWL');
-    </script>
     <link rel="icon" type="image/png" sizes="32x32" href="./image/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="./image/favicon-16x16.png">
-    <link rel="shortcut icon" type="image/x-icon" href="./image/favicon.ico">
-    <link rel="apple-touch-icon" sizes="180x180" href="./image/apple-touch-icon.png">
     <style>
-        /* Updated CSS to match BBC style more closely */
-        :root {
-            --primary-color: #000; /* Dark text */
-            --secondary-color: #333;
-            --accent-color: #ff4d00; /* Orange, matching BBC */
-            --bg-light: #fff; /* White background */
-            --card-bg: #f5f5f5; /* Light gray for cards */
-            --border-color: #e0e0e0; /* Border color */
+        :root{
+            --primary-color:#000;
+            --secondary-color:#444;
+            --accent-color:#ff4d00;
+            --bg-light:#fff;
+            --card-bg:#f6f6f6;
+            --border-color:#e6e6e6;
         }
-        * { 
-            box-sizing: border-box; 
-            margin: 0; 
-            padding: 0; 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            -webkit-tap-highlight-color: transparent; 
+        *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+        body{
+            background:var(--bg-light);
+            color:var(--primary-color);
+            padding:12px;
+            padding-bottom:100px;
+            display:flex;
+            justify-content:center;
         }
-        body {
-            background-color: var(--bg-light);
-            min-height: 100vh;
-            width: 100vw;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            overflow-y: auto; 
-            color: var(--primary-color);
-            padding: 10px;
-            padding-bottom: 80px; /* Space for bottom bar */
+
+        .player-container{
+            width:100%;
+            max-width:860px;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            gap:14px;
         }
-        .station-title {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: var(--accent-color); /* Orange color for Praise FM */
+
+        .station-title{font-size:26px;font-weight:800;color:var(--accent-color)}
+        .station-desc{font-size:14px;color:var(--secondary-color)}
+
+        /* Program Circle */
+        .program-area{display:flex;flex-direction:column;align-items:center;gap:10px;width:100%}
+        .program-circle{
+            width:min(56vw,240px);
+            height:min(56vw,240px);
+            border-radius:50%;
+            position:relative;
+            border:2px solid var(--border-color);
+            overflow:hidden;
+            background:#fafafa;
+            --progress-deg:0deg;
         }
-        .station-desc {
-            font-size: 14px;
-            color: var(--secondary-color);
-            margin-bottom: 15px;
-            text-align: center;
+        .program-img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+        .program-circle.is-playing::before{
+            content:"";
+            position:absolute;
+            inset:-6px;
+            border-radius:50%;
+            z-index:1;
+            background:conic-gradient(var(--accent-color) var(--progress-deg), rgba(0,0,0,0.08) var(--progress-deg));
+            -webkit-mask: radial-gradient(circle, transparent 68%, black 69%);
+            mask: radial-gradient(circle, transparent 68%, black 69%);
+            transition:--progress-deg 1s linear;
         }
-        .player-container {
-            width: 100%; 
-            max-width: 800px; 
-            display: flex; 
-            flex-direction: column;
-            align-items: center; /* Centered like BBC */
-            justify-content: flex-start; 
-            padding: 10px;
-            position: relative;
-            gap: 15px; 
+
+        .program-label{text-align:center}
+        .program-status{font-size:12px;color:var(--accent-color);font-weight:700;display:flex;justify-content:center;gap:8px;align-items:center}
+        .program-name{font-size:20px;font-weight:800;margin-top:6px}
+        .program-artists{font-size:14px;color:var(--secondary-color);margin-top:4px}
+
+        .play-btn{
+            background:var(--accent-color);
+            color:#fff;border:none;border-radius:8px;padding:12px 18px;font-weight:800;cursor:pointer;
+            display:flex;gap:10px;align-items:center;
         }
-        /* Program Circle (similar to BBC's circular image) */
-        .program-area {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            margin-bottom: 10px;
-        }
-        .program-circle {
-            width: min(60vw, 200px); 
-            height: min(60vw, 200px);
-            border-radius: 50%;
-            background-color: #f0f0f0;
-            position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            --progress-deg: 0deg;
-            border: 2px solid var(--border-color);
-        }
-        .program-img {
-            width: 100%; height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-        .program-circle.is-playing::before {
-            content: '';
-            position: absolute;
-            top: -6px; left: -6px; right: -6px; bottom: -6px;
-            border-radius: 50%;
-            z-index: -1;
-            background: conic-gradient(var(--accent-color) var(--progress-deg), rgba(255, 255, 255, 0.1) var(--progress-deg));
-            -webkit-mask: radial-gradient(transparent 68%, black 69%);
-            mask: radial-gradient(transparent 68%, black 69%);
-            transition: all 1s linear; 
-        }
-        .program-label {
-            margin-top: 10px;
-            text-align: center;
-            width: 100%;
-        }
-        .program-status { 
-            font-size: 12px;
-            color: var(--accent-color);
-            font-weight: 600;
-            letter-spacing: 1px; 
-            text-transform: uppercase;
-            display: flex;
-            align-items: center;
-            justify-content: center; 
-            gap: 8px;
-        }
-        .live-dot {
-            width: 8px;
-            height: 8px;
-            background-color: var(--accent-color);
-            border-radius: 50%;
-            box-shadow: 0 0 8px var(--accent-color);
-        }
-        .program-time {
-            font-size: 12px;
-            color: var(--secondary-color);
-            margin-top: 5px;
-        }
-        .program-name {
-            font-size: 20px;
-            font-weight: 800;
-            margin-top: 5px;
-            letter-spacing: -0.5px;
-            line-height: 1.1;
-            color: var(--primary-color);
-        }
-        .program-artists {
-            font-size: 14px;
-            color: var(--secondary-color);
-            margin-top: 5px;
-        }
-        /* Play Button */
-        .play-btn { 
-            width: 140px;
-            height: 45px;
-            background: var(--accent-color);
-            border-radius: 6px; 
-            box-shadow: 0 4px 10px rgba(255, 77, 0, 0.3);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 16px;
-            border: none;
-            cursor: pointer;
-        }
-        .play-btn svg {
-            width: 20px;
-            height: 20px;
-            fill: white;
-            margin-right: 8px;
-        }
+
+        /* Recents */
+        .recents-container{width:100%;margin-top:8px}
+        .recents-title{font-size:13px;color:#666;font-weight:700;text-transform:uppercase;margin-bottom:8px}
+        .recent-item{display:flex;align-items:center;gap:12px;padding:8px;border-radius:8px;background:var(--card-bg);border:1px solid var(--border-color);margin-bottom:8px}
+        .recent-cover{width:56px;height:56px;border-radius:6px;object-fit:cover;background:#eaeaea}
+        .recent-info{flex:1;min-width:0}
+        .recent-title{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .recent-artist{font-size:13px;color:var(--secondary-color);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .recent-time{font-size:12px;color:#888;margin-left:10px}
+
         /* Bottom Player Bar */
-        .bottom-player-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: #fff;
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-            transform: translateY(100%);
-            z-index: 1000;
+        .bottom-player-bar{
+            position:fixed;left:0;right:0;bottom:0;display:flex;align-items:center;gap:12px;padding:12px 16px;background:#fff;border-top:1px solid var(--border-color);box-shadow:0 -6px 20px rgba(0,0,0,0.05);z-index:999;
         }
-        .bottom-player-bar.visible {
-            transform: translateY(0);
-        }
-        .bar-program-info {
-            display: flex;
-            align-items: center;
-            flex: 1;
-        }
-        .bar-program-img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 10px;
-        }
-        .bar-program-text {
-            flex: 1;
-        }
-        .bar-program-name {
-            font-size: 14px;
-            font-weight: bold;
-        }
-        .bar-program-artists {
-            font-size: 12px;
-            color: var(--secondary-color);
-        }
-        .bar-controls {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .bar-control-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: var(--primary-color);
-        }
-        .bar-control-btn svg {
-            width: 24px;
-            height: 24px;
-            fill: currentColor;
-        }
-        .bar-volume-container {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            width: 100px;
-        }
-        .bar-volume-slider {
-            flex: 1;
-            -webkit-appearance: none;
-            background: rgba(0,0,0,0.1);
-            height: 4px;
-            border-radius: 2px;
-            outline: none;
-        }
-        .bar-volume-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--accent-color);
-            cursor: pointer;
-        }
-        .bar-volume-slider::-moz-range-thumb {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--accent-color);
-            cursor: pointer;
-        }
-        .bar-seek-bar {
-            width: 100px;
-            height: 4px;
-            background: rgba(0,0,0,0.1);
-            border-radius: 2px;
-            position: relative;
-        }
-        .bar-seek-progress {
-            height: 100%;
-            background: var(--accent-color);
-            width: 0%; /* Start at 0 */
-            border-radius: 2px;
-        }
-        .bar-live {
-            font-size: 12px;
-            color: var(--accent-color);
-            margin-left: 10px;
-        }
-        /* Recently Played */
-        .recents-container {
-            width: 100%; 
-            margin-top: 10px;
-            padding: 10px 0;
-            align-self: flex-start; /* Aligned to left */
-        }
-        .recents-title {
-            font-size: 14px; font-weight: 600; color: #666; text-transform: uppercase; margin-bottom: 10px; padding: 0 5px;
-        }
-        .recent-item {
-            display: flex; align-items: center; padding: 10px 15px; transition: background-color 0.2s; border-radius: 8px; margin-bottom: 8px;
-            background-color: var(--card-bg); /* Fundo branco */
-            border: 1px solid var(--border-color); /* Borda */
-        }
-        .recent-item:hover { background-color: #e8e8e8; }
-        .recent-cover {
-            width: 40px; height: 40px; border-radius: 6px; object-fit: cover; background-color: #e0e0e0; margin-right: 12px;
-        }
-        .recent-info { flex: 1; overflow: hidden; }
-        .recent-title { font-size: 14px; font-weight: 500; color: var(--primary-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .recent-artist { font-size: 12px; color: var(--secondary-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .recent-time { font-size: 11px; color: #888; margin-left: 10px; white-space: nowrap; }
-        /* Bottom Text */
-        .bottom-desc {
-            width: 100%;
-            text-align: left;
-            font-size: 12px;
-            color: var(--secondary-color);
-            margin-top: 15px;
-        }
-        .program-website {
-            color: var(--accent-color);
-            text-decoration: none;
-            font-weight: bold;
-        }
-        /* Improved Mobile Responsiveness */
-        @media (max-width: 480px) {
-            body {
-                padding: 10px;
-            }
-            .station-title {
-                font-size: 22px;
-            }
-            .station-desc {
-                font-size: 13px;
-                margin-bottom: 10px;
-            }
-            .program-circle {
-                width: 60vw;
-                height: 60vw;
-            }
-            .program-name {
-                font-size: 18px;
-            }
-            .program-artists {
-                font-size: 13px;
-            }
-            .play-btn {
-                width: 130px;
-                height: 40px;
-                font-size: 15px;
-            }
-            .play-btn svg {
-                width: 18px;
-                height: 18px;
-            }
-            .bottom-player-bar {
-                padding: 8px;
-                flex-wrap: wrap;
-            }
-            .bar-controls {
-                gap: 10px;
-            }
-            .bar-seek-bar {
-                width: 80px;
-            }
-            .bar-volume-container {
-                width: 80px;
-            }
-            .bar-volume-slider::-webkit-slider-thumb {
-                width: 18px;
-                height: 18px;
-            }
-            .bar-volume-slider::-moz-range-thumb {
-                width: 18px;
-                height: 18px;
-            }
-            .recent-item {
-                flex-direction: column;
-                align-items: flex-start;
-                padding: 10px;
-            }
-            .recent-cover {
-                width: 100%;
-                height: auto;
-                margin-right: 0;
-                margin-bottom: 10px;
-            }
-            .recent-time {
-                font-size: 10px;
-            }
-            .recent-title {
-                font-size: 13px;
-            }
-            .recent-artist {
-                font-size: 11px;
-            }
-            .bottom-desc {
-                font-size: 11px;
-            }
-        }
-        /* Desktop Adjustments */
-        @media (min-width: 768px) {
-            .player-container { 
-                max-width: 800px; 
-                padding: 30px;
-            }
-            .station-title {
-                font-size: 28px;
-            }
-            .program-circle {
-                width: 250px;
-                height: 250px;
-            }
-            .program-name {
-                font-size: 32px;
-            }
-            .play-btn { 
-                width: 200px; 
-                height: 60px; 
-                font-size: 20px;
-            }
-            .recent-cover {
-                width: 50px;
-                height: 50px;
-            }
-            .recent-title {
-                font-size: 16px;
-            }
-            .recent-artist {
-                font-size: 14px;
-            }
-            .bottom-player-bar {
-                padding: 15px;
-            }
-            .bar-program-img {
-                width: 50px;
-                height: 50px;
-            }
-            .bar-program-name {
-                font-size: 16px;
-            }
-            .bar-program-artists {
-                font-size: 14px;
-            }
-            .bar-seek-bar {
-                width: 200px;
-            }
-            .bar-volume-container {
-                width: 150px;
-            }
+        .bar-program-info{display:flex;align-items:center;gap:12px;flex:1;min-width:0}
+        .bar-program-img{width:56px;height:56px;border-radius:50%;object-fit:cover}
+        .bar-program-text{min-width:0}
+        .bar-program-name{font-weight:800;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .bar-program-artists{font-size:13px;color:var(--secondary-color);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+        .bar-controls{display:flex;align-items:center;gap:12px}
+        .bar-control-btn{background:none;border:none;cursor:pointer;font-size:18px}
+        .bar-seek-bar{width:160px;height:6px;background:rgba(0,0,0,0.08);border-radius:6px;overflow:hidden}
+        .bar-seek-progress{height:100%;background:var(--accent-color);width:0%}
+        .bar-volume-container{display:flex;align-items:center;gap:8px;width:140px;margin-left:20px}
+        .bar-volume-slider{-webkit-appearance:none;background:rgba(0,0,0,0.08);height:6px;border-radius:6px;width:100%}
+        .bar-volume-slider::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent-color)}
+        .bar-volume-slider::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--accent-color)}
+
+        /* Hide LIVE badge per request */
+        .bar-live{display:none}
+
+        /* Responsive */
+        @media (max-width:560px){
+            .program-circle{width:60vw;height:60vw}
+            .bar-seek-bar{width:100px}
+            .bar-volume-container{width:100px;margin-left:10px}
+            .recent-cover{width:100%;height:120px}
+            .recent-item{flex-direction:column;align-items:flex-start}
         }
     </style>
 </head>
 <body>
     <div class="player-container">
         <div class="station-title">Praise FM</div>
-        <div class="station-desc">Praise & Worship</div> <!-- Updated description -->
+        <div class="station-desc">Louvor e Adoração</div>
+
         <div class="program-area">
             <div class="program-circle" id="programCircle">
-                <img src="/image/logopraisefm.webp" id="programImg" class="program-img" alt="Program Logo">
+                <img id="programImg" class="program-img" src="/image/logopraisefm.webp" alt="Program artwork">
             </div>
             <div class="program-label">
-                <div class="program-status"><div class="live-dot"></div> LIVE: 03:00 - 04:00</div> <!-- Example time; make dynamic if possible -->
-                <div class="program-name" id="programNameDisplay">Current Show Name</div>
-                <div class="program-artists" id="programArtistsDisplay">Artist1, Artist2 and more!</div> <!-- Adapted from BBC -->
+                <div class="program-status" id="programStatus"><span id="programTimeDisplay">--:-- - --:--</span></div>
+                <div class="program-name" id="programNameDisplay">Praise FM</div>
+                <div class="program-artists" id="programArtistsDisplay">Various Artists</div>
             </div>
         </div>
+
         <button class="play-btn" id="playPauseBtn" aria-label="Play / Pause">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-            Play
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
+            <span id="playBtnText">Play</span>
         </button>
+
         <div class="recents-container">
             <div class="recents-title">Recently Played</div>
-            <div id="recentsList">
-                <!-- Recently played items will be added here -->
-            </div>
+            <div id="recentsList"></div>
         </div>
-        <div class="bottom-desc" id="bottomDesc">
-            <!-- Empty as per request -->
-        </div>
+
     </div>
+
     <div class="bottom-player-bar" id="bottomPlayerBar">
         <div class="bar-program-info">
-            <img src="/image/logopraisefm.webp" id="barProgramImg" class="bar-program-img" alt="Program Logo">
+            <img src="/image/logopraisefm.webp" id="barProgramImg" class="bar-program-img" alt="Program">
             <div class="bar-program-text">
-                <div class="bar-program-name" id="barProgramName">Current Show Name</div>
-                <div class="bar-program-artists" id="barProgramArtists">Artist1, Artist2 and more!</div>
+                <div class="bar-program-name" id="barProgramName">Praise FM</div>
+                <div class="bar-program-artists" id="barProgramArtists">Various Artists</div>
             </div>
         </div>
+
         <div class="bar-controls">
-            <div class="bar-seek-bar">
-                <div class="bar-seek-progress" id="barSeekProgress"></div> 
-            </div>
-            <button class="bar-control-btn" id="barRewindBtn" aria-label="Rewind 20s">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg>
-            </button>
-            <button class="bar-control-btn" id="barPlayPauseBtn" aria-label="Play / Pause">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-            </button>
-            <button class="bar-control-btn" id="barForwardBtn" aria-label="Forward 20s">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg>
-            </button>
+            <div class="bar-seek-bar"><div class="bar-seek-progress" id="barSeekProgress"></div></div>
+            <button class="bar-control-btn" id="barRewindBtn" title="Rewind 20s">⟲</button>
+            <button class="bar-control-btn" id="barPlayPauseBtn" title="Play/Pause">▶</button>
+            <button class="bar-control-btn" id="barForwardBtn" title="Forward 20s">⟳</button>
+
             <div class="bar-volume-container">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
-                <input type="range" class="bar-volume-slider" id="barVolumeSlider" min="0" max="1" step="0.01" value="0.8" aria-label="Volume">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3z"/></svg>
+                <input id="barVolumeSlider" class="bar-volume-slider" type="range" min="0" max="1" step="0.01" value="0.8" aria-label="Volume">
             </div>
-            <div class="bar-live">LIVE</div>
+            <div class="bar-live" id="barLive">LIVE</div>
         </div>
     </div>
-    <script>
-        // --- CONFIGURATION (kept similar) ---
-        const STREAM_URL = "https://stream.zeno.fm/hvwifp8ezc6tv";
-        const ZENO_ID = "hvwifp8ezc6tv"; 
-        const LASTFM_API_KEY = "7744c8f90ee053fc761e0e23bfa00b89";
-        const CHICAGO_TIMEZONE = "America/Chicago";
 
-        // --- LOCAL IMAGES ---
-        const IMG_DEFAULT = "/image/logopraisefm.webp"; 
-        const IMG_COMMERCIAL = "/image/commercial break.png"; 
-        const IMG_SPOT = "/image/spot.webp";
-        const IMG_MIDDAY_GRACE = "/image/middaygracelogo.webp"; 
-        const IMG_MIDNIGHT_GRACE = "/image/midnightgracelogo.webp";
-        const IMG_MORNING_SHOW = "/image/morningshowlogo.webp";
-        const IMG_CARPOOL = "/image/praisefmcarpoollogo.webp"; 
-        const IMG_CLASSIC = "/image/praisefmclassiclogo.webp";
-        const IMG_FUTURE_ARTISTS = "/image/praisefmfutureartistslogo.webp";
-        const IMG_POP = "/image/praisefmpoplogo.webp";
-        const IMG_SUNDAY_MORNING = "/image/sundaymorninglogo.webp";
+<script>
+/* --------------- CONFIG --------------- */
+const STREAM_URL = "https://stream.zeno.fm/hvwifp8ezc6tv";
+const ZENO_ID = "hvwifp8ezc6tv";
+const LASTFM_API_KEY = "7744c8f90ee053fc761e0e23bfa00b89";
 
-        // --- DOM ELEMENTS ---
-        const audio = new Audio(STREAM_URL);
-        const playBtn = document.getElementById('playPauseBtn');
-        const programCircle = document.getElementById('programCircle');
-        const programImg = document.getElementById('programImg');
-        const programNameDisplay = document.getElementById('programNameDisplay');
-        const programStatus = document.querySelector('.program-status');
-        const programArtistsDisplay = document.getElementById('programArtistsDisplay');
-        const bottomDesc = document.getElementById('bottomDesc');
-        const bottomPlayerBar = document.getElementById('bottomPlayerBar');
-        const barProgramImg = document.getElementById('barProgramImg');
-        const barProgramName = document.getElementById('barProgramName');
-        const barProgramArtists = document.getElementById('barProgramArtists');
-        const barPlayPauseBtn = document.getElementById('barPlayPauseBtn');
-        const barRewindBtn = document.getElementById('barRewindBtn');
-        const barForwardBtn = document.getElementById('barForwardBtn');
-        const barVolumeSlider = document.getElementById('barVolumeSlider');
-        const barSeekProgress = document.getElementById('barSeekProgress');
-        const recentsList = document.getElementById('recentsList');
+/* Local images (make sure filenames exist in /image/) */
+const IMG_DEFAULT = "/image/logopraisefm.webp";
+const IMG_COMMERCIAL = "/image/commercial break.png";
+const IMG_SPOT = "/image/spot.webp";
+const IMG_MIDDAY_GRACE = "/image/middaygracelogo.webp";
+const IMG_MIDNIGHT_GRACE = "/image/midnightgracelogo.webp";
+const IMG_MORNING_SHOW = "/image/morningshowlogo.webp";
+const IMG_CARPOOL = "/image/praisefmcarpoollogo.webp";
+const IMG_CLASSIC = "/image/praisefmclassiclogo.webp";
+const IMG_FUTURE_ARTISTS = "/image/praisefmfutureartistslogo.webp";
+const IMG_POP = "/image/praisefmpoplogo.webp";
+const IMG_SUNDAY_WITH_CHRIST = "/image/sundaywithchristlogo.webp";
+const IMG_LIVING_THE_MESSAGE = "/image/livingthemessage.webp";
+const IMG_NONSTOP = "/image/praisefmnonstop.webp";
 
-        // --- GLOBAL STATE ---
-        let isPlaying = false;
-        let progressInterval = null; 
-        let totalDuration = 0;
-        let startTime = 0;
-        let progressType = null; // 'program' or 'song' or null
-        const CARPOOL_START_HOUR = 18; // 6 PM Chicago
-        const CARPOOL_END_HOUR = 20;   // 8 PM Chicago
-        const RECENTLY_PLAYED = [];
-        const MAX_RECENTS = 4; // Only keep last 4
+/* --------------- DOM --------------- */
+const programCircle = document.getElementById('programCircle');
+const programImg = document.getElementById('programImg');
+const programNameDisplay = document.getElementById('programNameDisplay');
+const programArtistsDisplay = document.getElementById('programArtistsDisplay');
+const programStatus = document.getElementById('programStatus');
+const programTimeDisplay = document.getElementById('programTimeDisplay');
 
-        // --- TIME FUNCTIONS ---
-        function getChicagoTime() {
-            return new Date(new Date().toLocaleString("en-US", { timeZone: CHICAGO_TIMEZONE }));
-        }
+const playBtn = document.getElementById('playPauseBtn');
+const playBtnText = document.getElementById('playBtnText');
+const barPlayPauseBtn = document.getElementById('barPlayPauseBtn');
+const barRewindBtn = document.getElementById('barRewindBtn');
+const barForwardBtn = document.getElementById('barForwardBtn');
+const barVolumeSlider = document.getElementById('barVolumeSlider');
+const barSeekProgress = document.getElementById('barSeekProgress');
+const bottomPlayerBar = document.getElementById('bottomPlayerBar');
+const barProgramImg = document.getElementById('barProgramImg');
+const barProgramName = document.getElementById('barProgramName');
+const barProgramArtists = document.getElementById('barProgramArtists');
+const recentsList = document.getElementById('recentsList');
 
-        function isTimeBetween(startHour, endHour) {
-            const now = getChicagoTime();
-            const start = new Date(now);
-            start.setHours(startHour, 0, 0, 0);
-            const end = new Date(now);
-            end.setHours(endHour, 0, 0, 0);
-            return now >= start && now < end;
-        }
+/* --------------- STATE --------------- */
+const audio = new Audio(STREAM_URL);
+let isPlaying = false;
+let progressInterval = null;
+let progressType = null; // 'program' or 'song' or null
+let totalDuration = 0;
+let startTime = 0; // epoch ms when current progress started
+const RECENTLY_PLAYED = [];
+const MAX_RECENTS = 4;
 
-        function formatTimeRange(startHour, endHour) {
-            const start = new Date();
-            start.setHours(startHour, 0);
-            const end = new Date();
-            end.setHours(endHour, 0);
-            return `${start.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })} - ${end.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}`;
-        }
+/* --------------- Time helpers (Chicago) --------------- */
+const TZ = "America/Chicago";
+function nowChicago() {
+    return new Date(new Date().toLocaleString("en-US", { timeZone: TZ }));
+}
+function hourChicago() { return nowChicago().getHours(); }
+function dayChicago() { return nowChicago().getDay(); } // 0 Sun - 6 Sat
+function toTimeString(h,m=0){ return String(h).padStart(2,'0')+":"+String(m).padStart(2,'0'); }
+function formatTimeRange(startH, endH){
+    return `${toTimeString(startH)} - ${toTimeString(endH)}`;
+}
 
-        // --- RECENT TRACKS FUNCTION ---
-        function updateRecents(track, artist, cover, timeAgo = "Now") {
-            if (track === "Loading..." || track.toLowerCase().includes("commercial") || track.toLowerCase().includes("station id")) return;
-            if (RECENTLY_PLAYED.length > 0 && 
-                RECENTLY_PLAYED[0].title === track && 
-                RECENTLY_PLAYED[0].artist === artist) {
-                // Update time if same
-                RECENTLY_PLAYED[0].timeAgo = timeAgo;
-                return;
-            }
-            RECENTLY_PLAYED.unshift({ title: track, artist: artist, cover: cover || IMG_DEFAULT, timeAgo: timeAgo });
-            if (RECENTLY_PLAYED.length > MAX_RECENTS) {
-                RECENTLY_PLAYED.pop();
-            }
-            renderRecents();
-        }
+/* --------------- PROGRAM SCHEDULE (priority checked top->bottom) ---------------
+Rules implemented from your spec:
+- Midnight Grace 00:00-06:00 (everyday)
+- 06:00-07:00 music-only (no ring)
+- Morning Show 07:00-12:00 (everyday) BUT Sunday With Christ replaces Morning Show on Sundays
+- Living The Message: everyday at 09:00 (replay) and 10:00 (main) — 30 min each (insert into Morning Show)
+- Midday Grace 12:00-18:00 (everyday) — but at 12:00 on certain days Future Artists / Classics (30 min) override
+- Future Artists Mon/Wed/Fri at 12:00-12:30 and 20:00-20:30
+- Classics Tue/Thu/Sat at 12:00-12:30 and 20:00-20:30
+- Praise FM Non Stop 16:00-17:00 (music-only)
+- Carpool Mon-Fri 18:00-20:00
+- POP daily 22:00-22:30 (30 min)
+- Sunday With Christ Sunday 07:00-12:00
+All program entries that are "program" will have ring; music-only slots will not.
+-----------------------------------------------------------------------------*/
 
-        function renderRecents() {
-            recentsList.innerHTML = '';
-            RECENTLY_PLAYED.forEach(item => {
-                const itemHtml = `
-                    <div class="recent-item">
-                        <img src="${item.cover}" class="recent-cover" alt="${item.title} Cover">
-                        <div class="recent-info">
-                            <div class="recent-title">${item.title}</div>
-                            <div class="recent-artist">${item.artist}</div>
-                        </div>
-                        <div class="recent-time">${item.timeAgo}</div>
-                    </div>
-                `;
-                recentsList.innerHTML += itemHtml;
-            });
-        }
+const SCHEDULE = [
+    // Specific short programs (30 mins) - dayOfWeek: array or null for everyday
+    { name:"Future Artists", img:IMG_FUTURE_ARTISTS, days:[1,3,5], times:[ {start:12,end:12.5}, {start:20,end:20.5} ], durationMinutes:30, isProgram:true },
+    { name:"Praise FM Classics", img:IMG_CLASSIC, days:[2,4,6], times:[ {start:12,end:12.5}, {start:20,end:20.5} ], durationMinutes:30, isProgram:true },
+    { name:"Praise FM POP", img:IMG_POP, days:null, times:[ {start:22,end:22.5} ], durationMinutes:30, isProgram:true },
 
-        // --- PROGRESS FUNCTION ---
-        function startProgressInterval() {
-            if (progressInterval) clearInterval(progressInterval);
-            if (!totalDuration || !progressType) return;
+    // Living The Message (replay 09:00 and main 10:00) - 30 min each day
+    { name:"Living The Message (Replay)", img:IMG_LIVING_THE_MESSAGE, days:null, times:[ {start:9,end:9.5} ], durationMinutes:30, isProgram:true },
+    { name:"Living The Message", img:IMG_LIVING_THE_MESSAGE, days:null, times:[ {start:10,end:10.5} ], durationMinutes:30, isProgram:true },
 
-            progressInterval = setInterval(() => {
-                if (!isPlaying) return;
-                const now = Date.now();
-                const elapsed = now - startTime;
-                const percentage = Math.min(elapsed / totalDuration, 1) * 100;
+    // Carpool Mon-Fri
+    { name:"Praise FM Carpool", img:IMG_CARPOOL, days:[1,2,3,4,5], start:18, end:20, isProgram:true },
 
-                if (progressType === 'program') {
-                    programCircle.style.setProperty('--progress-deg', `${percentage * 3.6}deg`); // 360 degrees / 100 = 3.6
-                    barSeekProgress.style.width = `${percentage}%`;
-                } else if (progressType === 'song') {
-                    barSeekProgress.style.width = `${percentage}%`;
-                }
+    // Sunday special
+    { name:"Sunday With Christ", img:IMG_SUNDAY_WITH_CHRIST, days:[0], start:7, end:12, isProgram:true },
 
-                if (percentage >= 100) {
-                    clearInterval(progressInterval);
-                    if (progressType === 'program') programCircle.classList.remove('is-playing');
-                    barSeekProgress.style.width = '0%';
-                }
-            }, 1000);
-        }
+    // Regular long programs
+    { name:"Midnight Grace", img:IMG_MIDNIGHT_GRACE, days:null, start:0, end:6, isProgram:true },
+    // 06:00 - 07:00 music-only (handled below)
+    { name:"Morning Show", img:IMG_MORNING_SHOW, days:null, start:7, end:12, isProgram:true },
+    { name:"Midday Grace", img:IMG_MIDDAY_GRACE, days:null, start:12, end:18, isProgram:true },
 
-        // --- VISUAL UPDATE ---
-        function updateDisplay(programImage, programName, programTime, programArtists, description, isProgram = false, durationMs = 0) {
-            programImg.src = programImage;
-            barProgramImg.src = programImage;
-            programNameDisplay.innerText = programName;
-            barProgramName.innerText = programName;
-            programStatus.innerHTML = `<div class="live-dot"></div> LIVE: ${programTime}`;
-            programArtistsDisplay.innerText = programArtists;
-            barProgramArtists.innerText = programArtists;
-            bottomDesc.innerHTML = ``; // Empty as per request
+    // Non stop music (16-17 music only)
+    { name:"Praise FM Non Stop", img:IMG_NONSTOP, days:null, start:16, end:17, isProgram:false },
 
-            if (isProgram) {
-                progressType = 'program';
-                totalDuration = durationMs;
-                const now = getChicagoTime().getTime();
-                const startOfProgram = new Date(getChicagoTime());
-                startOfProgram.setHours(CARPOOL_START_HOUR, 0, 0, 0);
-                startTime = startOfProgram.getTime();
-                programCircle.classList.add('is-playing');
-            } else if (durationMs > 0) {
-                progressType = 'song';
-                totalDuration = durationMs;
-                startTime = Date.now();
-                programCircle.classList.remove('is-playing');
-                programCircle.style.setProperty('--progress-deg', '0deg');
-            } else {
-                progressType = null;
-                totalDuration = 0;
-                programCircle.classList.remove('is-playing');
-                programCircle.style.setProperty('--progress-deg', '0deg');
-                barSeekProgress.style.width = '0%';
-            }
+    // Carpool already above - duplicates avoided
+];
 
-            if (isPlaying) startProgressInterval();
-        }
+/* --------------- Helper: determine current program --------------- */
+function isTimeInRange(now, startHourFloat, endHourFloat) {
+    // startHourFloat can be non-integer (e.g., 12.5 = 12:30)
+    const h = now.getHours();
+    const minutes = now.getMinutes();
+    const currentFloat = h + (minutes/60);
+    return currentFloat >= startHourFloat && currentFloat < endHourFloat;
+}
 
-        // --- MAIN LOGIC (Metadata) ---
-        async function processMetadata(artist, track) {
-            const artistLow = artist.toLowerCase();
-            const trackLow = track.toLowerCase();
-            let currentSongImg = IMG_DEFAULT;
-            let programImage = IMG_DEFAULT;
-            let programName = "Praise FM";
-            let programTime = "All Day";
-            let programArtists = "Various Artists";
-            let description = "The best in praise and worship music.";
-            let isProgram = false;
-            let songDuration = 0;
-            let isCarpoolTime = isTimeBetween(CARPOOL_START_HOUR, CARPOOL_END_HOUR);
-
-            // 0. Check for Carpool program
-            if (isCarpoolTime) {
-                programImage = IMG_CARPOOL;
-                programName = "Carpool";
-                programTime = formatTimeRange(CARPOOL_START_HOUR, CARPOOL_END_HOUR);
-                programArtists = "Praise FM Hosts";
-                description = "Join the Carpool for your evening commute.";
-                isProgram = true;
-                const carpoolDuration = (CARPOOL_END_HOUR - CARPOOL_START_HOUR) * 3600 * 1000;
-                updateDisplay(programImage, programName, programTime, programArtists, description, isProgram, carpoolDuration);
-                return;
-            }
-
-            // 1. Check for commercials and identifiers
-            if (trackLow.includes("commercial") || trackLow.includes("ad break")) {
-                programImage = IMG_COMMERCIAL;
-                programName = "Commercial Break";
-                programArtists = "Praise FM";
-                description = "We'll be right back.";
-                updateDisplay(programImage, programName, programTime, programArtists, description, false);
-                return;
-            }
-            if (trackLow.includes("station id") || trackLow.includes("spot") || (artistLow === "praise fm" && trackLow === "praise fm")) {
-                programImage = IMG_SPOT;
-                programName = "Station ID";
-                programArtists = "Praise FM";
-                description = "You're listening to Praise FM.";
-                updateDisplay(programImage, programName, programTime, programArtists, description, false);
-                return;
-            }
-
-            // 2. Check for other programs (only if not Carpool)
-            const programMap = {
-                "midday": {img: IMG_MIDDAY_GRACE, name: "Midday Grace", artists: "Inspirational Hosts", desc: "Graceful midday tunes."},
-                "midnight": {img: IMG_MIDNIGHT_GRACE, name: "Midnight Grace", artists: "Night Hosts", desc: "Late night inspiration."},
-                "morning show": {img: IMG_MORNING_SHOW, name: "The Morning Show", artists: "Morning Team", desc: "Start your day right."},
-                "classic": {img: IMG_CLASSIC, name: "Praise FM Classic", artists: "Classic Artists", desc: "Timeless classics."},
-                "future": {img: IMG_FUTURE_ARTISTS, name: "Future Artists", artists: "Upcoming Talents", desc: "Discover new voices."},
-                "pop": {img: IMG_POP, name: "Praise FM Pop", artists: "Pop Stars", desc: "Pop hits with praise."},
-                "sunday": {img: IMG_SUNDAY_MORNING, name: "Sunday Morning", artists: "Sunday Hosts", desc: "Sunday worship vibes."}
-            };
-            let programMatch = null;
-            for (const key in programMap) {
-                if (artistLow.includes(key) || trackLow.includes(key)) {
-                    programMatch = programMap[key];
-                    break;
+function findScheduledProgram(now) {
+    // Check specific entries with times array (30-min blocks) first (they are listed first in SCHEDULE)
+    const day = now.getDay();
+    for (const entry of SCHEDULE) {
+        if (entry.times) {
+            // times is array of {start,end}
+            for (const t of entry.times) {
+                if (isTimeInRange(now, t.start, t.end)) {
+                    if (entry.days && !entry.days.includes(day)) continue;
+                    return {
+                        name: entry.name,
+                        img: entry.img,
+                        isProgram: !!entry.isProgram,
+                        startFloat: t.start,
+                        endFloat: t.end,
+                        durationMs: (t.end - t.start) * 60 * 60 * 1000
+                    };
                 }
             }
-            if (programMatch) {
-                programImage = programMatch.img;
-                programName = programMatch.name;
-                programArtists = programMatch.artists;
-                description = programMatch.desc;
-                isProgram = true;
-                programTime = "Scheduled Time"; // Replace with actual if available
-                // Assume a default duration for other programs, e.g., 3600000 ms (1 hour)
-                const defaultProgramDuration = 3600000;
-                updateDisplay(programImage, programName, programTime, programArtists, description, isProgram, defaultProgramDuration);
-                return;
+        } else if (typeof entry.start === 'number' && typeof entry.end === 'number') {
+            if (isTimeInRange(now, entry.start, entry.end)) {
+                if (entry.days && !entry.days.includes(day)) continue;
+                return {
+                    name: entry.name,
+                    img: entry.img,
+                    isProgram: !!entry.isProgram,
+                    startFloat: entry.start,
+                    endFloat: entry.end,
+                    durationMs: (entry.end - entry.start) * 60 * 60 * 1000
+                };
             }
+        }
+    }
 
-            // 3. If here, it's music - fetch duration for progress
+    // Special case: 06:00-07:00 music-only
+    if (isTimeInRange(now, 6, 7)) {
+        return { name: "Music", img: IMG_DEFAULT, isProgram:false, startFloat:6, endFloat:7, durationMs:0 };
+    }
+
+    // Default fallback if none found: show Praise FM (no ring)
+    return { name: "Praise FM", img: IMG_DEFAULT, isProgram:false, startFloat:0, endFloat:24, durationMs:0 };
+}
+
+/* --------------- UI Update for current schedule --------------- */
+function applyCurrentProgram() {
+    const now = nowChicago();
+    const program = findScheduledProgram(now);
+
+    // set display text/time
+    const start = program.startFloat;
+    const end = program.endFloat;
+    const startH = Math.floor(start);
+    const startM = (start % 1) * 60;
+    const endH = Math.floor(end);
+    const endM = (end % 1) * 60;
+    programTimeDisplay.innerText = `${String(startH).padStart(2,'0')}:${String(startM===0?0:startM).padStart(2,'0')} - ${String(endH).padStart(2,'0')}:${String(endM===0?0:endM).padStart(2,'0')}`;
+
+    programNameDisplay.innerText = program.name;
+    programArtistsDisplay.innerText = program.isProgram ? "Praise FM Hosts" : "Various Artists";
+    barProgramName.innerText = program.name;
+    barProgramArtists.innerText = program.isProgram ? "Praise FM Hosts" : "Various Artists";
+
+    // images
+    programImg.src = program.img || IMG_DEFAULT;
+    barProgramImg.src = program.img || IMG_DEFAULT;
+
+    // progress handling
+    if (program.isProgram && program.durationMs > 0) {
+        progressType = 'program';
+        totalDuration = program.durationMs;
+        // compute startTime as the start of that scheduled block TODAY in Chicago timezone
+        const nowLocal = nowChicago();
+        const startDate = new Date(nowLocal);
+        startDate.setHours(Math.floor(program.startFloat), Math.round((program.startFloat % 1) * 60), 0, 0);
+        startTime = startDate.getTime();
+        programCircle.classList.add('is-playing');
+        startProgressInterval();
+    } else {
+        // music-only or none
+        progressType = null;
+        totalDuration = 0;
+        programCircle.classList.remove('is-playing');
+        programCircle.style.setProperty('--progress-deg','0deg');
+        barSeekProgress.style.width = '0%';
+        if (progressInterval) { clearInterval(progressInterval); progressInterval = null; }
+    }
+}
+
+/* --------------- Progress interval --------------- */
+function startProgressInterval() {
+    if (progressInterval) clearInterval(progressInterval);
+    if (!totalDuration || !progressType) return;
+
+    progressInterval = setInterval(() => {
+        if (!isPlaying) return;
+        const now = Date.now();
+        const elapsed = now - startTime;
+        const pct = Math.max(0, Math.min(1, elapsed / totalDuration)) * 100;
+        if (progressType === 'program') {
+            programCircle.style.setProperty('--progress-deg', `${pct*3.6}deg`);
+            barSeekProgress.style.width = `${pct}%`;
+        } else if (progressType === 'song') {
+            barSeekProgress.style.width = `${pct}%`;
+        }
+
+        if (pct >= 100) {
+            // program ended; refresh program UI (next program may begin)
+            clearInterval(progressInterval);
+            progressInterval = null;
+            programCircle.classList.remove('is-playing');
+            barSeekProgress.style.width = '0%';
+            // apply next program immediately
+            applyCurrentProgram();
+        }
+    }, 1000);
+}
+
+/* --------------- Recently played logic (only songs, keep 4) --------------- */
+function updateRecents(track, artist, cover, timeAgo = "Now") {
+    if (!track) return;
+    const lowerArtist = (artist||"").toLowerCase();
+    const lowerTrack = (track||"").toLowerCase();
+
+    // Blocklist for non-music
+    const blockKeywords = ["commercial","spot","station id","praise fm","break","ad","show","program"];
+    if (blockKeywords.some(k => lowerArtist.includes(k) || lowerTrack.includes(k))) return;
+
+    // Add to head if different from last
+    if (RECENTLY_PLAYED.length > 0 && RECENTLY_PLAYED[0].title === track && RECENTLY_PLAYED[0].artist === artist) {
+        // refresh timestamp
+        RECENTLY_PLAYED[0].timeAgo = timeAgo;
+        renderRecents();
+        return;
+    }
+
+    RECENTLY_PLAYED.unshift({ title: track, artist: artist, cover: cover || IMG_DEFAULT, timeAgo });
+    if (RECENTLY_PLAYED.length > MAX_RECENTS) RECENTLY_PLAYED.splice(MAX_RECENTS);
+
+    renderRecents();
+}
+
+function renderRecents() {
+    recentsList.innerHTML = "";
+    RECENTLY_PLAYED.forEach(item=>{
+        const el = document.createElement('div');
+        el.className = 'recent-item';
+        el.innerHTML = `
+            <img class="recent-cover" src="${item.cover}" alt="cover">
+            <div class="recent-info">
+                <div class="recent-title">${item.title}</div>
+                <div class="recent-artist">${item.artist}</div>
+            </div>
+            <div class="recent-time">${item.timeAgo}</div>
+        `;
+        recentsList.appendChild(el);
+    });
+}
+
+/* --------------- Metadata processing (Zeno & LastFM) --------------- */
+async function processMetadata(artist, track) {
+    // Basic sanitization
+    artist = (artist||"").trim();
+    track = (track||"").trim();
+
+    // Block non-music names quickly
+    const blockLower = ["commercial","spot","station id","ad break","praise fm"];
+    const key = (artist + " " + track).toLowerCase();
+    if (!track || blockLower.some(k => key.includes(k))) {
+        // Show program art if current schedule is a program; else station art
+        applyCurrentProgram();
+        return;
+    }
+
+    // Try fetching cover + duration from Last.fm
+    let cover = IMG_DEFAULT;
+    let durationMs = 210000; // default 3.5 min
+    try {
+        const res = await fetch(`https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${LASTFM_API_KEY}&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}&format=json`);
+        const data = await res.json();
+        if (data && data.track) {
+            if (data.track.duration) {
+                durationMs = parseInt(data.track.duration) || durationMs;
+            }
+            if (data.track.album && data.track.album.image) {
+                // pick largest available
+                const imgObj = data.track.album.image.find(i=>i.size==='extralarge') || data.track.album.image.slice(-1)[0];
+                if (imgObj && imgObj['#text']) cover = imgObj['#text'];
+            }
+        }
+    } catch(e){
+        console.warn("LastFM fetch failed", e);
+    }
+
+    // Update UI for song
+    programImg.src = cover || IMG_DEFAULT;
+    barProgramImg.src = cover || IMG_DEFAULT;
+    programNameDisplay.innerText = track;
+    barProgramName.innerText = track;
+    programArtistsDisplay.innerText = artist || "Unknown";
+    barProgramArtists.innerText = artist || "Unknown";
+
+    // set song progress
+    progressType = 'song';
+    totalDuration = durationMs;
+    startTime = Date.now();
+    programCircle.classList.remove('is-playing');
+    programCircle.style.setProperty('--progress-deg','0deg');
+    startProgressInterval();
+
+    // add to recently played (only music)
+    updateRecents(track, artist, cover, "Now");
+}
+
+/* --------------- Zeno eventsource metadata --------------- */
+function setupZeno() {
+    try {
+        const es = new EventSource(`https://api.zeno.fm/mounts/metadata/subscribe/${ZENO_ID}`);
+        es.onmessage = function(e){
             try {
-                const res = await fetch(`https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${LASTFM_API_KEY}&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}&format=json`);
-                const data = await res.json();
-                if (data.track) {
-                    if (data.track.album && data.track.album.image) {
-                        const img = data.track.album.image.find(i => i.size === 'extralarge')['#text'];
-                        if (img) currentSongImg = img;
-                    }
-                    songDuration = parseInt(data.track.duration) || 210000; // Default to 3.5 minutes if not available
+                const d = JSON.parse(e.data);
+                if (d.streamTitle) {
+                    // assume "Artist - Track" or sometimes "Artist - Title - extra"
+                    const parts = d.streamTitle.split(' - ');
+                    const artist = parts[0]?.trim() || "";
+                    const track = parts.slice(1).join(' - ').trim() || "";
+                    // Process
+                    processMetadata(artist, track);
                 }
-            } catch(e) { 
-                console.log("LastFM Error", e); 
-                songDuration = 210000; // Default
-            }
+            } catch(err){}
+        };
+        es.onerror = function(){ /* silent */ };
+    } catch(e) {
+        console.warn("EventSource not available:", e);
+    }
+}
 
-            programImage = currentSongImg; // Use song cover for circle during music
-            programName = track;
-            programArtists = artist;
-            description = "Now playing on Praise FM.";
-            updateDisplay(programImage, programName, programTime, programArtists, description, false, songDuration);
-            // Add to recently played
-            updateRecents(track, artist, currentSongImg);
-        }
+/* --------------- Audio controls and UI wiring --------------- */
+function updatePlayUI(isNowPlaying){
+    if (isNowPlaying) {
+        playBtnText.innerText = "Pause";
+        barPlayPauseBtn.innerText = "❚❚";
+    } else {
+        playBtnText.innerText = "Play";
+        barPlayPauseBtn.innerText = "▶";
+    }
+}
 
-        // --- AUDIO CONTROLS ---
-        audio.addEventListener('error', (e) => {
-            console.log("Stream error, attempting to reconnect...");
-            setTimeout(() => {
-                audio.src = STREAM_URL;
-                audio.play().catch(e => console.log("Autoplay blocked"));
-            }, 3000);
+function togglePlayPause(){
+    if (!isPlaying) {
+        if (audio.src !== STREAM_URL) audio.src = STREAM_URL;
+        audio.play().then(()=>{
+            isPlaying = true;
+            updatePlayUI(true);
+            bottomPlayerBar.style.display = "flex";
+            // If currently a program active, ensure progress runs
+            if (progressType === 'program' || progressType === 'song') startProgressInterval();
+        }).catch(e=>{
+            console.warn("Play failed:", e);
         });
+    } else {
+        audio.pause();
+        isPlaying = false;
+        updatePlayUI(false);
+        // Pause progress
+    }
+}
 
-        function togglePlayPause(isPlay) {
-            if (isPlay) {
-                if (audio.src !== STREAM_URL) audio.src = STREAM_URL;
-                audio.play().then(() => {
-                    isPlaying = true;
-                    updatePlayButtons(true);
-                    bottomPlayerBar.classList.add('visible');
-                    startProgressInterval();
-                }).catch(e => {
-                    console.error("Autoplay prevented", e);
-                });
-            } else {
-                audio.pause();
-                isPlaying = false;
-                updatePlayButtons(false);
-                bottomPlayerBar.classList.remove('visible');
-                if (progressInterval) clearInterval(progressInterval);
-            }
-        }
+playBtn.addEventListener('click', togglePlayPause);
+barPlayPauseBtn.addEventListener('click', togglePlayPause);
 
-        function updatePlayButtons(isPlaying) {
-            const playSVG = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
-            const pauseSVG = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
-            const text = isPlaying ? 'Pause' : 'Play';
-            const svg = isPlaying ? pauseSVG : playSVG;
-            playBtn.innerHTML = `${svg} ${text}`;
-            barPlayPauseBtn.innerHTML = svg;
-        }
+barRewindBtn.addEventListener('click', ()=> {
+    try { audio.currentTime = Math.max(0, (audio.currentTime || 0) - 20); startTime += 20000; } catch(e){}
+});
+barForwardBtn.addEventListener('click', ()=> {
+    try { audio.currentTime = (audio.currentTime || 0) + 20; startTime -= 20000; } catch(e){}
+});
 
-        playBtn.addEventListener('click', () => togglePlayPause(!isPlaying));
-        barPlayPauseBtn.addEventListener('click', () => togglePlayPause(!isPlaying));
+barVolumeSlider.addEventListener('input', (e)=> {
+    audio.volume = Number(e.target.value);
+});
 
-        barVolumeSlider.addEventListener('input', (e) => {
-            audio.volume = e.target.value;
-        });
+/* reconnect on stream error */
+audio.addEventListener('error', ()=>{
+    console.warn("Stream error, retrying in 3s...");
+    setTimeout(()=>{ audio.src = STREAM_URL; if (isPlaying) audio.play().catch(()=>{}); }, 3000);
+});
 
-        // Skip functions (attempt to seek if possible)
-        function skip(seconds) {
-            if (audio.currentTime !== undefined) {
-                audio.currentTime += seconds;
-                // Update startTime to reflect skip
-                startTime -= seconds * 1000; // Adjust startTime to keep progress consistent
-            }
-        }
-        barRewindBtn.addEventListener('click', () => skip(-20));
-        barForwardBtn.addEventListener('click', () => skip(20));
+/* --------------- Init & periodic checks --------------- */
+function init(){
+    // initial UI program
+    applyCurrentProgram();
+    renderRecents();
 
-        function setupZeno() {
-            const es = new EventSource(`https://api.zeno.fm/mounts/metadata/subscribe/${ZENO_ID}`);
-            es.onmessage = (e) => {
-                try {
-                    const d = JSON.parse(e.data);
-                    if (d.streamTitle) {
-                        const parts = d.streamTitle.split(' - ');
-                        const artist = parts[0]?.trim() || "Praise FM";
-                        const track = parts.slice(1).join(' - ')?.trim() || "";
-                        processMetadata(artist, track);
-                    }
-                } catch(err) {}
-            };
-        }
+    // setup zeno metadata
+    setupZeno();
 
-        // Initialization
-        setupZeno();
-        // Initial display
-        updateDisplay(IMG_DEFAULT, 'Praise FM', '00:00 - 00:00', 'Various Artists', 'Welcome to Praise FM.', false);
-        renderRecents(); // Initial empty recents
-    </script>
+    // every 15s check schedule to pick up new program start/stop
+    setInterval(applyCurrentProgram, 15000);
+}
+
+init();
+
+</script>
 </body>
 </html>
