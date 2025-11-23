@@ -51,8 +51,7 @@
         .mini-controls { display:flex; align-items:center; gap:16px; }
         .mini-btn { background:none; border:none; cursor:pointer; padding:8px; }
         .mini-btn svg { width:24px; height:24px; fill:var(--grey); }
-        .mini-play { background:var(--orange); width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center;
-            border:none; cursor:pointer; box-shadow:0 2px 10px rgba(255,77,0,.3); }
+        .mini-play { background:var(--orange); width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; box-shadow:0 2px 12px rgba(255,77,0,.35); }
         .mini-play svg { width:20px; height:20px; fill:#fff; }
         .mini-volume { display:flex; align-items:center; gap:4px; width:100px; }
         .mini-volume-bar { flex:1; height:4px; background:#ddd; border-radius:2px; position:relative; cursor:pointer; }
@@ -61,7 +60,7 @@
         .mini-track-bar { width:100%; height:4px; background:#ddd; border-radius:2px; position:relative; cursor:pointer; }
         .mini-track-fill { height:100%; background:var(--orange); border-radius:2px; width:0%; }
         .mini-track-time { display:flex; justify-content:space-between; font-size:11px; color:var(--light-grey); margin-top:4px; }
-        @media (max-width:480px) { .circle-container { width:260px; height:260px; } .program-title { font-size:24px; } .mini-controls { gap:10px; } .mini-volume { width:80px; } }
+        @media (max-width:480px) { .mini-player { padding:10px; } .mini-player-content { flex-direction:column; align-items:flex-start; gap:14px; } .mini-play { width:64px; height:64px; }  .circle-container { width:260px; height:260px; } .program-title { font-size:24px; } .mini-controls { gap:10px; } .mini-volume { width:80px; } }
     </style>
 </head>
 <body>
@@ -275,7 +274,7 @@
     function formatProgramName(p) {
         if (!p) return "Praise FM";
         const base = p.name.replace(/ \([^)]*\)$/, '').trim();
-        if (base === "Praise FM Non Stop" || base === "Midnight Grace" || base === "Praise FM POP" || base === "Praise FM Magazine") return base;
+        if (base === "Praise FM Non Stop" || base === "Midnight Grace" || base === "Praise FM POP" || base === "Praise FM Magazine" || base === "Praise FM Worship") return base;
         const host = hosts[base] || "Praise FM";
         return `${base} With ${host}`;
     }
@@ -330,7 +329,7 @@
             const key = `${artist}-${title}`;
             if (!recents.some(t => t.key === key)) {
                 recents.unshift({title, artist, cover, key});
-                if (recents.length > 5) recents.pop();
+                if (recents.length > 4) recents.pop();
                 document.getElementById("recentList").innerHTML = recents.map(t => `\n                    <div class="recent-item">\n                        <img src="${t.cover}" class="recent-cover" onerror="this.src='${images.default}'">\n                        <div>\n                            <div class="recent-title">${t.title}</div>\n                            <div class="recent-artist">${t.artist}</div>\n                        </div>\n                    </div>\n                `).join("");
             }
         }
