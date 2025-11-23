@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Praise FM - Live (Atualizado)</title>
+    <title>Praise FM - Live</title>
     <meta name="theme-color" content="#ff4d00">
     <link rel="icon" type="image/png" sizes="32x32" href="/image/favicon-32x32.png">
     <style>
@@ -291,7 +291,12 @@
         document.getElementById("miniTitle").textContent = currentTrack.title ? currentTrack.title : displayName;
         document.getElementById("miniArtist").textContent = currentTrack.artist ? currentTrack.artist : "Praise & Worship";
 
-        const fmt = (p, offset=0) => { return p.start; };
+        const fmt = (p, offset=0) => {
+    const [h, m] = p.start.split(":").map(Number);
+    const suffix = h >= 12 ? "PM" : "AM";
+    const hour = ((h + 11) % 12) + 1;
+    return `${hour}:${m.toString().padStart(2, "0")} ${suffix}`;
+};
 
         const todayNext = schedule.filter(p => (!p.days || p.days.includes(now.getDay())) && timeToMins(p.start) > timeToMins(now.toTimeString().slice(0,5)));
         const off1 = todayNext.length > 0 ? 0 : 1;
