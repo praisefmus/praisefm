@@ -309,7 +309,7 @@
             d.setDate(d.getDate() + offset);
             const [h,m] = p.start.split(":");
             d.setHours(+h, +m, 0, 0);
-            return d.toLocaleTimeString("en-US", {hour:"2-digit", minute:"2-digit", hour12:true, timeZone:"America/Chicago"});
+            return d.toLocaleTimeString("en-US", {hour:"2-digit", minute:"2-digit", hour12:true});
         };
         const todayNext = schedule.filter(p => (!p.days || p.days.includes(now.getDay())) && timeToMins(p.start) > timeToMins(now.toTimeString().slice(0,5)));
         const off1 = todayNext.length > 0 ? 0 : 1;
