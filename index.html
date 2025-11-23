@@ -43,7 +43,7 @@
             box-shadow:0 -4px 20px rgba(0,0,0,.1); padding:12px 16px; display:none; flex-direction:column; gap:10px; z-index:999;
         }
         .mini-player.show { display:flex; }
-        .mini-player-content { display:flex; align-items:center; gap:12px; justify-content:space-between; }
+        .mini-player-content { display:flex; align-items:center; gap:12px; justify-content:space-between; flex-wrap:wrap; }
         .mini-cover { width:56px; height:56px; border-radius:8px; object-fit:cover; background:#eee; }
         .mini-info { flex:1; min-width:0; }
         .mini-title { font-weight:700; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -149,7 +149,7 @@
     const images = {
         default: "/image/logopraisefm.webp",
         midnight: "/image/midnightgracelogo.webp",
-        worship: "/image/praisefmworshiplogo.webp",
+        worship: "/image/praisefmworship.png",
         morning: "/image/morningshowlogo.webp",
         midday: "/image/middaygracelogo.webp",
         nonstop: "/image/praisefmnonstop.png",
@@ -369,7 +369,14 @@
         const rect = e.currentTarget.getBoundingClientRect();
         const percent = (e.clientX - rect.left) / rect.width;
         audio.volume = Math.max(0, Math.min(1, percent));
+        audio.muted = false;
         document.getElementById("miniVolumeFill").style.width = (audio.volume*100)+'%';
+    };
+    document.getElementById("miniVolumeIcon").onclick = () => {
+        audio.muted = !audio.muted;
+        document.getElementById("miniVolumeIcon").innerHTML = audio.muted 
+            ? '<svg viewBox="0 0 24 24"><path d="M16.5 12l4.5 4.5-1.5 1.5L15 13.5 11.5 17H7v-6h4.5L15 7.5l4.5-4.5 1.5 1.5L16.5 12z"/></svg>' 
+            : '<svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>';
     };
 
     setInterval(updateDisplay, 8000);
