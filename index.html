@@ -203,11 +203,11 @@
     ];
 
     // UTILIDADES DE HORA
-    function getChicagoTime() { return new Date(new Date().toLocaleString("en-US",{timeZone:"America/Chicago"})); }
+    function getTime() { return new Date(new Date().toLocaleString("en-US",{timeZone:"America/"})); }
     function timeToMins(t) { const [h,m]=t.split(":").map(Number); return h*60+m; }
 
     function getCurrentAndNext() {
-        const now = getChicagoTime();
+        const now = getTime();
         const day = now.getDay();
         const mins = timeToMins(now.toTimeString().slice(0,5));
         let current = null;
@@ -250,7 +250,7 @@
 
     function updateProgramProgress() {
         const {current} = getCurrentAndNext();
-        const now = getChicagoTime();
+        const now = getTime();
         if (current.start && current.end) {
             const s = timeToMins(current.start);
             const e = timeToMins(current.end);
@@ -282,7 +282,7 @@
 
     function updateDisplay() {
         const {current, next1, next2} = getCurrentAndNext();
-        const now = getChicagoTime();
+        const now = getTime();
         document.querySelectorAll("#mainImg, #miniImg").forEach(el => el.src = current.img || images.default);
         document.getElementById("upnextImg1").src = next1.img || images.default;
         document.getElementById("upnextImg2").src = next2.img || images.default;
@@ -291,22 +291,15 @@
         document.getElementById("miniTitle").textContent = currentTrack.title ? currentTrack.title : displayName;
         document.getElementById("miniArtist").textContent = currentTrack.artist ? currentTrack.artist : "Praise & Worship";
 
-        const fmt = (p, offset=0) => {
-            if (!p.start) return "--:--";
-            const d = new Date(now);
-            d.setDate(d.getDate() + offset);
-            const [h,m] = p.start.split(":");
-            d.setHours(+h, +m, 0, 0);
-            return d.toLocaleTimeString("en-US", {hour:"2-digit", minute:"2-digit", hour12:true, timeZone:"America/Chicago"});
-        };
+        const fmt = (p, offset=0) => { return p.start; };
 
         const todayNext = schedule.filter(p => (!p.days || p.days.includes(now.getDay())) && timeToMins(p.start) > timeToMins(now.toTimeString().slice(0,5)));
         const off1 = todayNext.length > 0 ? 0 : 1;
         const off2 = todayNext.length > 1 ? 0 : 1;
         document.getElementById("upnextTitle1").textContent = formatProgramName(next1);
-        document.getElementById("upnextTime1").textContent = fmt(next1, off1) + " Chicago";
+        document.getElementById("upnextTime1").textContent = fmt(next1, off1) + " ";
         document.getElementById("upnextTitle2").textContent = formatProgramName(next2);
-        document.getElementById("upnextTime2").textContent = fmt(next2, off2) + " Chicago";
+        document.getElementById("upnextTime2").textContent = fmt(next2, off2) + " ";
 
         if (current.start && current.end) {
             const s = timeToMins(current.start);
