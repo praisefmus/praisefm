@@ -1,3 +1,4 @@
+<!-- Source file: /mnt/data/GROK SITE.txt -->
 <!DOCTYPE html>
 <html lang="pt">
 <head>
@@ -202,7 +203,7 @@
     ];
 
     // UTILIDADES DE HORA
-    function getTime() { return new Date(new Date().toLocaleString("en-US",{timeZone:"America/"})); }
+    function getTime() { return new Date(new Date().toLocaleString("en-US",{timeZone:"America/Chicago"})); }
     function timeToMins(t) { const [h,m]=t.split(":").map(Number); return h*60+m; }
 
     function getCurrentAndNext() {
