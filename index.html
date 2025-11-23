@@ -172,7 +172,7 @@
     const STREAM_URL = "https://stream.zeno.fm/hvwifp8ezc6tv";
     const audio = new Audio(STREAM_URL);
     audio.volume = 0.8;
-    const THEAUDIODB_API_KEY = "2"; // Chave de teste gratuita
+    const LASTFM_API_KEY = "7744c8f90ee053fc761e0e23bfa00b89";
     const images = {
         default: "/image/logopraisefm.webp",
         morning: "/image/morningshowlogo.webp",
@@ -184,8 +184,7 @@
         pop: "/image/praisefmpoplogo.webp",
         sunday: "/image/sundaywithchrist.png",
         nonstop: "/image/praisefmnonstop.png",
-        living: "/image/livingthemessage.png",
-        worship: "/image/praisefmworship.png"
+        living: "/image/livingthemessage.png"
     };
     const hosts = {
         "Morning Show": "Stancy Campbell",
@@ -197,26 +196,38 @@
         "Sunday With Christ": "Matt Riley",
         "Midnight Grace": "Daniel Brooks",
         "Living The Message": "various Pastors",
-        "Praise FM Non Stop": "Praise FM",
-        "Praise FM Worship": "Praise FM"
+        "Praise FM Non Stop": "Praise FM"
     };
+    // ✅ PROGRAMAÇÃO EXATA DO PROGRAMAÇÃO.TXT
     const schedule = [
+        // Midnight Grace: 00:00 – 06:00
         {start:"00:00", end:"06:00", name:"Midnight Grace", img:images.midnight},
+        // Music Only: 06:00 – 07:00
         {start:"06:00", end:"07:00", name:"Music Only", img:images.default},
+        // Morning Show: 07:00 – 12:00
         {start:"07:00", end:"12:00", name:"Morning Show", img:images.morning},
+        // Living The Message: 10:00 – 10:30 (every day)
         {start:"10:00", end:"10:30", name:"Living The Message", img:images.living},
+        // Midday Grace: 12:00 – 18:00
         {start:"12:00", end:"18:00", name:"Midday Grace", img:images.midday},
+        // Praise FM Non Stop: 16:00 – 17:00
         {start:"16:00", end:"17:00", name:"Praise FM Non Stop", img:images.nonstop},
+        // Praise FM Carpool: 18:00 – 20:00 (seg–sex)
         {start:"18:00", end:"20:00", name:"Praise FM Carpool", img:images.carpool, days:[1,2,3,4,5]},
-        {start:"21:30", end:"22:00", name:"Praise FM Worship", img:images.worship},
-        {start:"22:00", end:"23:59", name:"Praise FM POP", img:images.pop},
+        // Praise FM Future Artists: seg, qua, sex 12:00 + replay 20:00
         {start:"12:00", end:"13:00", name:"Praise FM Future Artists", img:images.future, days:[1,3,5]},
         {start:"20:00", end:"21:00", name:"Praise FM Future Artists (Replay)", img:images.future, days:[1,3,5]},
+        // Praise FM Classics: ter, qui, sáb 12:00 + replay 20:00
         {start:"12:00", end:"13:00", name:"Praise FM Classics", img:images.classic, days:[2,4,6]},
         {start:"20:00", end:"21:00", name:"Praise FM Classics (Replay)", img:images.classic, days:[2,4,6]},
+        // Living The Message Replay: 21:00 – 21:30 (every day) — CORRIGIDO DE "9 AM"
         {start:"21:00", end:"21:30", name:"Living The Message (Replay)", img:images.living},
+        // Praise FM POP: everyday at 10 PM → 22:00 – 23:59
+        {start:"22:00", end:"23:59", name:"Praise FM POP", img:images.pop},
+        // Sunday With Christ: dom 07:00 – 12:00
         {start:"07:00", end:"12:00", name:"Sunday With Christ", img:images.sunday, days:[0]}
     ];
+
     function getChicagoTime() { return new Date(new Date().toLocaleString("en-US",{timeZone:"America/Chicago"})); }
     function timeToMins(t) { const [h,m]=t.split(":").map(Number); return h*60+m; }
     function getCurrentAndNext() {
@@ -248,14 +259,17 @@
             next2: future[1]?.prog || schedule[1]
         };
     }
+
     let currentTrack = {title:"", artist:"", duration:0, startTime:0};
     const recents = [];
     let trackTimer = null;
-    function formatTime(minutes) {
-        const hrs = Math.floor(minutes / 60);
-        const mins = Math.floor(minutes % 60);
-        return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+
+    function formatTime(seconds) {
+        const min = Math.floor(seconds / 60);
+        const sec = Math.floor(seconds % 60);
+        return `${min}:${sec.toString().padStart(2, '0')}`;
     }
+
     function updateProgramProgress() {
         const {current} = getCurrentAndNext();
         const now = getChicagoTime();
@@ -275,23 +289,25 @@
             document.getElementById("miniTrackDuration").textContent = "Live";
         }
     }
+
     async function fetchAlbumCover(artist, title) {
         if (!artist || !title) return images.default;
         try {
-            const r = await fetch(`https://www.theaudiodb.com/api/v1/json/${THEAUDIODB_API_KEY}/searchtrack.php?s=${encodeURIComponent(artist)}&t=${encodeURIComponent(title)}`);
+            const r = await fetch(`https://ws.audioscrobbler.com/2.0/?method=track.getInfo&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(title)}&api_key=${LASTFM_API_KEY}&format=json`);
             const d = await r.json();
-            const track = d.track?.[0];
-            return track?.strTrackThumb || track?.strAlbumThumb || images.default;
+            return d.track?.album?.image?.[3]?.["#text"] || d.track?.artist?.image?.[3]?.["#text"] || images.default;
         } catch { return images.default; }
     }
+
     function formatProgramName(p) {
         if (!p) return "Praise FM";
         const base = p.name.replace(/ \([^)]*\)$/, '').trim();
-        if (base === "Music Only" || base === "Praise FM Non Stop" || base === "Praise FM Worship") return base;
-        if (base === "Living The Message") return base;
+        if (base === "Music Only" || base === "Praise FM Non Stop") return base;
+        if (base === "Living The Message") return base; // ✅ Sem "With various Pastors"
         const host = hosts[base] || "DJ Praise";
         return `${base} With ${host}`;
     }
+
     function updateDisplay() {
         const {current, next1, next2} = getCurrentAndNext();
         const now = getChicagoTime();
@@ -309,7 +325,7 @@
             d.setDate(d.getDate() + offset);
             const [h,m] = p.start.split(":");
             d.setHours(+h, +m, 0, 0);
-            return d.toLocaleTimeString("en-US", {hour:"2-digit", minute:"2-digit", hour12:true});
+            return d.toLocaleTimeString("en-US", {hour:"2-digit", minute:"2-digit", hour12:true, timeZone:"America/Chicago"});
         };
         const todayNext = schedule.filter(p => (!p.days || p.days.includes(now.getDay())) && timeToMins(p.start) > timeToMins(now.toTimeString().slice(0,5)));
         const off1 = todayNext.length > 0 ? 0 : 1;
@@ -331,32 +347,13 @@
         }
         updateProgramProgress();
     }
+
     async function processMetadata(artist, title) {
-        console.log(`Debug: Processando metadata para artista: ${artist}, título: ${title}`);
         if (trackTimer) clearInterval(trackTimer);
-       
         if (title.toLowerCase().includes("commercial") || title.toLowerCase().includes("ad")) {
             currentTrack = {title:"", artist:"", duration:0, startTime:0};
         } else {
             currentTrack = {title, artist, duration:0, startTime:Date.now()};
-            try {
-                const r = await fetch(`https://www.theaudiodb.com/api/v1/json/${THEAUDIODB_API_KEY}/searchtrack.php?s=${encodeURIComponent(artist)}&t=${encodeURIComponent(title)}`);
-                const d = await r.json();
-                console.log('Debug: Resposta completa da TheAudioDB:', d);
-                const track = d.track?.[0];
-                const durationMs = parseInt(track?.intDuration || "0", 10);
-                console.log('Debug: Duração em ms extraída:', durationMs);
-                const duration = durationMs / 1000;
-                console.log('Debug: Duração em segundos:', duration);
-                if (duration > 0) {
-                    currentTrack.duration = duration;
-                } else {
-                    console.warn('Debug: Duração não encontrada ou zero para:', title);
-                }
-            } catch (e) {
-                console.error('Debug: Erro ao buscar duração:', e);
-            }
-           
             const cover = await fetchAlbumCover(artist, title);
             const key = `${artist}-${title}`;
             if (!recents.some(t => t.key === key)) {
@@ -376,17 +373,18 @@
         updateDisplay();
         trackTimer = setInterval(updateProgramProgress, 1000);
     }
+
     const es = new EventSource("https://api.zeno.fm/mounts/metadata/subscribe/hvwifp8ezc6tv");
     es.onmessage = e => {
         try {
             const d = JSON.parse(e.data);
             if (d.streamTitle) {
-                console.log('Debug: Metadata recebido do stream:', d.streamTitle);
                 const parts = d.streamTitle.split(" - ");
                 processMetadata(parts[0]||"", parts.slice(1).join(" - ")||"");
             }
         } catch {}
     };
+
     function togglePlay() {
         if (audio.paused) { audio.play(); document.getElementById("miniPlayer").classList.add("show"); }
         else audio.pause();
@@ -396,6 +394,7 @@
         document.querySelector("#bigPlay").innerHTML = playing ? pauseSvg + ' Pause' : playSvg + ' Play';
         document.getElementById("miniPlayPause").innerHTML = playing ? pauseSvg : playSvg;
     }
+
     document.getElementById("bigPlay").onclick = togglePlay;
     document.getElementById("miniPlayPause").onclick = togglePlay;
     document.getElementById("miniRewind").onclick = () => audio.currentTime = Math.max(0, audio.currentTime - 15);
@@ -407,8 +406,9 @@
         document.getElementById("miniVolumeFill").style.width = (audio.volume*100)+'%';
     };
     document.getElementById("miniTrackBar").onclick = (e) => {
-        // Optional: could add seeking for program, but since live, maybe disable or ignore
+        // Seeking desativado para stream ao vivo
     };
+
     setInterval(updateDisplay, 8000);
     updateDisplay();
 </script>
