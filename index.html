@@ -138,6 +138,15 @@
         <div class="mini-info">
             <div class="mini-title" id="miniTitle">Praise FM</div>
             <div class="mini-artist" id="miniArtist">Praise & Worship</div>
+            <div class="mini-track-progress">
+                <div class="mini-track-bar" id="miniTrackBar">
+                    <div class="mini-track-fill" id="miniTrackFill" style="width:0%"></div>
+                </div>
+                <div class="mini-track-time">
+                    <span id="miniTrackCurrent">0:00</span>
+                    <span id="miniTrackDuration">0:00</span>
+                </div>
+            </div>
         </div>
         <div class="mini-controls">
             <button class="mini-btn" id="miniRewind">
@@ -157,15 +166,6 @@
                     <div class="mini-volume-fill" id="miniVolumeFill"></div>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="mini-track-progress">
-        <div class="mini-track-bar" id="miniTrackBar">
-            <div class="mini-track-fill" id="miniTrackFill" style="width:0%"></div>
-        </div>
-        <div class="mini-track-time">
-            <span id="miniTrackCurrent">0:00</span>
-            <span id="miniTrackDuration">0:00</span>
         </div>
     </div>
 </div>
@@ -252,8 +252,38 @@
         };
     }
 
-    let currentTrack = {title:"", artist:""};
+    let currentTrack = {title:"", artist:"", duration:0, startTime:0};
     const recents = [];
+    let trackTimer = null;
+
+    function formatTime(seconds) {
+        const min = Math.floor(seconds / 60);
+        const sec = Math.floor(seconds % 60);
+        return `${min}:${sec.toString().padStart(2, '0')}`;
+    }
+
+    function updateTrackProgress() {
+        if (!currentTrack.duration || currentTrack.duration <= 0) {
+            document.getElementById("miniTrackFill").style.width = "0%";
+            document.getElementById("miniTrackCurrent").textContent = "--:--";
+            document.getElementById("miniTrackDuration").textContent = "Live";
+            return;
+        }
+
+        const elapsed = Date.now() - currentTrack.startTime;
+        const elapsedSec = elapsed / 1000;
+        const progress = Math.min(100, (elapsedSec / currentTrack.duration) * 100);
+        
+        document.getElementById("miniTrackFill").style.width = `${progress}%`;
+        document.getElementById("miniTrackCurrent").textContent = formatTime(elapsedSec);
+        document.getElementById("miniTrackDuration").textContent = formatTime(currentTrack.duration);
+        
+        if (elapsedSec >= currentTrack.duration) {
+            clearInterval(trackTimer);
+            trackTimer = null;
+        }
+    }
+
     async function fetchAlbumCover(artist, title) {
         if (!artist || !title) return images.default;
         try {
@@ -262,15 +292,16 @@
             return d.track?.album?.image?.[3]?.["#text"] || d.track?.artist?.image?.[3]?.["#text"] || images.default;
         } catch { return images.default; }
     }
+
     function formatProgramName(p) {
         if (!p) return "Praise FM";
         const base = p.name.replace(/ \([^)]*\)$/, '').trim();
         if (base === "Music Only" || base === "Praise FM Non Stop" || base === "Praise FM Worship") return base;
-        // ✅ Removido "With" para "Living The Message"
-        if (base === "Living The Message") return base;
+        if (base === "Living The Message") return base; // ✅ Sem "With"
         const host = hosts[base] || "DJ Praise";
         return `${base} With ${host}`;
     }
+
     function updateDisplay() {
         const {current, next1, next2} = getCurrentAndNext();
         const now = getChicagoTime();
@@ -288,7 +319,6 @@
             d.setDate(d.getDate() + offset);
             const [h,m] = p.start.split(":");
             d.setHours(+h, +m, 0, 0);
-            // ✅ Força formato 12h com AM/PM
             return d.toLocaleTimeString("en-US", {hour:"2-digit", minute:"2-digit", hour12:true, timeZone:"America/Chicago"});
         };
         const todayNext = schedule.filter(p => (!p.days || p.days.includes(now.getDay())) && timeToMins(p.start) > timeToMins(now.toTimeString().slice(0,5)));
@@ -310,11 +340,25 @@
             document.getElementById("progressRing").style.background = "conic-gradient(var(--orange) 0%, transparent 0%)";
         }
     }
+
     async function processMetadata(artist, title) {
+        if (trackTimer) clearInterval(trackTimer);
+        
         if (title.toLowerCase().includes("commercial") || title.toLowerCase().includes("ad")) {
-            currentTrack = {title:"", artist:""};
+            currentTrack = {title:"", artist:"", duration:0, startTime:0};
         } else {
-            currentTrack = {title, artist};
+            currentTrack = {title, artist, duration:0, startTime:Date.now()};
+            try {
+                const r = await fetch(`https://ws.audioscrobbler.com/2.0/?method=track.getInfo&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(title)}&api_key=${LASTFM_API_KEY}&format=json`);
+                const d = await r.json();
+                const duration = parseInt(d.track?.duration || d.track?.album?.duration, 10);
+                if (duration > 0) {
+                    currentTrack.duration = duration;
+                }
+            } catch (e) {
+                console.warn("Duração não encontrada para:", title);
+            }
+            
             const cover = await fetchAlbumCover(artist, title);
             const key = `${artist}-${title}`;
             if (!recents.some(t => t.key === key)) {
@@ -332,6 +376,11 @@
             }
         }
         updateDisplay();
+        if (currentTrack.duration > 0) {
+            trackTimer = setInterval(updateTrackProgress, 1000);
+        } else {
+            updateTrackProgress();
+        }
     }
 
     const es = new EventSource("https://api.zeno.fm/mounts/metadata/subscribe/hvwifp8ezc6tv");
@@ -355,17 +404,6 @@
         document.getElementById("miniPlayPause").innerHTML = playing ? pauseSvg : playSvg;
     }
 
-    function updateTrackProgress() {
-        if (audio.duration && !isNaN(audio.duration)) {
-            const progress = (audio.currentTime / audio.duration) * 100;
-            document.getElementById("miniTrackFill").style.width = `${progress}%`;
-            const current = new Date(audio.currentTime * 1000).toISOString().substr(14, 5);
-            const total = new Date(audio.duration * 1000).toISOString().substr(14, 5);
-            document.getElementById("miniTrackCurrent").textContent = current;
-            document.getElementById("miniTrackDuration").textContent = total;
-        }
-    }
-
     document.getElementById("bigPlay").onclick = togglePlay;
     document.getElementById("miniPlayPause").onclick = togglePlay;
     document.getElementById("miniRewind").onclick = () => audio.currentTime = Math.max(0, audio.currentTime - 15);
@@ -379,11 +417,14 @@
     document.getElementById("miniTrackBar").onclick = (e) => {
         const rect = e.currentTarget.getBoundingClientRect();
         const percent = (e.clientX - rect.left) / rect.width;
-        if (audio.duration) audio.currentTime = percent * audio.duration;
+        if (currentTrack.duration > 0) {
+            const newTime = percent * currentTrack.duration;
+            currentTrack.startTime = Date.now() - (newTime * 1000);
+            updateTrackProgress();
+        }
     };
 
     setInterval(updateDisplay, 8000);
-    setInterval(updateTrackProgress, 1000);
     updateDisplay();
 </script>
 </body>
