@@ -198,28 +198,20 @@
     };
     // ✅ PROGRAMAÇÃO EXATA DO PROGRAMAÇÃO.TXT
     const schedule = [
-        // Midnight Grace: 00:00 – 06:00
         {start:"00:00", end:"06:00", name:"Midnight Grace", img:images.midnight},
-        // Praise FM Worship: 06:00 – 07:00
         {start:"06:00", end:"07:00", name:"Praise FM Worship", img:images.worship},
-        // Sunday With Christ: DOMINGO 07:00 – 12:00
-        {start:"07:00", end:"12:00", name:"Sunday With Christ", img:images.sunday, days:[0]},
-        // Morning Show: seg–sáb 07:00 – 12:00
-        {start:"07:00", end:"12:00", name:"Morning Show", img:images.morning, days:[1,2,3,4,5,6]},
-        // Midday Grace: seg–sáb 12:00 – 18:00 (conforme PROGRAMAÇÃO.txt)
-        {start:"12:00", end:"18:00", name:"Midday Grace", img:images.midday, days:[1,2,3,4,5,6]},
-        // Praise FM Non Stop: 16:00 – 17:00 (dentro do Midday Grace, mas com prioridade por vir depois)
+        {start:"07:00", end:"12:00", name:"Morning Show", img:images.morning},
+        {start:"10:00", end:"10:30", name:"Living The Message", img:images.default},
+        {start:"12:00", end:"18:00", name:"Midday Grace", img:images.midday},
         {start:"16:00", end:"17:00", name:"Praise FM Non Stop", img:images.nonstop},
-        // Praise FM Future Artists: seg/qua/sex 12:00 + replay 20:00
+        {start:"22:00", end:"23:59", name:"Praise FM POP", img:images.pop},
         {start:"12:00", end:"13:00", name:"Praise FM Future Artists", img:images.future, days:[1,3,5]},
         {start:"20:00", end:"21:00", name:"Praise FM Future Artists (Replay)", img:images.future, days:[1,3,5]},
-        // Praise FM Classics: ter/qui/sáb 12:00 + replay 20:00
         {start:"12:00", end:"13:00", name:"Praise FM Classics", img:images.classic, days:[2,4,6]},
         {start:"20:00", end:"21:00", name:"Praise FM Classics (Replay)", img:images.classic, days:[2,4,6]},
-        // Praise FM POP: everyday at 10 pm → 22:00 – 23:59
-        {start:"22:00", end:"23:59", name:"Praise FM POP", img:images.pop},
-        // Praise FM Worship: 21:30 – 00:00
-        {start:"21:30", end:"23:59", name:"Praise FM Worship", img:images.worship}
+        {start:"21:00", end:"21:30", name:"Living The Message (Replay)", img:images.default},
+        {start:"21:30", end:"23:59", name:"Praise FM Worship", img:images.worship},
+        {start:"07:00", end:"12:00", name:"Sunday With Christ", img:images.sunday, days:[0]}
     ];
 
     function getChicagoTime() { return new Date(new Date().toLocaleString("en-US",{timeZone:"America/Chicago"})); }
@@ -230,6 +222,8 @@
         const mins = timeToMins(now.toTimeString().slice(0,5));
         let current = null;
         const future = [];
+        
+        // Procura programas do dia atual
         for (const p of schedule) {
             if (p.days && !p.days.includes(day)) continue;
             const s = timeToMins(p.start);
@@ -240,13 +234,19 @@
             }
             if (mins < s) future.push({prog:p, startMins:s});
         }
+        future.sort((a,b) => a.startMins - b.startMins);
+        // Se não houver programas restantes hoje, pega os de amanhã
         if (future.length === 0) {
             const tomorrow = (day + 1) % 7;
-            for (const p of schedule) {
-                if (!p.days || p.days.includes(tomorrow)) future.push({prog:p, startMins:timeToMins(p.start)});
-            }
+            const tomorrowProgs = schedule.filter(p => !p.days || p.days.includes(tomorrow))
+                .map(p => ({prog:p, startMins:timeToMins(p.start)}))
+                .sort((a,b) => a.startMins - b.startMins);
+            return {
+                current: current || {name:"Praise FM", img:images.default},
+                next1: tomorrowProgs[0]?.prog || schedule[0],
+                next2: tomorrowProgs[1]?.prog || schedule[1]
+            };
         }
-        future.sort((a,b) => a.startMins - b.startMins);
         return {
             current: current || {name:"Praise FM", img:images.default},
             next1: future[0]?.prog || schedule[0],
@@ -297,6 +297,7 @@
         if (!p) return "Praise FM";
         const base = p.name.replace(/ \([^)]*\)$/, '').trim();
         if (base === "Praise FM Non Stop" || base === "Praise FM Worship") return base;
+        if (base === "Living The Message") return base; // ✅ Sem "With"
         const host = hosts[base] || "DJ Praise";
         return `${base} With ${host}`;
     }
@@ -320,13 +321,16 @@
             d.setHours(+h, +m, 0, 0);
             return d.toLocaleTimeString("en-US", {hour:"2-digit", minute:"2-digit", hour12:true, timeZone:"America/Chicago"});
         };
+        // Determina se o próximo programa é hoje ou amanhã
         const todayNext = schedule.filter(p => (!p.days || p.days.includes(now.getDay())) && timeToMins(p.start) > timeToMins(now.toTimeString().slice(0,5)));
         const off1 = todayNext.length > 0 ? 0 : 1;
         const off2 = todayNext.length > 1 ? 0 : 1;
+        
         document.getElementById("upnextTitle1").textContent = formatProgramName(next1);
         document.getElementById("upnextTime1").textContent = fmt(next1, off1) + " Chicago";
         document.getElementById("upnextTitle2").textContent = formatProgramName(next2);
         document.getElementById("upnextTime2").textContent = fmt(next2, off2) + " Chicago";
+        
         if (current.start && current.end) {
             const s = timeToMins(current.start);
             const e = timeToMins(current.end);
