@@ -251,29 +251,28 @@
     let currentTrack = {title:"", artist:"", duration:0, startTime:0};
     const recents = [];
     let trackTimer = null;
-    function formatTime(seconds) {
-        const min = Math.floor(seconds / 60);
-        const sec = Math.floor(seconds % 60);
-        return `${min}:${sec.toString().padStart(2, '0')}`;
+    function formatTime(minutes) {
+        const hrs = Math.floor(minutes / 60);
+        const mins = Math.floor(minutes % 60);
+        return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
     }
-    function updateTrackProgress() {
-        if (!currentTrack.duration || currentTrack.duration <= 0) {
+    function updateProgramProgress() {
+        const {current} = getCurrentAndNext();
+        const now = getChicagoTime();
+        if (current.start && current.end) {
+            const s = timeToMins(current.start);
+            const e = timeToMins(current.end);
+            const n = timeToMins(now.toTimeString().slice(0,5));
+            const total = (e - s + 1440) % 1440;
+            const elapsed = (n - s + 1440) % 1440;
+            const pct = total > 0 ? (elapsed / total) * 100 : 0;
+            document.getElementById("miniTrackFill").style.width = `${pct}%`;
+            document.getElementById("miniTrackCurrent").textContent = formatTime(elapsed);
+            document.getElementById("miniTrackDuration").textContent = formatTime(total);
+        } else {
             document.getElementById("miniTrackFill").style.width = "0%";
             document.getElementById("miniTrackCurrent").textContent = "--:--";
             document.getElementById("miniTrackDuration").textContent = "Live";
-            return;
-        }
-        const elapsed = Date.now() - currentTrack.startTime;
-        const elapsedSec = elapsed / 1000;
-        const progress = Math.min(100, (elapsedSec / currentTrack.duration) * 100);
-       
-        document.getElementById("miniTrackFill").style.width = `${progress}%`;
-        document.getElementById("miniTrackCurrent").textContent = formatTime(elapsedSec);
-        document.getElementById("miniTrackDuration").textContent = formatTime(currentTrack.duration);
-       
-        if (elapsedSec >= currentTrack.duration) {
-            clearInterval(trackTimer);
-            trackTimer = null;
         }
     }
     async function fetchAlbumCover(artist, title) {
@@ -330,6 +329,7 @@
         } else {
             document.getElementById("progressRing").style.background = "conic-gradient(var(--orange) 0%, transparent 0%)";
         }
+        updateProgramProgress();
     }
     async function processMetadata(artist, title) {
         console.log(`Debug: Processando metadata para artista: ${artist}, título: ${title}`);
@@ -374,11 +374,7 @@
             }
         }
         updateDisplay();
-        if (currentTrack.duration > 0) {
-            trackTimer = setInterval(updateTrackProgress, 1000);
-        } else {
-            updateTrackProgress();
-        }
+        trackTimer = setInterval(updateProgramProgress, 1000);
     }
     const es = new EventSource("https://api.zeno.fm/mounts/metadata/subscribe/hvwifp8ezc6tv");
     es.onmessage = e => {
@@ -411,13 +407,7 @@
         document.getElementById("miniVolumeFill").style.width = (audio.volume*100)+'%';
     };
     document.getElementById("miniTrackBar").onclick = (e) => {
-        const rect = e.currentTarget.getBoundingClientRect();
-        const percent = (e.clientX - rect.left) / rect.width;
-        if (currentTrack.duration > 0) {
-            const newTime = percent * currentTrack.duration;
-            currentTrack.startTime = Date.now() - (newTime * 1000);
-            updateTrackProgress();
-        }
+        // Optional: could add seeking for program, but since live, maybe disable or ignore
     };
     setInterval(updateDisplay, 8000);
     updateDisplay();
