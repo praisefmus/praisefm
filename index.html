@@ -297,7 +297,7 @@
         if (!p) return "Praise FM";
         const base = p.name.replace(/ \([^)]*\)$/, '').trim();
         if (base === "Music Only" || base === "Praise FM Non Stop" || base === "Praise FM Worship") return base;
-        if (base === "Living The Message") return base; // ✅ Sem "With"
+        if (base === "Living The Message") return base;
         const host = hosts[base] || "DJ Praise";
         return `${base} With ${host}`;
     }
