@@ -178,25 +178,21 @@
         morning: "/image/morningshowlogo.webp",
         midday: "/image/middaygracelogo.webp",
         midnight: "/image/midnightgracelogo.webp",
-        carpool: "/image/praisefmcarpoollogo.webp",
         classic: "/image/praisefmclassicslogo.webp",
         future: "/image/praisefmfutureartistslogo.webp",
         pop: "/image/praisefmpoplogo.webp",
         sunday: "/image/sundaywithchrist.png",
         nonstop: "/image/praisefmnonstop.png",
-        living: "/image/livingthemessage.png",
         worship: "/image/praisefmworship.png"
     };
     const hosts = {
         "Morning Show": "Stancy Campbell",
         "Midday Grace": "Michael Ray",
-        "Praise FM Carpool": "Rachael Harris",
         "Praise FM Future Artists": "Sarah Jordan",
         "Praise FM Classics": "Scott Turner",
         "Praise FM POP": "Jordan Reys",
         "Sunday With Christ": "Matt Riley",
         "Midnight Grace": "Daniel Brooks",
-        "Living The Message": "various Pastors",
         "Praise FM Non Stop": "Praise FM",
         "Praise FM Worship": "Praise FM"
     };
@@ -210,26 +206,18 @@
         {start:"07:00", end:"12:00", name:"Sunday With Christ", img:images.sunday, days:[0]},
         // Morning Show: seg–sáb 07:00 – 12:00
         {start:"07:00", end:"12:00", name:"Morning Show", img:images.morning, days:[1,2,3,4,5,6]},
-        // Living The Message: todos os dias 10:00 – 10:30
-        {start:"10:00", end:"10:30", name:"Living The Message", img:images.living},
-        // Midday Grace: seg–sáb 12:00 – 18:00
+        // Midday Grace: seg–sáb 12:00 – 18:00 (conforme PROGRAMAÇÃO.txt)
         {start:"12:00", end:"18:00", name:"Midday Grace", img:images.midday, days:[1,2,3,4,5,6]},
-        // Praise FM Non Stop: 16:00 – 17:00
+        // Praise FM Non Stop: 16:00 – 17:00 (dentro do Midday Grace, mas com prioridade por vir depois)
         {start:"16:00", end:"17:00", name:"Praise FM Non Stop", img:images.nonstop},
-        // Praise FM Worship: 17:00 – 18:00
-        {start:"17:00", end:"18:00", name:"Praise FM Worship", img:images.worship},
-        // Praise FM Carpool: seg–sex 18:00 – 20:00
-        {start:"18:00", end:"20:00", name:"Praise FM Carpool", img:images.carpool, days:[1,2,3,4,5]},
-        // Praise FM POP: todos os dias 22:00 – 23:59
-        {start:"22:00", end:"23:59", name:"Praise FM POP", img:images.pop},
         // Praise FM Future Artists: seg/qua/sex 12:00 + replay 20:00
         {start:"12:00", end:"13:00", name:"Praise FM Future Artists", img:images.future, days:[1,3,5]},
         {start:"20:00", end:"21:00", name:"Praise FM Future Artists (Replay)", img:images.future, days:[1,3,5]},
         // Praise FM Classics: ter/qui/sáb 12:00 + replay 20:00
         {start:"12:00", end:"13:00", name:"Praise FM Classics", img:images.classic, days:[2,4,6]},
         {start:"20:00", end:"21:00", name:"Praise FM Classics (Replay)", img:images.classic, days:[2,4,6]},
-        // Living The Message Replay: todos os dias 21:00 – 21:30
-        {start:"21:00", end:"21:30", name:"Living The Message (Replay)", img:images.living},
+        // Praise FM POP: everyday at 10 pm → 22:00 – 23:59
+        {start:"22:00", end:"23:59", name:"Praise FM POP", img:images.pop},
         // Praise FM Worship: 21:30 – 00:00
         {start:"21:30", end:"23:59", name:"Praise FM Worship", img:images.worship}
     ];
@@ -309,7 +297,6 @@
         if (!p) return "Praise FM";
         const base = p.name.replace(/ \([^)]*\)$/, '').trim();
         if (base === "Praise FM Non Stop" || base === "Praise FM Worship") return base;
-        if (base === "Living The Message") return base;
         const host = hosts[base] || "DJ Praise";
         return `${base} With ${host}`;
     }
