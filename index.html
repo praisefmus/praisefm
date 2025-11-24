@@ -171,35 +171,40 @@
         "Sunday With Christ": "Matt Riley",
         "Midnight Grace": "Daniel Brooks",
         "Praise FM Non Stop": "Praise FM",
-        "Praise FM Worship": "Praise FM"
+        "Praise FM Worship": "Praise FM",
+        "Praise FM Magazine": "Praise FM"
     };
 
     // SCHEDULE (confirmed by the user)
     // days: 0 = Sunday, 1 = Monday, ... 6 = Saturday
     const schedule = [
-        // Midnight Grace: 00:00 – 06:00 (all days)
+        // Midnight Grace: 12:00 AM – 6:00 AM (all days)
         {start:"00:00", end:"06:00", name:"Midnight Grace", img:images.midnight, desc: "Daniel Brooks lays down the most soothing overnight praise vibes."},
-        // Praise FM Worship: 06:00 – 07:00 (all days)
+        // Praise FM Worship: 6:00 AM – 7:00 AM (all days)
         {start:"06:00", end:"07:00", name:"Praise FM Worship", img:images.worship, desc: "Praise FM plays the finest worship music."},
-        // Morning Show: 07:00 – 12:00 (Mon–Fri)
+        // Morning Show: 7:00 AM – 12:00 PM (Mon–Fri)
         {start:"07:00", end:"12:00", name:"Morning Show", img:images.morning, days:[1,2,3,4,5], desc: "Stancy Campbell kickstarts your day with uplifting praise and inspiration."},
-        // Sunday With Christ: 07:00 – 12:00 (Sunday)
+        // Sunday With Christ: 7:00 AM – 12:00 PM (Sunday)
         {start:"07:00", end:"12:00", name:"Sunday With Christ", img:images.sunday, days:[0], desc: "Matt Riley shares spiritual insights and Sunday music."},
-        // Midday Grace: 12:00 – 16:00 (all days)
+        // Midday Grace: 12:00 PM – 4:00 PM (all days)
         {start:"12:00", end:"16:00", name:"Midday Grace", img:images.midday, desc: "Michael Ray brings grace and tunes through the midday."},
-        // Praise FM Non Stop: 16:00 – 17:00 (all days)
+        // Praise FM Non Stop: 4:00 PM – 5:00 PM (all days)
         {start:"16:00", end:"17:00", name:"Praise FM Non Stop", img:images.nonstop, desc: "Praise FM with non-stop praise hits."},
-        // Praise FM Worship: 17:00 – 18:00 (all days)
+        // Praise FM Worship: 5:00 PM – 6:00 PM (all days)
         {start:"17:00", end:"18:00", name:"Praise FM Worship", img:images.worship, desc: "Praise FM plays the finest worship music."},
-        // Praise FM Carpool: 18:00 – 20:00 (Mon–Fri)
+        // Praise FM Carpool: 6:00 PM – 8:00 PM (Mon–Fri)
         {start:"18:00", end:"20:00", name:"Praise FM Carpool", img:images.carpool, days:[1,2,3,4,5], desc: "Rachael Harris with praise tunes for your drive home."},
-        // Praise FM POP: 20:00 – 20:30 (all days)
+        // Praise FM Worship: 6:00 PM – 8:00 PM (Sat–Sun)
+        {start:"18:00", end:"20:00", name:"Praise FM Worship", img:images.worship, days:[0,6], desc: "Praise FM plays the finest worship music."},
+        // Praise FM POP: 8:00 PM – 8:30 PM (all days)
         {start:"20:00", end:"20:30", name:"Praise FM POP", img:images.pop, desc: "Jordan Reys with all things pop and contemporary praise."},
-        // Praise FM Magazine: 20:30 – 20:31 (Sunday only)
+        // Praise FM Magazine: 8:30 PM – 8:31 PM (Sunday only)
         {start:"20:30", end:"20:31", name:"Praise FM Magazine", img:images.magazine, days:[0], desc: "Praise FM with magazine-style content and features."},
-        // Praise FM Non Stop: 20:30/20:31 – 21:30
+        // Praise FM Non Stop: 8:30 PM – 9:30 PM (Mon-Sat)
         {start:"20:30", end:"21:30", name:"Praise FM Non Stop", img:images.nonstop, days:[1,2,3,4,5,6], desc: "Praise FM with non-stop praise hits."},
-        // Praise FM Worship: 21:30 – 00:00 (all days)
+        // Praise FM Non Stop: 8:31 PM – 9:30 PM (Sunday only)
+        {start:"20:31", end:"21:30", name:"Praise FM Non Stop", img:images.nonstop, days:[0], desc: "Praise FM with non-stop praise hits."},
+        // Praise FM Worship: 9:30 PM – 12:00 AM (all days)
         {start:"21:30", end:"00:00", name:"Praise FM Worship", img:images.worship, desc: "Praise FM plays the finest worship music."}
     ];
 
