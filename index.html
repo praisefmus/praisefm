@@ -1,37 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Praise FM - Live</title>
-    <meta name="theme-color" content="#ff4d00">
+    <title>Praise FM Nederland - Live</title>
+    <meta name="theme-color" content="#1a365d">
     <link rel="icon" type="image/png" sizes="32x32" href="/image/favicon-32x32.png">
     <link rel="manifest" href="/manifest.json">
     <style>
-        :root { --orange:#ff4d00; --dark:#111; --grey:#555; --light-grey:#888; --bg:#fff; --border-color:#ddd; }
+        :root { --primary:#1a365d; --dark:#111; --grey:#555; --light-grey:#888; --bg:#fff; --border-color:#ddd; }
         * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; }
         body { background:var(--bg); color:#000; min-height:100vh; padding-bottom:120px; display:flex; flex-direction:column; align-items:center; }
         .container { width:100%; max-width:900px; padding:20px; text-align:center; }
-        .station-title { font-size:32px; font-weight:900; color:var(--orange); margin:20px 0 4px; }
+        .station-title { font-size:32px; font-weight:900; color:var(--primary); margin:20px 0 4px; }
         .station-subtitle { font-size:17px; color:var(--grey); margin-bottom:30px; }
         .circle-container { width:min(80vw,320px); height:min(80vw,320px); margin:0 auto 20px; position:relative; }
-        .circle-border { position:absolute; inset:0; border-radius:50%; background:conic-gradient(var(--orange) 0%, transparent 0%);
+        .circle-border { position:absolute; inset:0; border-radius:50%; background:conic-gradient(var(--primary) 0%, transparent 0%);
             mask:radial-gradient(transparent 68%, black 70%); -webkit-mask:radial-gradient(transparent 68%, black 70%); }
         .circle-img { position:absolute; inset:6px; border-radius:50%; overflow:hidden; background:#000; }
         .circle-img img { width:100%; height:100%; object-fit:cover; }
-        .live-badge { display:inline-flex; align-items:center; gap:8px; color:var(--orange); font-weight:700; font-size:14px; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; }
-        .live-dot { width:9px; height:9px; background:var(--orange); border-radius:50%; animation:pulse 2s infinite; }
+        .live-badge { display:inline-flex; align-items:center; gap:8px; color:var(--primary); font-weight:700; font-size:14px; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; }
+        .live-dot { width:9px; height:9px; background:var(--primary); border-radius:50%; animation:pulse 2s infinite; }
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
         .program-title { font-size:28px; font-weight:800; margin:10px 0 30px; line-height:1.2; }
-        .play-button { margin:40px auto; width:220px; height:56px; background:var(--orange); color:#fff; border:none; border-radius:28px; font-size:18px; font-weight:700; cursor:pointer;
-            display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 6px 20px rgba(255,77,0,.3); transition:transform .2s; }
+        .play-button { margin:40px auto; width:220px; height:56px; background:var(--primary); color:#fff; border:none; border-radius:28px; font-size:18px; font-weight:700; cursor:pointer;
+            display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 6px 20px rgba(26,54,93,.3); transition:transform .2s; }
         .play-button:hover { transform:scale(1.05); }
         .play-button svg { width:24px; height:24px; fill:#fff; margin-left:10px; }
         .upnext { background:#f8f8f8; border-radius:12px; padding:20px; margin:40px 0; text-align:left; }
         .upnext-items { display:flex; gap:20px; flex-wrap:wrap; }
         .upnext-item { flex:1; min-width:200px; display:flex; align-items:center; gap:16px; }
         .upnext-img { width:60px; height:60px; border-radius:0; object-fit:cover; background:#eee; }
-        .upnext-time { font-size:14px; font-weight:700; color:var(--orange); text-transform:uppercase; letter-spacing:0.5px; }
+        .upnext-time { font-size:14px; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:0.5px; }
         .upnext-title { font-size:16px; font-weight:700; margin-top:4px; }
         .upnext-desc { font-size:14px; color:var(--grey); margin-top:4px; }
         .recently { margin-top:40px; text-align:left; }
@@ -53,29 +53,15 @@
         .mini-controls { display:flex; align-items:center; gap:16px; }
         .mini-btn { background:none; border:none; cursor:pointer; padding:8px; }
         .mini-btn svg { width:24px; height:24px; fill:var(--grey); }
-        .mini-play { background:var(--orange); width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; box-shadow:0 2px 12px rgba(255,77,0,.35); }
+        .mini-play { background:var(--primary); width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; box-shadow:0 2px 12px rgba(26,54,93,.35); }
         .mini-play svg { width:20px; height:20px; fill:#fff; }
         .mini-volume { display:flex; align-items:center; gap:4px; width:100px; }
         .mini-volume-bar { flex:1; height:4px; background:#ddd; border-radius:2px; position:relative; cursor:pointer; }
-        .mini-volume-fill { height:100%; background:var(--orange); border-radius:2px; width:80%; }
+        .mini-volume-fill { height:100%; background:var(--primary); border-radius:2px; width:80%; }
         .mini-track-progress { width:100%; padding:6px 0; }
         .mini-track-bar { width:100%; height:4px; background:#ddd; border-radius:2px; position:relative; cursor:pointer; }
-        .mini-track-fill { height:100%; background:var(--orange); border-radius:2px; width:0%; }
+        .mini-track-fill { height:100%; background:var(--primary); border-radius:2px; width:0%; }
         .mini-track-time { display:flex; justify-content:space-between; font-size:11px; color:var(--light-grey); margin-top:4px; }
-        /* Install Banner */
-        #installBanner {
-            display: none;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #fff;
-            border-top: 1px solid #eee;
-            padding: 12px 16px;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-            z-index: 9999;
-            font-family: Arial, sans-serif;
-        }
         @media (max-width:480px) { 
             .mini-player { padding:10px; } 
             .mini-player-content { flex-direction:column; align-items:flex-start; gap:14px; } 
@@ -89,23 +75,23 @@
 </head>
 <body>
 <div class="container">
-    <h1 class="station-title">Praise FM</h1>
-    <p class="station-subtitle">Praise & Worship</p>
+    <h1 class="station-title">Praise FM Nederland</h1>
+    <p class="station-subtitle">Continue Aanbidding</p>
     <div class="circle-container">
         <div class="circle-border" id="progressRing"></div>
         <div class="circle-img">
-            <img id="mainImg" src="/image/logopraisefm.webp" alt="Now Playing">
+            <img id="mainImg" src="/image/logo-nl.webp" alt="Nu aan het spelen">
         </div>
     </div>
     <div class="live-badge"><div class="live-dot"></div> LIVE</div>
-    <h2 class="program-title" id="programTitle">Praise FM</h2>
+    <h2 class="program-title" id="programTitle">Praise FM Nederland</h2>
     <button class="play-button" id="bigPlay">
-        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Play
+        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Afspelen
     </button>
     <div class="upnext">
         <div class="upnext-items">
             <div class="upnext-item">
-                <img id="upnextImg1" src="/image/praisefmnonstop.png" class="upnext-img" onerror="this.src='/image/logopraisefm.webp'">
+                <img id="upnextImg1" src="/image/nonstop.webp" class="upnext-img" onerror="this.src='/image/logo-nl.webp'">
                 <div>
                     <div class="upnext-time" id="upnextTime1">-</div>
                     <div class="upnext-title" id="upnextTitle1">-</div>
@@ -113,7 +99,7 @@
                 </div>
             </div>
             <div class="upnext-item">
-                <img id="upnextImg2" src="/image/praisefmcarpoollogo.webp" class="upnext-img" onerror="this.src='/image/logopraisefm.webp'">
+                <img id="upnextImg2" src="/image/thuisreis.webp" class="upnext-img" onerror="this.src='/image/logo-nl.webp'">
                 <div>
                     <div class="upnext-time" id="upnextTime2">-</div>
                     <div class="upnext-title" id="upnextTitle2">-</div>
@@ -123,34 +109,16 @@
         </div>
     </div>
     <div class="recently">
-        <div class="recently-header">Recently played</div>
+        <div class="recently-header">Recent gespeeld</div>
         <div id="recentList"></div>
     </div>
 </div>
-
-<!-- Install PWA Banner -->
-<div id="installBanner">
-  <div style="display:flex; align-items:center; gap:12px;">
-    <div style="width:40px; height:40px; border-radius:8px; background:#ff4d00; display:flex; align-items:center; justify-content:center;">
-      <svg viewBox="0 0 24 24" style="width:20px; height:20px; fill:#fff;">
-        <path d="M18 15v3H6v-3H4v3c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-3h-2zm-4-8l-4-4V1h-2v2H6c-1.1 0-2 .9-2 2v2c1.38-1.24 3.23-2 5-2 1.77 0 3.62.76 5 2V5c0-1.1-.9-2-2-2h-2V1h2zM8 7c0-1.66 1.34-3 3-3s3 1.34 3 3v3H8V7z"/>
-      </svg>
-    </div>
-    <div style="flex:1;">
-      <div style="font-size:14px; font-weight:700; color:#333;">Install Praise FM</div>
-      <div style="font-size:12px; color:#666;">Add to Home Screen for easy listening</div>
-    </div>
-    <button id="installBtn" style="background:#ff4d00; color:#fff; border:none; padding:6px 12px; border-radius:4px; font-size:13px; font-weight:600; cursor:pointer;">Install</button>
-    <button id="closeBanner" style="background:none; border:none; color:#999; font-size:20px; cursor:pointer; width:24px; height:24px; display:flex; align-items:center; justify-content:center;">×</button>
-  </div>
-</div>
-
 <div class="mini-player" id="miniPlayer">
     <div class="mini-player-content">
-        <img id="miniImg" src="/image/logopraisefm.webp" class="mini-cover">
+        <img id="miniImg" src="/image/logo-nl.webp" class="mini-cover">
         <div class="mini-info">
-            <div class="mini-title" id="miniTitle">Praise FM</div>
-            <div class="mini-artist" id="miniArtist">Praise & Worship</div>
+            <div class="mini-title" id="miniTitle">Praise FM Nederland</div>
+            <div class="mini-artist" id="miniArtist">Continue Aanbidding</div>
             <div class="mini-track-progress">
                 <div class="mini-track-bar" id="miniTrackBar">
                     <div class="mini-track-fill" id="miniTrackFill" style="width:0%"></div>
@@ -183,55 +151,52 @@
     </div>
 </div>
 <script>
-    // STREAM
-    const STREAM_URL = "https://stream.zeno.fm/hvwifp8ezc6tv";
+    const STREAM_URL = "/api/stream";
     const audio = new Audio(STREAM_URL);
     audio.volume = 0.8;
 
     const images = {
-        default: "/image/logopraisefm.webp",
-        midnight: "/image/midnightgracelogo.webp",
-        worship: "/image/praisefmworship.png",
-        morning: "/image/morningshowlogo.webp",
-        midday: "/image/middaygracelogo.webp",
-        nonstop: "/image/praisefmnonstop.png",
-        carpool: "/image/praisefmcarpoollogo.webp",
-        pop: "/image/praisefmpoplogo.webp",
-        sunday: "/image/sundaywithchrist.png",
-        magazine: "/image/praisefmmagazine.png"
+        default: "/image/logo-nl.webp",
+        nachtgenade: "/image/nachtgenade.webp",
+        aanbidding: "/image/aanbidding.webp",
+        ochtendshow: "/image/ochtendshow.webp",
+        zondag: "/image/zondag.webp",
+        pop: "/image/pop.webp",
+        thuisreis: "/image/thuisreis.webp"
     };
 
     const hosts = {
-        "Morning Show": "Stancy Campbell",
-        "Midday Grace": "Michael Ray",
-        "Praise FM Carpool": "Rachael Harris",
-        "Praise FM POP": "Jordan Reys",
-        "Sunday With Christ": "Matt Riley",
-        "Midnight Grace": "Daniel Brooks",
-        "Praise FM Non Stop": "Praise FM",
-        "Praise FM Worship": "Praise FM"
+        "Ochtendshow": "Lieke van Dijk",
+        "Zondag met Christus": "Joris de Wit",
+        "Praise FM POP": "Luuk Vermeulen",
+        "Praise FM Thuisreis": "Eva de Jong",
+        "Nachtgenade": "Fleur Jansen"
     };
 
-    // CORREÇÃO: Midnight Grace das 03:00–06:00 (Chicago time)
+    // ✅ SCHEDULE COM OCHTENDSHOW NO SÁBADO (dia 6)
     const schedule = [
-        {start:"00:00", end:"03:00", name:"Praise FM Worship", img:images.worship, desc: "Praise FM plays the finest worship music."},
-        {start:"03:00", end:"06:00", name:"Midnight Grace", img:images.midnight, desc: "Daniel Brooks lays down the most soothing overnight praise vibes."},
-        {start:"06:00", end:"07:00", name:"Praise FM Worship", img:images.worship, desc: "Praise FM plays the finest worship music."},
-        {start:"07:00", end:"12:00", name:"Morning Show", img:images.morning, days:[1,2,3,4,5], desc: "Stancy Campbell kickstarts your day with uplifting praise and inspiration."},
-        {start:"07:00", end:"12:00", name:"Sunday With Christ", img:images.sunday, days:[0], desc: "Matt Riley shares spiritual insights and Sunday music."},
-        {start:"12:00", end:"16:00", name:"Midday Grace", img:images.midday, desc: "Michael Ray brings grace and tunes through the midday."},
-        {start:"16:00", end:"17:00", name:"Praise FM Non Stop", img:images.nonstop, desc: "Praise FM with non-stop praise hits."},
-        {start:"17:00", end:"18:00", name:"Praise FM Worship", img:images.worship, desc: "Praise FM plays the finest worship music."},
-        {start:"18:00", end:"20:00", name:"Praise FM Carpool", img:images.carpool, days:[1,2,3,4,5], desc: "Rachael Harris with praise tunes for your drive home."},
-        {start:"18:00", end:"20:00", name:"Praise FM Worship", img:images.worship, days:[0,6], desc: "Praise FM plays the finest worship music."},
-        {start:"20:00", end:"20:30", name:"Praise FM POP", img:images.pop, desc: "Jordan Reys with all things pop and contemporary praise."},
-        {start:"20:30", end:"20:31", name:"Praise FM Magazine", img:images.magazine, days:[0], desc: "Praise FM with magazine-style content and features."},
-        {start:"20:30", end:"21:30", name:"Praise FM Non Stop", img:images.nonstop, days:[1,2,3,4,5,6], desc: "Praise FM with non-stop praise hits."},
-        {start:"21:30", end:"00:00", name:"Praise FM Worship", img:images.worship, desc: "Praise FM plays the finest worship music."}
+        {start:"00:00", end:"06:00", name:"Nachtgenade", img:images.nachtgenade, desc: "Fleur Jansen omhult u met stilte en gebed."},
+        {start:"06:00", end:"07:00", name:"Praise FM Aanbidding", img:images.aanbidding, desc: "Continue stroom van aanbidding."},
+        // Ochtendshow: segunda a SÁBADO (1,2,3,4,5,6)
+        {start:"07:00", end:"12:00", name:"Ochtendshow", img:images.ochtendshow, days:[1,2,3,4,5,6], desc: "Lieke van Dijk begroet u met opbouwende lof."},
+        // Zondag met Christus: domingo (0)
+        {start:"07:00", end:"12:00", name:"Zondag met Christus", img:images.zondag, days:[0], desc: "Joris de Wit deelt geestelijke inzichten."},
+        {start:"12:00", end:"17:00", name:"Praise FM Aanbidding", img:images.aanbidding, desc: "Continue stroom van aanbidding."},
+        {start:"17:00", end:"18:00", name:"Praise FM POP", img:images.pop, desc: "Luuk Vermeulen presenteert de nieuwste lofzangen."},
+        // Thuisreis: segunda a sexta (1-5)
+        {start:"18:00", end:"20:00", name:"Praise FM Thuisreis", img:images.thuisreis, days:[1,2,3,4,5], desc: "Eva de Jong begeleidt u naar huis."},
+        // Aanbidding: sábado e domingo (6,0) à noite
+        {start:"18:00", end:"20:00", name:"Praise FM Aanbidding", img:images.aanbidding, days:[0,6], desc: "Continue stroom van aanbidding."},
+        {start:"20:00", end:"00:00", name:"Praise FM Aanbidding", img:images.aanbidding, desc: "Continue stroom van aanbidding."}
     ];
 
-    function getTime() { return new Date(new Date().toLocaleString("en-US",{timeZone:"America/Chicago"})); }
-    function timeToMins(t) { const [h,m]=t.split(":").map(Number); return h*60+m; }
+    function getTime() { 
+        return new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/Amsterdam" })); 
+    }
+    function timeToMins(t) { 
+        const [h,m] = t.split(":").map(Number); 
+        return h * 60 + m; 
+    }
 
     function getCurrentAndNext() {
         const now = getTime();
@@ -247,23 +212,23 @@
             if (mins >= s && mins < end) {
                 if (!current || end > timeToMins(current.end)) current = p;
             }
-            if (mins < s) future.push({prog:p, startMins:s});
+            if (mins < s) future.push({prog: p, startMins: s});
         }
         if (future.length === 0) {
             const tomorrow = (day + 1) % 7;
             for (const p of schedule) {
-                if (!p.days || p.days.includes(tomorrow)) future.push({prog:p, startMins:timeToMins(p.start)});
+                if (!p.days || p.days.includes(tomorrow)) future.push({prog: p, startMins: timeToMins(p.start)});
             }
         }
         future.sort((a,b) => a.startMins - b.startMins);
         return {
-            current: current || {name:"Praise FM", img:images.default, start:null, end:null},
+            current: current || {name: "Praise FM Nederland", img: images.default, start: null, end: null},
             next1: future[0]?.prog || schedule[0],
             next2: future[1]?.prog || schedule[1]
         };
     }
 
-    let currentTrack = {title:"", artist:"", duration:0, startTime:0};
+    let currentTrack = {title: "", artist: "", duration: 0, startTime: 0};
     const recents = [];
     let trackTimer = null;
 
@@ -308,13 +273,13 @@
     }
 
     function formatProgramName(p) {
-        if (!p) return "Praise FM";
+        if (!p) return "Praise FM Nederland";
         const base = p.name.replace(/ \([^)]*\)$/, '').trim();
-        if (["Praise FM Non Stop", "Midnight Grace", "Praise FM POP", "Praise FM Magazine", "Praise FM Worship"].includes(base)) {
+        if (["Praise FM Aanbidding", "Praise FM POP"].includes(base)) {
             return base;
         }
         const host = hosts[base] || "Praise FM";
-        return `${base} With ${host}`;
+        return `${base} met ${host}`;
     }
 
     function formatRange(p) {
@@ -336,8 +301,8 @@
         const displayName = formatProgramName(current);
         document.getElementById("programTitle").textContent = displayName;
         document.getElementById("miniTitle").textContent = currentTrack.title || displayName;
-        document.getElementById("miniArtist").textContent = currentTrack.artist || "Praise & Worship";
-        document.getElementById("upnextTime1").textContent = "UP NEXT: " + formatRange(next1);
+        document.getElementById("miniArtist").textContent = currentTrack.artist || "Continue Aanbidding";
+        document.getElementById("upnextTime1").textContent = "VOLGENDE: " + formatRange(next1);
         document.getElementById("upnextTitle1").textContent = formatProgramName(next1);
         document.getElementById("upnextDesc1").textContent = next1.desc || "-";
         document.getElementById("upnextTime2").textContent = formatRange(next2);
@@ -351,9 +316,9 @@
             const total = (e - s + 1440) % 1440;
             const elapsed = (n - s + 1440) % 1440;
             const pct = total > 0 ? (elapsed / total) * 100 : 0;
-            document.getElementById("progressRing").style.background = `conic-gradient(var(--orange) ${pct}%, transparent ${pct}%)`;
+            document.getElementById("progressRing").style.background = `conic-gradient(var(--primary) ${pct}%, transparent ${pct}%)`;
         } else {
-            document.getElementById("progressRing").style.background = "conic-gradient(var(--orange) 0%, transparent 0%)";
+            document.getElementById("progressRing").style.background = "conic-gradient(var(--primary) 0%, transparent 0%)";
         }
         updateProgramProgress();
     }
@@ -385,7 +350,7 @@
     }
 
     try {
-        const es = new EventSource("https://api.zeno.fm/mounts/metadata/subscribe/hvwifp8ezc6tv");
+        const es = new EventSource("https://api.zeno.fm/mounts/metadata/subscribe/olisuxy9v3vtv");
         es.onmessage = e => {
             try {
                 const d = JSON.parse(e.data);
@@ -395,7 +360,7 @@
                 }
             } catch {}
         };
-    } catch(e) { /* ignore */ }
+    } catch(e) {}
 
     function togglePlay() {
         if (audio.paused) { audio.play(); document.getElementById("miniPlayer").classList.add("show"); }
@@ -403,7 +368,7 @@
         const playing = !audio.paused;
         const playSvg = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
         const pauseSvg = '<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
-        document.querySelector("#bigPlay").innerHTML = playing ? pauseSvg + ' Pause' : playSvg + ' Play';
+        document.querySelector("#bigPlay").innerHTML = playing ? pauseSvg + ' Pauzeren' : playSvg + ' Afspelen';
         document.getElementById("miniPlayPause").innerHTML = playing ? pauseSvg : playSvg;
     }
 
@@ -424,37 +389,6 @@
             ? '<svg viewBox="0 0 24 24"><path d="M16.5 12l4.5 4.5-1.5 1.5L15 13.5 11.5 17H7v-6h4.5L15 7.5l4.5-4.5 1.5 1.5L16.5 12z"/></svg>' 
             : '<svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>';
     };
-
-    // Install Banner
-    let deferredPrompt;
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        if (/Android|iPhone|iPad|iPod|Opera Mini|IEMobile|BlackBerry|webOS/i.test(navigator.userAgent)) {
-            document.getElementById('installBanner').style.display = 'block';
-        }
-    });
-    document.getElementById('installBtn').addEventListener('click', () => {
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then(() => {
-                deferredPrompt = null;
-                document.getElementById('installBanner').style.display = 'none';
-            });
-        }
-    });
-    document.getElementById('closeBanner').addEventListener('click', () => {
-        document.getElementById('installBanner').style.display = 'none';
-    });
-
-    // Register Service Worker
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js')
-                .then(reg => console.log('SW registered:', reg.scope))
-                .catch(err => console.log('SW failed:', err));
-        });
-    }
 
     setInterval(updateDisplay, 8000);
     updateDisplay();
