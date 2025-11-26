@@ -1,4 +1,3 @@
-<!-- Source file: /mnt/data/GROK SITE.txt -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +6,34 @@
     <title>Praise FM - Live</title>
     <meta name="theme-color" content="#ff4d00">
     <link rel="icon" type="image/png" sizes="32x32" href="/image/favicon-32x32.png">
+
+    <!-- 🇳🇱 Redirecionamento para Holanda -->
+    <script>
+        // Redireciona visitantes da Holanda (NL) antes de carregar a página
+        (function() {
+            const redirectToNetherlands = () => {
+                window.location.href = 'https://praisefmnederland.vercel.app';
+            };
+
+            // Tenta detectar o país via API
+            fetch('https://ipapi.co/json/')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.country_code === 'NL') {
+                        redirectToNetherlands();
+                    }
+                })
+                .catch(() => {
+                    // Em caso de falha na API, tenta fallback via cabeçalho Cloudflare (se aplicável) ou linguagem
+                    if (navigator.language.startsWith('nl')) {
+                        // Opcional: redirecionar por idioma, mas só se houver forte indicação
+                        // Aqui deixamos desativado por segurança, a menos que você queira ativar
+                        // redirectToNetherlands();
+                    }
+                });
+        })();
+    </script>
+
     <style>
         :root { --orange:#ff4d00; --dark:#111; --grey:#555; --light-grey:#888; --bg:#fff; --border-color:#ddd; }
         * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; }
@@ -62,7 +89,15 @@
         .mini-track-bar { width:100%; height:4px; background:#ddd; border-radius:2px; position:relative; cursor:pointer; }
         .mini-track-fill { height:100%; background:var(--orange); border-radius:2px; width:0%; }
         .mini-track-time { display:flex; justify-content:space-between; font-size:11px; color:var(--light-grey); margin-top:4px; }
-        @media (max-width:480px) { .mini-player { padding:10px; } .mini-player-content { flex-direction:column; align-items:flex-start; gap:14px; } .mini-play { width:64px; height:64px; }  .circle-container { width:260px; height:260px; } .program-title { font-size:24px; } .mini-controls { gap:10px; } .mini-volume { width:80px; } }
+        @media (max-width:480px) { 
+            .mini-player { padding:10px; } 
+            .mini-player-content { flex-direction:column; align-items:flex-start; gap:14px; } 
+            .mini-play { width:64px; height:64px; }  
+            .circle-container { width:260px; height:260px; } 
+            .program-title { font-size:24px; } 
+            .mini-controls { gap:10px; } 
+            .mini-volume { width:80px; } 
+        }
     </style>
 </head>
 <body>
@@ -147,7 +182,6 @@
     const STREAM_URL = "https://stream.zeno.fm/hvwifp8ezc6tv";
     const audio = new Audio(STREAM_URL);
     audio.volume = 0.8;
-
     // IMAGES (keep the files in /image/ or replace with yours)
     const images = {
         default: "/image/logopraisefm.webp",
@@ -161,7 +195,6 @@
         sunday: "/image/sundaywithchrist.png",
         magazine: "/image/praisefmmagazine.png"
     };
-
     // HOSTS (optional)
     const hosts = {
         "Morning Show": "Stancy Campbell",
@@ -173,7 +206,6 @@
         "Praise FM Non Stop": "Praise FM",
         "Praise FM Worship": "Praise FM"
     };
-
     // SCHEDULE (confirmed by the user)
     // days: 0 = Sunday, 1 = Monday, ... 6 = Saturday
     const schedule = [
@@ -202,11 +234,9 @@
         // Praise FM Worship: 21:30 – 00:00 (all days)
         {start:"21:30", end:"00:00", name:"Praise FM Worship", img:images.worship, desc: "Praise FM plays the finest worship music."}
     ];
-
     // TIME UTILITIES
     function getTime() { return new Date(new Date().toLocaleString("en-US",{timeZone:"America/Chicago"})); }
     function timeToMins(t) { const [h,m]=t.split(":").map(Number); return h*60+m; }
-
     function getCurrentAndNext() {
         const now = getTime();
         const day = now.getDay();
@@ -237,18 +267,15 @@
             next2: future[1]?.prog || schedule[1]
         };
     }
-
     // RECENT TRACKS (simple)
     let currentTrack = {title:"", artist:"", duration:0, startTime:0};
     const recents = [];
     let trackTimer = null;
-
     function formatTime(seconds) {
         const min = Math.floor(seconds / 60);
         const sec = Math.floor(seconds % 60);
         return `${min}:${sec.toString().padStart(2, '0')}`;
     }
-
     function updateProgramProgress() {
         const {current} = getCurrentAndNext();
         const now = getTime();
@@ -268,7 +295,6 @@
             document.getElementById("miniTrackDuration").textContent = "Live";
         }
     }
-
     async function fetchAlbumCover(artist, title) {
         if (!artist || !title) return images.default;
         const query = encodeURIComponent(`${artist} ${title}`);
@@ -282,7 +308,6 @@
         } catch (e) {}
         return images.default;
     }
-
     function formatProgramName(p) {
         if (!p) return "Praise FM";
         const base = p.name.replace(/ \([^)]*\)$/, '').trim();
@@ -290,7 +315,6 @@
         const host = hosts[base] || "Praise FM";
         return `${base} With ${host}`;
     }
-
     function formatRange(p) {
         const [sh, sm] = p.start.split(":").map(Number);
         const [eh, em] = p.end.split(":").map(Number);
@@ -300,7 +324,6 @@
         const eHour = ((eh + 11) % 12) + 1;
         return `${sHour}:${sm.toString().padStart(2, '0')} ${sSuffix} - ${eHour}:${em.toString().padStart(2, '0')} ${eSuffix}`;
     }
-
     function updateDisplay() {
         const {current, next1, next2} = getCurrentAndNext();
         const now = getTime();
@@ -312,15 +335,12 @@
         document.getElementById("programTitle").textContent = displayName;
         document.getElementById("miniTitle").textContent = currentTrack.title ? currentTrack.title : displayName;
         document.getElementById("miniArtist").textContent = currentTrack.artist ? currentTrack.artist : "Praise & Worship";
-
         document.getElementById("upnextTime1").textContent = "UP NEXT: " + formatRange(next1);
         document.getElementById("upnextTitle1").textContent = formatProgramName(next1);
         document.getElementById("upnextDesc1").textContent = next1.desc || "-";
-
         document.getElementById("upnextTime2").textContent = formatRange(next2);
         document.getElementById("upnextTitle2").textContent = formatProgramName(next2);
         document.getElementById("upnextDesc2").textContent = next2.desc || "-";
-
         if (current.start && current.end) {
             const s = timeToMins(current.start);
             const e = timeToMins(current.end);
@@ -334,7 +354,6 @@
         }
         updateProgramProgress();
     }
-
     async function processMetadata(artist, title) {
         if (trackTimer) clearInterval(trackTimer);
         if (title.toLowerCase().includes("commercial") || title.toLowerCase().includes("ad")) {
@@ -360,7 +379,6 @@
         updateDisplay();
         trackTimer = setInterval(updateProgramProgress, 1000);
     }
-
     // METADATA (EventSource) - keep as is (if available)
     try {
         const es = new EventSource("https://api.zeno.fm/mounts/metadata/subscribe/hvwifp8ezc6tv");
@@ -374,7 +392,6 @@
             } catch {}
         };
     } catch(e) { /* ignore for environments blocking EventSource */ }
-
     function togglePlay() {
         if (audio.paused) { audio.play(); document.getElementById("miniPlayer").classList.add("show"); }
         else audio.pause();
@@ -384,7 +401,6 @@
         document.querySelector("#bigPlay").innerHTML = playing ? pauseSvg + ' Pause' : playSvg + ' Play';
         document.getElementById("miniPlayPause").innerHTML = playing ? pauseSvg : playSvg;
     }
-
     document.getElementById("bigPlay").onclick = togglePlay;
     document.getElementById("miniPlayPause").onclick = togglePlay;
     document.getElementById("miniRewind").onclick = () => audio.currentTime = Math.max(0, audio.currentTime - 15);
@@ -402,7 +418,6 @@
             ? '<svg viewBox="0 0 24 24"><path d="M16.5 12l4.5 4.5-1.5 1.5L15 13.5 11.5 17H7v-6h4.5L15 7.5l4.5-4.5 1.5 1.5L16.5 12z"/></svg>' 
             : '<svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>';
     };
-
     setInterval(updateDisplay, 8000);
     updateDisplay();
 </script>
