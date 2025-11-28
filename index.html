@@ -74,9 +74,8 @@
 </head>
 <body>
 
-<!-- 🔽 Praise FM locale topbar (INSERTED NEAR START OF <body>) -->
+<!-- 🔽 Praise FM locale topbar (modern, non-intrusive, user-choice only) -->
 <style>
-  /* Topbar styles (self-contained) */
   #praisefm-locale-bar {
     position: fixed;
     top: 0;
@@ -186,7 +185,6 @@
 
   if (isClosed()) return;
   if (location.hostname.includes("praisefmnederland") || location.hostname === "praisefm.nl") return;
-
   if (!isLikelyFromNetherlands()) return;
 
   const bar = document.getElementById("praisefm-locale-bar");
@@ -299,7 +297,6 @@
     const STREAM_URL = "https://stream.zeno.fm/hvwifp8ezc6tv";
     const audio = new Audio(STREAM_URL);
     audio.volume = 0.8;
-    // IMAGES (keep the files in /image/ or replace with yours)
     const images = {
         default: "/image/logopraisefm.webp",
         midnight: "/image/midnightgracelogo.webp",
@@ -312,7 +309,6 @@
         sunday: "/image/sundaywithchrist.png",
         magazine: "/image/praisefmmagazine.png"
     };
-    // HOSTS (optional)
     const hosts = {
         "Morning Show": "Stancy Campbell",
         "Midday Grace": "Michael Ray",
@@ -323,35 +319,20 @@
         "Praise FM Non Stop": "Praise FM",
         "Praise FM Worship": "Praise FM"
     };
-    // SCHEDULE (confirmed by the user)
-    // days: 0 = Sunday, 1 = Monday, ... 6 = Saturday
     const schedule = [
-        // Midnight Grace: 00:00 – 06:00 (all days)
         {start:"00:00", end:"06:00", name:"Midnight Grace", img:images.midnight, desc: "Daniel Brooks lays down the most soothing overnight praise vibes."},
-        // Praise FM Worship: 06:00 – 07:00 (all days)
         {start:"06:00", end:"07:00", name:"Praise FM Worship", img:images.worship, desc: "Praise FM plays the finest worship music."},
-        // Morning Show: 07:00 – 12:00 (Mon–Fri)
         {start:"07:00", end:"12:00", name:"Morning Show", img:images.morning, days:[1,2,3,4,5], desc: "Stancy Campbell kickstarts your day with uplifting praise and inspiration."},
-        // Sunday With Christ: 07:00 – 12:00 (Sunday)
         {start:"07:00", end:"12:00", name:"Sunday With Christ", img:images.sunday, days:[0], desc: "Matt Riley shares spiritual insights and Sunday music."},
-        // Midday Grace: 12:00 – 16:00 (all days)
         {start:"12:00", end:"16:00", name:"Midday Grace", img:images.midday, desc: "Michael Ray brings grace and tunes through the midday."},
-        // Praise FM Non Stop: 16:00 – 17:00 (all days)
         {start:"16:00", end:"17:00", name:"Praise FM Non Stop", img:images.nonstop, desc: "Praise FM with non-stop praise hits."},
-        // Praise FM Worship: 17:00 – 18:00 (all days)
         {start:"17:00", end:"18:00", name:"Praise FM Worship", img:images.worship, desc: "Praise FM plays the finest worship music."},
-        // Praise FM Carpool: 18:00 – 20:00 (Mon–Fri)
         {start:"18:00", end:"20:00", name:"Praise FM Carpool", img:images.carpool, days:[1,2,3,4,5], desc: "Rachael Harris with praise tunes for your drive home."},
-        // Praise FM POP: 20:00 – 20:30 (all days)
         {start:"20:00", end:"20:30", name:"Praise FM POP", img:images.pop, desc: "Jordan Reys with all things pop and contemporary praise."},
-        // Praise FM Magazine: 20:30 – 20:31 (Sunday only)
         {start:"20:30", end:"20:31", name:"Praise FM Magazine", img:images.magazine, days:[0], desc: "Praise FM with magazine-style content and features."},
-        // Praise FM Non Stop: 20:30/20:31 – 21:30
         {start:"20:30", end:"21:30", name:"Praise FM Non Stop", img:images.nonstop, days:[1,2,3,4,5,6], desc: "Praise FM with non-stop praise hits."},
-        // Praise FM Worship: 21:30 – 00:00 (all days)
         {start:"21:30", end:"00:00", name:"Praise FM Worship", img:images.worship, desc: "Praise FM plays the finest worship music."}
     ];
-    // TIME UTILITIES
     function getTime() { return new Date(new Date().toLocaleString("en-US",{timeZone:"America/Chicago"})); }
     function timeToMins(t) { const [h,m]=t.split(":").map(Number); return h*60+m; }
     function getCurrentAndNext() {
@@ -370,7 +351,6 @@
             }
             if (mins < s) future.push({prog:p, startMins:s});
         }
-        // If no future today, fill with programs from the next day
         if (future.length === 0) {
             const tomorrow = (day + 1) % 7;
             for (const p of schedule) {
@@ -384,7 +364,6 @@
             next2: future[1]?.prog || schedule[1]
         };
     }
-    // RECENT TRACKS (simple)
     let currentTrack = {title:"", artist:"", duration:0, startTime:0};
     const recents = [];
     let trackTimer = null;
@@ -420,7 +399,7 @@
             const res = await fetch(url);
             const data = await res.json();
             if (data.results && data.results[0] && data.results[0].artworkUrl100) {
-                return data.results[0].artworkUrl100.replace('100x100', '600x600'); // higher res
+                return data.results[0].artworkUrl100.replace('100x100', '600x600');
             }
         } catch (e) {}
         return images.default;
@@ -428,7 +407,8 @@
     function formatProgramName(p) {
         if (!p) return "Praise FM";
         const base = p.name.replace(/ \([^)]*\)$/, '').trim();
-        if (base === "Praise FM Non Stop" || base === "Midnight Grace" || base === "Praise FM POP" || base === "Praise FM Magazine" || base === "Praise FM Worship") return base;
+        // REMOVIDO "Midnight Grace" da lista de exceções!
+        if (base === "Praise FM Non Stop" || base === "Praise FM POP" || base === "Praise FM Magazine" || base === "Praise FM Worship") return base;
         const host = hosts[base] || "Praise FM";
         return `${base} With ${host}`;
     }
@@ -496,7 +476,6 @@
         updateDisplay();
         trackTimer = setInterval(updateProgramProgress, 1000);
     }
-    // METADATA (EventSource)
     try {
         const es = new EventSource("https://api.zeno.fm/mounts/metadata/subscribe/hvwifp8ezc6tv");
         es.onmessage = e => {
@@ -508,7 +487,7 @@
                 }
             } catch {}
         };
-    } catch(e) { /* ignore for environments blocking EventSource */ }
+    } catch(e) {}
     function togglePlay() {
         if (audio.paused) { audio.play(); document.getElementById("miniPlayer").classList.add("show"); }
         else audio.pause();
