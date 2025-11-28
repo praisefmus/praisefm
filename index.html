@@ -17,112 +17,80 @@
     <title>Praise FM - Live</title>
     <meta name="theme-color" content="#ff4d00">
     <link rel="icon" type="image/png" sizes="32x32" href="/image/favicon-32x32.png">
-    <link rel="manifest" href="/manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+
     <style>
-        :root {
-            --orange:#ff4d00;
-            --dark:#111;
-            --grey:#555;
-            --light-grey:#888;
-            --bg:#fff;
-            --border-color:#ddd;
-        }
-        * {
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-            font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-        }
-        body {
-            background:var(--bg);
-            color:#000;
-            min-height:100vh;
-            padding-bottom:120px;
-            display:flex;
-            flex-direction:column;
-            align-items:center;
-        }
-        .container {
-            width:100%;
-            max-width:900px;
-            padding:20px;
-            text-align:center;
-        }
-        .station-title {
-            font-size:32px;
-            font-weight:900;
-            color:var(--orange);
-            margin:20px 0 4px;
-        }
-        .now-playing-img {
-            width:280px;
-            height:280px;
-            border-radius:15px;
-            object-fit:cover;
-            margin:15px auto;
-            display:block;
-            background:#eee;
-        }
-        .now-playing-title {
-            font-size:20px;
-            font-weight:700;
-            margin-top:10px;
-        }
-        .now-playing-artist {
-            font-size:16px;
-            margin-top:4px;
-            color:var(--grey);
-        }
-        .player-controls {
-            margin-top:25px;
-            display:flex;
-            justify-content:center;
-            gap:20px;
-        }
-        .player-button {
-            background:var(--orange);
-            border:none;
-            color:#fff;
-            padding:15px 28px;
-            font-size:18px;
-            font-weight:700;
-            border-radius:40px;
-            cursor:pointer;
-            box-shadow:0 4px 12px rgba(0,0,0,0.2);
-        }
-        #external-radio-banner {
+        :root { --orange:#ff4d00; --dark:#111; --grey:#555; --light-grey:#888; --bg:#fff; --border-color:#ddd; }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; }
+        body { background:var(--bg); color:#000; min-height:100vh; padding-bottom:120px; display:flex; flex-direction:column; align-items:center; }
+        .container { width:100%; max-width:900px; padding:20px; text-align:center; }
+        .station-title { font-size:32px; font-weight:900; color:var(--orange); margin:20px 0 4px; }
+        .station-subtitle { font-size:17px; color:var(--grey); margin-bottom:30px; }
+        .circle-container { width:min(80vw,320px); height:min(80vw,320px); margin:0 auto 20px; position:relative; }
+        .circle-border { position:absolute; inset:0; border-radius:50%; background:conic-gradient(var(--orange) 0%, transparent 0%);
+            mask:radial-gradient(transparent 68%, black 70%); -webkit-mask:radial-gradient(transparent 68%, black 70%); }
+        .circle-img { position:absolute; inset:6px; border-radius:50%; overflow:hidden; background:#000; }
+        .circle-img img { width:100%; height:100%; object-fit:cover; }
+        .live-badge { display:inline-flex; align-items:center; gap:8px; color:var(--orange); font-weight:700; font-size:14px; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; }
+        .live-dot { width:9px; height:9px; background:var(--orange); border-radius:50%; animation:pulse 2s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+        /* 🎯 NOTIFICAÇÃO DISCRETA (Opção D) */
+        #external-radio-toast {
             display:none;
             position:fixed;
-            bottom:0; left:0; right:0;
+            bottom:20px;
+            right:20px;
             background:#111;
-            color:#fff;
-            padding:18px 20px;
-            text-align:center;
-            font-size:16px;
-            z-index:9999;
-            box-shadow:0 -4px 18px rgba(0,0,0,0.4);
+            color:white;
+            padding:14px 18px;
+            border-radius:14px;
+            font-size:14px;
+            box-shadow:0 4px 18px rgba(0,0,0,0.4);
+            z-index:99999;
+            max-width:260px;
+            animation:fadeToast .4s ease-out;
         }
-        #external-radio-banner button {
+        #external-radio-toast button {
             margin-top:8px;
             background:#ff4d00;
             border:none;
             color:white;
-            padding:10px 22px;
-            border-radius:12px;
-            font-size:15px;
+            padding:6px 14px;
+            border-radius:10px;
+            font-size:13px;
             font-weight:700;
             cursor:pointer;
         }
+        @keyframes fadeToast {
+            from { opacity:0; transform:translateY(15px); }
+            to { opacity:1; transform:translateY(0); }
+        /* (continuação dos estilos existentes) */
     </style>
 </head>
+
 <body>
 
+<!-- 🔔 Notificação discreta -->
+<div id="external-radio-toast">
+    Você veio de outra plataforma.<br>
+    Ouça com mais qualidade aqui no site oficial.
+    <button onclick="window.location.href='https://praisefm.vercel.app'">OUVIR</button>
+</div>
+
+<!-- Conteúdo original -->
 <div class="container">
     <img src="/image/praisefm.png" width="180" style="margin-top:20px;">
     <div class="station-title">Praise FM — Praise & Worship</div>
 
-    <img id="cover" src="/image/default.jpg" class="now-playing-img">
+    <div class="circle-container">
+        <div class="circle-border" id="circleBorder"></div>
+        <div class="circle-img">
+            <img id="cover" src="/image/default.jpg">
+        </div>
+    </div>
+
+    <div class="live-badge"><div class="live-dot"></div> LIVE</div>
+
     <div id="title" class="now-playing-title">Loading...</div>
     <div id="artist" class="now-playing-artist"></div>
 
@@ -132,20 +100,21 @@
     </div>
 </div>
 
-<!-- Banner Inteligente -->
-<div id="external-radio-banner">
-    Parece que você veio de outra plataforma.<br>
-    Ouça com mais qualidade aqui no site oficial.<br>
-    <button onclick="window.location.href='https://praisefm.vercel.app'">OUVIR AGORA</button>
-</div>
-
+<!-- Player Script Original -->
 <script>
-/* === Player === */
 const audio = new Audio("https://stream.zeno.fm/f2z4h9m9k2zuv");
-document.getElementById("play").onclick = () => audio.play();
-document.getElementById("stop").onclick = () => audio.pause();
 
-/* === Atualizar música === */
+document.getElementById("play").onclick = () => {
+    audio.play();
+    document.getElementById("circleBorder").style.animation = "spin 8s linear infinite";
+};
+
+document.getElementById("stop").onclick = () => {
+    audio.pause();
+    document.getElementById("circleBorder").style.animation = "none";
+};
+
+/* Música atual */
 async function loadTrack() {
     try {
         const r = await fetch("https://public.radio.co/stations/s8e3f0d4c4/status");
@@ -164,8 +133,10 @@ async function loadTrack() {
 }
 setInterval(loadTrack, 5000);
 loadTrack();
+</script>
 
-/* === DETECÇÃO DE PLATAFORMAS EXTERNAS + EVENTO GA4 === */
+<!-- 🔍 Detecção de Plataformas + Evento GA4 + Notificação -->
+<script>
 (function(){
     const ref = document.referrer.toLowerCase();
     const ua = navigator.userAgent.toLowerCase();
@@ -185,13 +156,13 @@ loadTrack();
         }
     }
 
-    if (ua.includes("mytuner") || ua.includes("radiobox") || ua.includes("tunein")) {
+    if (ua.includes("mytuner") || ua.includes("tunein") || ua.includes("radiobox")) {
         isExternal = true;
     }
 
     if (isExternal) {
-        const banner = document.getElementById("external-radio-banner");
-        if (banner) banner.style.display = "block";
+        const toast = document.getElementById("external-radio-toast");
+        toast.style.display = "block";
 
         if (typeof gtag === "function") {
             gtag('event', 'external_platform_listener', {
