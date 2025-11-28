@@ -6,6 +6,18 @@
     <title>Praise FM - Live</title>
     <meta name="theme-color" content="#ff4d00">
     <link rel="icon" type="image/png" sizes="32x32" href="/image/favicon-32x32.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0RNK6G5WWL"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-0RNK6G5WWL');
+    </script>
+
     <style>
         :root { --orange:#ff4d00; --dark:#111; --grey:#555; --light-grey:#888; --bg:#fff; --border-color:#ddd; }
         * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; }
@@ -116,7 +128,7 @@
 </head>
 <body>
 
-<!-- 🌐 BANNER MULTILÍNGUE (Apple-style) -->
+<!-- 🌐 BANNER MULTILÍNGUE -->
 <div id="praisefm-locale-bar" style="display:none;">
     <div class="pfm-message">Your region has a Praise FM version.</div>
     <div class="pfm-locale-select" id="pfm-locale-select">
@@ -124,11 +136,11 @@
             <span>🌐 Select Region</span>
         </button>
         <div class="pfm-dropdown" id="pfm-dropdown">
-            <a href="https://praisefmfr.vercel.app" class="pfm-option"><span class="flag">🇫🇷</span> France</a>
-            <a href="https://praisefmde.vercel.app" class="pfm-option"><span class="flag">🇩🇪</span> Germany</a>
-            <a href="https://praisefmch-fr.vercel.app" class="pfm-option"><span class="flag">🇨🇭</span> Switzerland (FR)</a>
-            <a href="https://praisefmch-de.vercel.app" class="pfm-option"><span class="flag">🇨🇭</span> Switzerland (DE)</a>
-            <a href="https://praisefmnederland.vercel.app" class="pfm-option"><span class="flag">🇳🇱</span> Netherlands</a>
+            <a href="https://praisefmfr.vercel.app"><span class="flag">🇫🇷</span> France</a>
+            <a href="https://praisefmde.vercel.app"><span class="flag">🇩🇪</span> Germany</a>
+            <a href="https://praisefmch-fr.vercel.app"><span class="flag">🇨🇭</span> Switzerland (FR)</a>
+            <a href="https://praisefmch-de.vercel.app"><span class="flag">🇨🇭</span> Switzerland (DE)</a>
+            <a href="https://praisefmnederland.vercel.app"><span class="flag">🇳🇱</span> Netherlands</a>
         </div>
     </div>
     <button class="pfm-close-btn" id="pfm-close" aria-label="Close">&times;</button>
@@ -167,11 +179,17 @@
     return;
   }
 
-  document.getElementById("praisefm-locale-bar").style.display = "flex";
-  document.getElementById("pfm-bar-shim").style.display = "block";
+  const bar = document.getElementById("praisefm-locale-bar");
+  const shim = document.getElementById("pfm-bar-shim");
+  if (!bar) return;
+
+  bar.style.display = "flex";
+  shim.style.display = "block";
 
   const toggle = document.getElementById("pfm-locale-toggle");
   const dropdown = document.getElementById("pfm-dropdown");
+  if (!toggle || !dropdown) return;
+
   toggle.addEventListener("click", (e) => {
     e.stopPropagation();
     document.getElementById("pfm-locale-select").classList.toggle("active");
@@ -183,12 +201,11 @@
 
   document.getElementById("pfm-close").addEventListener("click", () => {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ts: Date.now()})); } catch(e){}
-    document.getElementById("praisefm-locale-bar").style.display = "none";
-    document.getElementById("pfm-bar-shim").style.display = "none";
+    bar.style.display = "none";
+    shim.style.display = "none";
   });
 })();
 </script>
-<!-- 🔼 FIM DO BANNER -->
 
 <div class="container">
     <h1 class="station-title">Praise FM</h1>
@@ -340,7 +357,6 @@
     function formatProgramName(p) {
         if (!p) return "Praise FM";
         const base = p.name.replace(/ \([^)]*\)$/, '').trim();
-        // ✅ REMOVIDO "Midnight Grace" da lista de exceção!
         if (["Praise FM Non Stop", "Praise FM POP", "Praise FM Magazine", "Praise FM Worship"].includes(base)) {
             return base;
         }
@@ -456,7 +472,7 @@
     document.getElementById("miniVolumeIcon").onclick = () => {
         audio.muted = !audio.muted;
         document.getElementById("miniVolumeIcon").innerHTML = audio.muted 
-            ? '<svg viewBox="0 0 24 24"><path d="M16.5 12l4.5 4.5-1.5 1.5L15 13.5 11.5 17H7v-6h4.5L15 7.5l4.5-4.5 1.5 1.5L16.5 12z"/></svg>' 
+            ? '<svg viewBox="0 0 24 24"><path d="M16.5 12l4.5 4.5-1.5 1.5L15 13.5 11.5 17H7v-6h4.5L15 7.5l4.5-4.5 1.5 1.5L16.5 12z"/></svg>'
             : '<svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>';
     };
     function updateDisplay() {
