@@ -71,120 +71,64 @@
             .mini-volume { width:80px; } 
         }
 
-        /* 🌐 Locale dropdown (Apple-style) */
+        /* 🌐 Apple-style dropdown */
         #praisefm-locale-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: rgba(22,22,22,0.98);
-            color: #fff;
+            position: fixed; top: 0; left: 0; right: 0;
+            background: rgba(22,22,22,0.98); color: #fff;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-            z-index: 99999;
-            padding: 12px 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-            backdrop-filter: blur(6px);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            z-index: 99999; padding: 12px 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2); backdrop-filter: blur(6px);
+            display: flex; align-items: center; justify-content: space-between;
         }
-        #praisefm-locale-bar .pfm-message {
-            font-size: 15px;
-            line-height: 1.3;
-        }
-        .pfm-locale-select {
-            position: relative;
-            display: inline-block;
-        }
+        #praisefm-locale-bar .pfm-message { font-size: 15px; line-height: 1.3; }
+        .pfm-locale-select { position: relative; display: inline-block; }
         .pfm-locale-select button {
-            background: rgba(255,255,255,0.1);
-            color: white;
-            border: none;
-            padding: 6px 12px 6px 10px;
-            border-radius: 20px;
-            font-size: 14px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            background: rgba(255,255,255,0.1); color: white; border: none;
+            padding: 6px 12px 6px 10px; border-radius: 20px; font-size: 14px;
+            cursor: pointer; display: flex; align-items: center; gap: 6px;
         }
         .pfm-locale-select button::after {
-            content: "▼";
-            font-size: 8px;
-            opacity: 0.7;
+            content: "▼"; font-size: 8px; opacity: 0.7;
         }
         .pfm-dropdown {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background: #000;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-            z-index: 100;
-            display: none;
-            min-width: 200px;
-            overflow: hidden;
+            position: absolute; top: 100%; right: 0;
+            background: #000; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            z-index: 100; display: none; min-width: 200px; overflow: hidden;
         }
         .pfm-dropdown a {
-            display: block;
-            color: white;
-            padding: 10px 16px;
-            text-decoration: none;
-            font-size: 14px;
-            transition: background 0.2s;
+            display: block; color: white; padding: 10px 16px; text-decoration: none;
+            font-size: 14px; transition: background 0.2s;
         }
-        .pfm-dropdown a:hover {
-            background: #1a1a1a;
-        }
-        .pfm-dropdown a span.flag {
-            margin-right: 8px;
-            font-size: 16px;
-        }
-        .pfm-locale-select.active .pfm-dropdown {
-            display: block;
-        }
+        .pfm-dropdown a:hover { background: #1a1a1a; }
+        .pfm-dropdown a span.flag { margin-right: 8px; font-size: 16px; }
+        .pfm-locale-select.active .pfm-dropdown { display: block; }
         .pfm-close-btn {
-            background: none;
-            border: none;
-            color: #aaa;
-            font-size: 18px;
-            margin-left: 12px;
-            cursor: pointer;
-            padding: 4px;
+            background: none; border: none; color: #aaa; font-size: 18px;
+            margin-left: 12px; cursor: pointer; padding: 4px;
         }
         @media (max-width: 520px) {
             #praisefm-locale-bar { padding: 10px 16px; }
             #praisefm-locale-bar .pfm-message { font-size: 13px; }
-            .pfm-bar-shim { height: 64px; }
         }
         .pfm-bar-shim { height: 56px; display: none; }
+        @media (max-width: 520px) { .pfm-bar-shim { height: 64px; } }
     </style>
 </head>
 <body>
 
-<!-- 🌐 Locale Banner com dropdown estilo Apple -->
+<!-- 🌐 BANNER MULTILÍNGUE (Apple-style) -->
 <div id="praisefm-locale-bar" style="display:none;">
-    <div class="pfm-message">You’re visiting from a region with a Praise FM version.</div>
+    <div class="pfm-message">Your region has a Praise FM version.</div>
     <div class="pfm-locale-select" id="pfm-locale-select">
         <button id="pfm-locale-toggle">
             <span>🌐 Select Region</span>
         </button>
         <div class="pfm-dropdown" id="pfm-dropdown">
-            <a href="https://praisefmfr.vercel.app" class="pfm-option" data-lang="fr">
-                <span class="flag">🇫🇷</span> France
-            </a>
-            <a href="https://praisefmde.vercel.app" class="pfm-option" data-lang="de">
-                <span class="flag">🇩🇪</span> Germany
-            </a>
-            <a href="https://praisefmch-fr.vercel.app" class="pfm-option" data-lang="fr-CH">
-                <span class="flag">🇨🇭</span> Switzerland (FR)
-            </a>
-            <a href="https://praisefmch-de.vercel.app" class="pfm-option" data-lang="de-CH">
-                <span class="flag">🇨🇭</span> Switzerland (DE)
-            </a>
-            <a href="https://praisefmnederland.vercel.app" class="pfm-option" data-lang="nl">
-                <span class="flag">🇳🇱</span> Netherlands
-            </a>
+            <a href="https://praisefmfr.vercel.app" class="pfm-option"><span class="flag">🇫🇷</span> France</a>
+            <a href="https://praisefmde.vercel.app" class="pfm-option"><span class="flag">🇩🇪</span> Germany</a>
+            <a href="https://praisefmch-fr.vercel.app" class="pfm-option"><span class="flag">🇨🇭</span> Switzerland (FR)</a>
+            <a href="https://praisefmch-de.vercel.app" class="pfm-option"><span class="flag">🇨🇭</span> Switzerland (DE)</a>
+            <a href="https://praisefmnederland.vercel.app" class="pfm-option"><span class="flag">🇳🇱</span> Netherlands</a>
         </div>
     </div>
     <button class="pfm-close-btn" id="pfm-close" aria-label="Close">&times;</button>
@@ -193,7 +137,7 @@
 
 <script>
 (function(){
-  const STORAGE_KEY = "praisefm_locale_banner_closed_v1";
+  const STORAGE_KEY = "praisefm_locale_banner_closed_v2";
   const EXPIRE_DAYS = 30;
 
   function isClosed() {
@@ -205,19 +149,17 @@
     } catch (e) { return false; }
   }
 
-  // Detecta idioma
   const langs = navigator.languages || [navigator.language || ''];
-  let detectedLang = null;
+  let detected = false;
   for (const lang of langs) {
-    if (lang.toLowerCase().startsWith('fr')) detectedLang = 'fr';
-    else if (lang.toLowerCase().startsWith('de')) detectedLang = 'de';
-    else if (lang.toLowerCase().startsWith('nl')) detectedLang = 'nl';
-    // Suíça: fr-CH, de-CH
-    else if (lang.toLowerCase() === 'fr-ch') detectedLang = 'fr-CH';
-    else if (lang.toLowerCase() === 'de-ch') detectedLang = 'de-CH';
+    const l = lang.toLowerCase();
+    if (l.startsWith('fr') || l.startsWith('de') || l.startsWith('nl')) {
+      detected = true;
+      break;
+    }
   }
 
-  if (isClosed() || !detectedLang || 
+  if (isClosed() || !detected || 
       location.hostname.includes("praisefmfr") || 
       location.hostname.includes("praisefmde") || 
       location.hostname.includes("praisefmch") || 
@@ -225,34 +167,25 @@
     return;
   }
 
-  // Mostrar banner
-  const bar = document.getElementById("praisefm-locale-bar");
-  const shim = document.getElementById("pfm-bar-shim");
-  if (!bar) return;
-  bar.style.display = "flex";
-  shim.style.display = "block";
+  document.getElementById("praisefm-locale-bar").style.display = "flex";
+  document.getElementById("pfm-bar-shim").style.display = "block";
 
-  // Toggle dropdown
-  const toggleBtn = document.getElementById("pfm-locale-toggle");
+  const toggle = document.getElementById("pfm-locale-toggle");
   const dropdown = document.getElementById("pfm-dropdown");
-  toggleBtn.addEventListener("click", (e) => {
+  toggle.addEventListener("click", (e) => {
     e.stopPropagation();
     document.getElementById("pfm-locale-select").classList.toggle("active");
   });
 
-  // Fechar dropdown ao clicar fora
   document.addEventListener("click", () => {
     document.getElementById("pfm-locale-select").classList.remove("active");
   });
 
-  // Fechar banner
-  const closeBanner = () => {
+  document.getElementById("pfm-close").addEventListener("click", () => {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ts: Date.now()})); } catch(e){}
-    bar.style.display = "none";
-    shim.style.display = "none";
-  };
-
-  document.getElementById("pfm-close").addEventListener("click", closeBanner);
+    document.getElementById("praisefm-locale-bar").style.display = "none";
+    document.getElementById("pfm-bar-shim").style.display = "none";
+  });
 })();
 </script>
 <!-- 🔼 FIM DO BANNER -->
@@ -334,7 +267,6 @@
     </div>
 </div>
 <script>
-    // STREAM
     const STREAM_URL = "https://stream.zeno.fm/hvwifp8ezc6tv";
     const audio = new Audio(STREAM_URL);
     audio.volume = 0.8;
@@ -408,8 +340,8 @@
     function formatProgramName(p) {
         if (!p) return "Praise FM";
         const base = p.name.replace(/ \([^)]*\)$/, '').trim();
-        // ✅ REMOVIDO "Midnight Grace" da lista de exceções!
-        if (base === "Praise FM Non Stop" || base === "Praise FM POP" || base === "Praise FM Magazine" || base === "Praise FM Worship") {
+        // ✅ REMOVIDO "Midnight Grace" da lista de exceção!
+        if (["Praise FM Non Stop", "Praise FM POP", "Praise FM Magazine", "Praise FM Worship"].includes(base)) {
             return base;
         }
         const host = hosts[base] || "Praise FM";
@@ -458,7 +390,7 @@
         try {
             const res = await fetch(url);
             const data = await res.json();
-            if (data.results && data.results[0] && data.results[0].artworkUrl100) {
+            if (data.results?.[0]?.artworkUrl100) {
                 return data.results[0].artworkUrl100.replace('100x100', '600x600');
             }
         } catch (e) {}
