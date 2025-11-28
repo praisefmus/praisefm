@@ -1,27 +1,19 @@
 {
-  "name": "Praise FM U.S.",
-  "short_name": "Praise FM",
-  "description": "24/7 Praise & Worship from Chicago",
-  "lang": "en-US",
+  "name": "Praise FM",
+  "short_name": "PraiseFM",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#000000",
+  "background_color": "#fff",
   "theme_color": "#ff4d00",
-  "orientation": "portrait",
   "icons": [
     {
-      "src": "/image/favicon-192x192.png",
+      "src": "/image/launcher-icon-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/image/favicon-512x512.png",
+      "src": "/image/launcher-icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
-    },
-    {
-      "src": "/image/apple-touch-icon.png",
-      "sizes": "180x180",
       "type": "image/png"
     }
   ]
