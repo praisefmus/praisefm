@@ -2,20 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Praise FM - Live</title>
     <meta name="theme-color" content="#ff4d00">
     <link rel="icon" type="image/png" sizes="32x32" href="/image/favicon-32x32.png">
-
     <!-- 🇳🇱 Redirecionamento para Holanda -->
     <script>
-        // Redireciona visitantes da Holanda (NL) antes de carregar a página
         (function() {
             const redirectToNetherlands = () => {
                 window.location.href = 'https://praisefmnederland.vercel.app';
             };
-
-            // Tenta detectar o país via API
             fetch('https://ipapi.co/json/')
                 .then(response => response.json())
                 .then(data => {
@@ -24,16 +20,10 @@
                     }
                 })
                 .catch(() => {
-                    // Em caso de falha na API, tenta fallback via cabeçalho Cloudflare (se aplicável) ou linguagem
-                    if (navigator.language.startsWith('nl')) {
-                        // Opcional: redirecionar por idioma, mas só se houver forte indicação
-                        // Aqui deixamos desativado por segurança, a menos que você queira ativar
-                        // redirectToNetherlands();
-                    }
+                    // fallback opcional desativado por segurança
                 });
         })();
     </script>
-
     <style>
         :root { --orange:#ff4d00; --dark:#111; --grey:#555; --light-grey:#888; --bg:#fff; --border-color:#ddd; }
         * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; }
@@ -77,14 +67,6 @@
         .mini-info { flex:1; min-width:0; }
         .mini-title { font-weight:700; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
         .mini-artist { font-size:13px; color:var(--grey); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-        .mini-controls { display:flex; align-items:center; gap:16px; }
-        .mini-btn { background:none; border:none; cursor:pointer; padding:8px; }
-        .mini-btn svg { width:24px; height:24px; fill:var(--grey); }
-        .mini-play { background:var(--orange); width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; box-shadow:0 2px 12px rgba(255,77,0,.35); }
-        .mini-play svg { width:20px; height:20px; fill:#fff; }
-        .mini-volume { display:flex; align-items:center; gap:4px; width:100px; }
-        .mini-volume-bar { flex:1; height:4px; background:#ddd; border-radius:2px; position:relative; cursor:pointer; }
-        .mini-volume-fill { height:100%; background:var(--orange); border-radius:2px; width:80%; }
         .mini-track-progress { width:100%; padding:6px 0; }
         .mini-track-bar { width:100%; height:4px; background:#ddd; border-radius:2px; position:relative; cursor:pointer; }
         .mini-track-fill { height:100%; background:var(--orange); border-radius:2px; width:0%; }
@@ -101,48 +83,50 @@
     </style>
 </head>
 <body>
-<div class="container">
-    <h1 class="station-title">Praise FM</h1>
-    <p class="station-subtitle">Praise & Worship</p>
-    <div class="circle-container">
-        <div class="circle-border" id="progressRing"></div>
-        <div class="circle-img">
-            <img id="mainImg" src="/image/logopraisefm.webp" alt="Now Playing">
-        </div>
-    </div>
-    <div class="live-badge"><div class="live-dot"></div> LIVE</div>
-    <h2 class="program-title" id="programTitle">Praise FM</h2>
-    <button class="play-button" id="bigPlay">
-        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Play
-    </button>
-    <div class="upnext">
-        <div class="upnext-items">
-            <div class="upnext-item">
-                <img id="upnextImg1" src="/image/logopraisefmnonstop.png" class="upnext-img" onerror="this.src='/image/logopraisefmnonstop.png'">
-                <div>
-                    <div class="upnext-time" id="upnextTime1">-</div>
-                    <div class="upnext-title" id="upnextTitle1">-</div>
-                    <div class="upnext-desc" id="upnextDesc1">-</div>
-                </div>
-            </div>
-            <div class="upnext-item">
-                <img id="upnextImg2" src="/image/praisefmcarpoollogo.webp" class="upnext-img" onerror="this.src='/image/logopraisefm.webp'">
-                <div>
-                    <div class="upnext-time" id="upnextTime2">-</div>
-                    <div class="upnext-title" id="upnextTitle2">-</div>
-                    <div class="upnext-desc" id="upnextDesc2">-</div>
-                </div>
+<main>
+    <div class="container">
+        <h1 class="station-title">Praise FM</h1>
+        <p class="station-subtitle">Praise & Worship</p>
+        <div class="circle-container">
+            <div class="circle-border" id="progressRing"></div>
+            <div class="circle-img">
+                <img id="mainImg" src="/image/logopraisefm.webp" alt="Now Playing">
             </div>
         </div>
+        <div class="live-badge"><div class="live-dot"></div> LIVE</div>
+        <h2 class="program-title" id="programTitle">Praise FM</h2>
+        <button class="play-button" id="bigPlay" aria-label="Tocar/Pausar rádio">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Play
+        </button>
+        <div class="upnext">
+            <div class="upnext-items">
+                <div class="upnext-item">
+                    <img id="upnextImg1" src="/image/logopraisefmnonstop.png" class="upnext-img" alt="" onerror="this.src='/image/logopraisefmnonstop.png'">
+                    <div>
+                        <div class="upnext-time" id="upnextTime1">-</div>
+                        <div class="upnext-title" id="upnextTitle1">-</div>
+                        <div class="upnext-desc" id="upnextDesc1">-</div>
+                    </div>
+                </div>
+                <div class="upnext-item">
+                    <img id="upnextImg2" src="/image/praisefmcarpoollogo.webp" class="upnext-img" alt="" onerror="this.src='/image/logopraisefm.webp'">
+                    <div>
+                        <div class="upnext-time" id="upnextTime2">-</div>
+                        <div class="upnext-title" id="upnextTitle2">-</div>
+                        <div class="upnext-desc" id="upnextDesc2">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="recently">
+            <div class="recently-header">Recently played</div>
+            <div id="recentList"></div>
+        </div>
     </div>
-    <div class="recently">
-        <div class="recently-header">Recently played</div>
-        <div id="recentList"></div>
-    </div>
-</div>
-<div class="mini-player" id="miniPlayer">
+</main>
+<div class="mini-player" id="miniPlayer" role="application">
     <div class="mini-player-content">
-        <img id="miniImg" src="/image/logopraisefm.webp" class="mini-cover">
+        <img id="miniImg" src="/image/logopraisefm.webp" class="mini-cover" alt="Now playing cover">
         <div class="mini-info">
             <div class="mini-title" id="miniTitle">Praise FM</div>
             <div class="mini-artist" id="miniArtist">Praise & Worship</div>
@@ -157,17 +141,17 @@
             </div>
         </div>
         <div class="mini-controls">
-            <button class="mini-btn" id="miniRewind">
+            <button class="mini-btn" id="miniRewind" aria-label="Retroceder 15 segundos">
                 <svg viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg>
             </button>
-            <button class="mini-play" id="miniPlayPause">
+            <button class="mini-play" id="miniPlayPause" aria-label="Tocar/Pausar">
                 <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
             </button>
-            <button class="mini-btn" id="miniForward">
+            <button class="mini-btn" id="miniForward" aria-label="Avançar 15 segundos">
                 <svg viewBox="0 0 24 24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg>
             </button>
             <div class="mini-volume">
-                <button class="mini-btn" id="miniVolumeIcon">
+                <button class="mini-btn" id="miniVolumeIcon" aria-label="Alternar mudo">
                     <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
                 </button>
                 <div class="mini-volume-bar" id="miniVolumeBar">
@@ -182,7 +166,6 @@
     const STREAM_URL = "https://stream.zeno.fm/hvwifp8ezc6tv";
     const audio = new Audio(STREAM_URL);
     audio.volume = 0.8;
-    // IMAGES (keep the files in /image/ or replace with yours)
     const images = {
         default: "/image/logopraisefm.webp",
         midnight: "/image/midnightgracelogo.webp",
@@ -195,7 +178,6 @@
         sunday: "/image/sundaywithchrist.png",
         magazine: "/image/praisefmmagazine.png"
     };
-    // HOSTS (optional)
     const hosts = {
         "Morning Show": "Stancy Campbell",
         "Midday Grace": "Michael Ray",
@@ -206,35 +188,20 @@
         "Praise FM Non Stop": "Praise FM",
         "Praise FM Worship": "Praise FM"
     };
-    // SCHEDULE (confirmed by the user)
-    // days: 0 = Sunday, 1 = Monday, ... 6 = Saturday
     const schedule = [
-        // Midnight Grace: 00:00 – 06:00 (all days)
         {start:"00:00", end:"06:00", name:"Midnight Grace", img:images.midnight, desc: "Daniel Brooks lays down the most soothing overnight praise vibes."},
-        // Praise FM Worship: 06:00 – 07:00 (all days)
         {start:"06:00", end:"07:00", name:"Praise FM Worship", img:images.worship, desc: "Praise FM plays the finest worship music."},
-        // Morning Show: 07:00 – 12:00 (Mon–Fri)
         {start:"07:00", end:"12:00", name:"Morning Show", img:images.morning, days:[1,2,3,4,5], desc: "Stancy Campbell kickstarts your day with uplifting praise and inspiration."},
-        // Sunday With Christ: 07:00 – 12:00 (Sunday)
         {start:"07:00", end:"12:00", name:"Sunday With Christ", img:images.sunday, days:[0], desc: "Matt Riley shares spiritual insights and Sunday music."},
-        // Midday Grace: 12:00 – 16:00 (all days)
         {start:"12:00", end:"16:00", name:"Midday Grace", img:images.midday, desc: "Michael Ray brings grace and tunes through the midday."},
-        // Praise FM Non Stop: 16:00 – 17:00 (all days)
         {start:"16:00", end:"17:00", name:"Praise FM Non Stop", img:images.nonstop, desc: "Praise FM with non-stop praise hits."},
-        // Praise FM Worship: 17:00 – 18:00 (all days)
         {start:"17:00", end:"18:00", name:"Praise FM Worship", img:images.worship, desc: "Praise FM plays the finest worship music."},
-        // Praise FM Carpool: 18:00 – 20:00 (Mon–Fri)
         {start:"18:00", end:"20:00", name:"Praise FM Carpool", img:images.carpool, days:[1,2,3,4,5], desc: "Rachael Harris with praise tunes for your drive home."},
-        // Praise FM POP: 20:00 – 20:30 (all days)
         {start:"20:00", end:"20:30", name:"Praise FM POP", img:images.pop, desc: "Jordan Reys with all things pop and contemporary praise."},
-        // Praise FM Magazine: 20:30 – 20:31 (Sunday only)
         {start:"20:30", end:"20:31", name:"Praise FM Magazine", img:images.magazine, days:[0], desc: "Praise FM with magazine-style content and features."},
-        // Praise FM Non Stop: 20:30/20:31 – 21:30
         {start:"20:30", end:"21:30", name:"Praise FM Non Stop", img:images.nonstop, days:[1,2,3,4,5,6], desc: "Praise FM with non-stop praise hits."},
-        // Praise FM Worship: 21:30 – 00:00 (all days)
         {start:"21:30", end:"00:00", name:"Praise FM Worship", img:images.worship, desc: "Praise FM plays the finest worship music."}
     ];
-    // TIME UTILITIES
     function getTime() { return new Date(new Date().toLocaleString("en-US",{timeZone:"America/Chicago"})); }
     function timeToMins(t) { const [h,m]=t.split(":").map(Number); return h*60+m; }
     function getCurrentAndNext() {
@@ -253,7 +220,6 @@
             }
             if (mins < s) future.push({prog:p, startMins:s});
         }
-        // If no future today, fill with programs from the next day
         if (future.length === 0) {
             const tomorrow = (day + 1) % 7;
             for (const p of schedule) {
@@ -267,7 +233,6 @@
             next2: future[1]?.prog || schedule[1]
         };
     }
-    // RECENT TRACKS (simple)
     let currentTrack = {title:"", artist:"", duration:0, startTime:0};
     const recents = [];
     let trackTimer = null;
@@ -303,7 +268,7 @@
             const res = await fetch(url);
             const data = await res.json();
             if (data.results && data.results[0] && data.results[0].artworkUrl100) {
-                return data.results[0].artworkUrl100.replace('100x100', '600x600'); // higher res
+                return data.results[0].artworkUrl100.replace('100x100', '600x600');
             }
         } catch (e) {}
         return images.default;
@@ -311,7 +276,7 @@
     function formatProgramName(p) {
         if (!p) return "Praise FM";
         const base = p.name.replace(/ \([^)]*\)$/, '').trim();
-        if (base === "Praise FM Non Stop" || base === "Midnight Grace" || base === "Praise FM POP" || base === "Praise FM Magazine" || base === "Praise FM Worship") return base;
+        if (["Praise FM Non Stop", "Midnight Grace", "Praise FM POP", "Praise FM Magazine", "Praise FM Worship"].includes(base)) return base;
         const host = hosts[base] || "Praise FM";
         return `${base} With ${host}`;
     }
@@ -327,20 +292,32 @@
     function updateDisplay() {
         const {current, next1, next2} = getCurrentAndNext();
         const now = getTime();
-        document.getElementById("mainImg").src = current.img || images.default;
-        document.getElementById("miniImg").src = current.img || images.default;
-        document.getElementById("upnextImg1").src = next1.img || images.default;
-        document.getElementById("upnextImg2").src = next2.img || images.default;
         const displayName = formatProgramName(current);
+        // Atualiza imagens
+        const mainImg = document.getElementById("mainImg");
+        const miniImg = document.getElementById("miniImg");
+        const upnext1 = document.getElementById("upnextImg1");
+        const upnext2 = document.getElementById("upnextImg2");
+
+        mainImg.src = current.img || images.default;
+        mainImg.alt = displayName;
+        miniImg.src = currentTrack.title ? "" : (current.img || images.default);
+        miniImg.alt = currentTrack.title ? `${currentTrack.title} by ${currentTrack.artist}` : displayName;
+        upnext1.src = next1.img || images.default;
+        upnext1.alt = formatProgramName(next1);
+        upnext2.src = next2.img || images.default;
+        upnext2.alt = formatProgramName(next2);
+
         document.getElementById("programTitle").textContent = displayName;
-        document.getElementById("miniTitle").textContent = currentTrack.title ? currentTrack.title : displayName;
-        document.getElementById("miniArtist").textContent = currentTrack.artist ? currentTrack.artist : "Praise & Worship";
+        document.getElementById("miniTitle").textContent = currentTrack.title || displayName;
+        document.getElementById("miniArtist").textContent = currentTrack.artist || "Praise & Worship";
         document.getElementById("upnextTime1").textContent = "UP NEXT: " + formatRange(next1);
         document.getElementById("upnextTitle1").textContent = formatProgramName(next1);
         document.getElementById("upnextDesc1").textContent = next1.desc || "-";
         document.getElementById("upnextTime2").textContent = formatRange(next2);
         document.getElementById("upnextTitle2").textContent = formatProgramName(next2);
         document.getElementById("upnextDesc2").textContent = next2.desc || "-";
+
         if (current.start && current.end) {
             const s = timeToMins(current.start);
             const e = timeToMins(current.end);
@@ -367,7 +344,7 @@
                 if (recents.length > 4) recents.pop();
                 document.getElementById("recentList").innerHTML = recents.map(t => `
                     <div class="recent-item">
-                        <img src="${t.cover}" class="recent-cover" onerror="this.src='${images.default}'">
+                        <img src="${t.cover}" class="recent-cover" alt="${t.title} by ${t.artist}" onerror="this.src='${images.default}'">
                         <div>
                             <div class="recent-title">${t.title}</div>
                             <div class="recent-artist">${t.artist}</div>
@@ -379,7 +356,6 @@
         updateDisplay();
         trackTimer = setInterval(updateProgramProgress, 1000);
     }
-    // METADATA (EventSource) - keep as is (if available)
     try {
         const es = new EventSource("https://api.zeno.fm/mounts/metadata/subscribe/hvwifp8ezc6tv");
         es.onmessage = e => {
@@ -391,7 +367,7 @@
                 }
             } catch {}
         };
-    } catch(e) { /* ignore for environments blocking EventSource */ }
+    } catch(e) {}
     function togglePlay() {
         if (audio.paused) { audio.play(); document.getElementById("miniPlayer").classList.add("show"); }
         else audio.pause();
