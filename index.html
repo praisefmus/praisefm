@@ -6,7 +6,6 @@
     <title>Praise FM - Live</title>
     <meta name="theme-color" content="#ff4d00">
     <link rel="icon" type="image/png" sizes="32x32" href="/image/favicon-32x32.png">
-    <!-- 🇳🇱 Redirecionamento para Holanda -->
     <script>
         (function() {
             const redirectToNetherlands = () => {
@@ -111,8 +110,10 @@
             animation: pulse 2s infinite;
         }
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
+            0%, 100% { opacity: 1;
+            }
+            50% { opacity: 0.4;
+            }
         }
         .program-title {
             font-size: 28px;
@@ -352,13 +353,20 @@
             margin-top: 4px;
         }
         @media (max-width: 480px) {
-            .mini-player { padding: 10px; }
-            .mini-player-content { flex-direction: column; align-items: flex-start; gap: 14px; }
-            .mini-play { width: 64px; height: 64px; }
-            .circle-container { width: 260px; height: 260px; }
-            .program-title { font-size: 24px; }
-            .mini-controls { gap: 10px; }
-            .mini-volume { width: 80px; }
+            .mini-player { padding: 10px;
+            }
+            .mini-player-content { flex-direction: column; align-items: flex-start; gap: 14px;
+            }
+            .mini-play { width: 64px; height: 64px;
+            }
+            .circle-container { width: 260px; height: 260px;
+            }
+            .program-title { font-size: 24px;
+            }
+            .mini-controls { gap: 10px;
+            }
+            .mini-volume { width: 80px;
+            }
         }
     </style>
 </head>
@@ -422,18 +430,20 @@
         </div>
         <div class="mini-controls">
             <button class="mini-btn" id="miniRewind" aria-label="Retroceder 15 segundos">
-                <svg viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 
+6V6l-8.5 6z"/></svg>
             </button>
             <button class="mini-play" id="miniPlayPause" aria-label="Tocar/Pausar">
                 <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
             </button>
             <button class="mini-btn" id="miniForward" aria-label="Avançar 15 segundos">
-                <svg viewBox="0 0 24 24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg>
+                <svg viewBox="0 0 24 24"><path 
+d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg>
             </button>
             <div class="mini-volume">
                 <button class="mini-btn" id="miniVolumeIcon" aria-label="Alternar mudo">
                     <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
-                </button>
+            </button>
                 <div class="mini-volume-bar" id="miniVolumeBar">
                     <div class="mini-volume-fill" id="miniVolumeFill"></div>
                 </div>
@@ -465,51 +475,58 @@
         "Sunday With Christ": "Matt Riley",
         "Midnight Grace": "Daniel Brooks",
         "Praise FM Non Stop": "Praise FM",
-        "Praise FM Worship": "Praise FM"
+        "Praise 
+FM Worship": "Praise FM"
     };
     const schedule = [
         {start:"00:00", end:"06:00", name:"Midnight Grace", img:images.midnight, desc: "Daniel Brooks lays down the most soothing overnight praise vibes."},
         {start:"06:00", end:"07:00", name:"Praise FM Worship", img:images.worship, desc: "Praise FM plays the finest worship music."},
         {start:"07:00", end:"12:00", name:"Morning Show", img:images.morning, days:[1,2,3,4,5], desc: "Stancy Campbell kickstarts your day with uplifting praise and inspiration."},
-        {start:"07:00", end:"12:00", name:"Sunday With Christ", img:images.sunday, days:[0], desc: "Matt Riley shares spiritual insights and Sunday music."},
+        {start:"07:00", end:"12:00", name:"Sunday With Christ", img:images.sunday, days:[0], desc: "Matt Riley shares spiritual insights 
+and Sunday music."},
         {start:"12:00", end:"16:00", name:"Midday Grace", img:images.midday, desc: "Michael Ray brings grace and tunes through the midday."},
         {start:"16:00", end:"17:00", name:"Praise FM Non Stop", img:images.nonstop, desc: "Praise FM with non-stop praise hits."},
         {start:"17:00", end:"18:00", name:"Praise FM Worship", img:images.worship, desc: "Praise FM plays the finest worship music."},
         {start:"18:00", end:"20:00", name:"Praise FM Carpool", img:images.carpool, days:[1,2,3,4,5], desc: "Rachael Harris with praise tunes for your drive home."},
-        {start:"20:00", end:"20:30", name:"Praise FM POP", img:images.pop, desc: "Jordan Reys with all things pop and contemporary praise."},
+        {start:"20:00", end:"20:30", 
+name:"Praise FM POP", img:images.pop, desc: "Jordan Reys with all things pop and contemporary praise."},
         {start:"20:30", end:"20:31", name:"Praise FM Magazine", img:images.magazine, days:[0], desc: "Praise FM with magazine-style content and features."},
         {start:"20:30", end:"21:30", name:"Praise FM Non Stop", img:images.nonstop, days:[1,2,3,4,5,6], desc: "Praise FM with non-stop praise hits."},
         {start:"21:30", end:"00:00", name:"Praise FM Worship", img:images.worship, desc: "Praise FM plays the finest worship music."}
     ];
-    function getTime() { return new Date(new Date().toLocaleString("en-US", {timeZone: "America/Chicago"})); }
-    function timeToMins(t) { const [h,m] = t.split(":").map(Number); return h * 60 + m; }
+function getTime() { return new Date(new Date().toLocaleString("en-US", {timeZone: "America/Chicago"})); }
+    function timeToMins(t) { const [h,m] = t.split(":").map(Number);
+return h * 60 + m; }
     function getCurrentAndNext() {
         const now = getTime();
-        const day = now.getDay();
+const day = now.getDay();
         const mins = timeToMins(now.toTimeString().slice(0,5));
         let current = null;
         const future = [];
-        for (const p of schedule) {
+for (const p of schedule) {
             if (p.days && !p.days.includes(day)) continue;
-            const s = timeToMins(p.start);
+const s = timeToMins(p.start);
             const e = timeToMins(p.end);
             const end = e <= s ? e + 1440 : e;
-            if (mins >= s && mins < end) {
+if (mins >= s && mins < end) {
                 if (!current || end > timeToMins(current.end)) current = p;
-            }
+}
             if (mins < s) future.push({ prog: p, startMins: s });
-        }
+}
         if (future.length === 0) {
             const tomorrow = (day + 1) % 7;
-            for (const p of schedule) {
+for (const p of schedule) {
                 if (!p.days || p.days.includes(tomorrow)) future.push({ prog: p, startMins: timeToMins(p.start) });
-            }
+}
         }
         future.sort((a, b) => a.startMins - b.startMins);
-        return {
-            current: current || { name: "Praise FM", img: images.default, start: null, end: null },
-            next1: future[0]?.prog || schedule[0],
-            next2: future[1]?.prog || schedule[1]
+return {
+            current: current ||
+{ name: "Praise FM", img: images.default, start: null, end: null },
+            next1: future[0]?.prog ||
+schedule[0],
+            next2: future[1]?.prog ||
+schedule[1]
         };
     }
     let currentTrack = { title: "", artist: "", duration: 0, startTime: 0 };
@@ -517,115 +534,120 @@
     let trackTimer = null;
     function formatTime(seconds) {
         const min = Math.floor(seconds / 60);
-        const sec = Math.floor(seconds % 60);
+const sec = Math.floor(seconds % 60);
         return `${min}:${sec.toString().padStart(2, '0')}`;
     }
     function updateProgramProgress() {
         const { current } = getCurrentAndNext();
-        const now = getTime();
+const now = getTime();
         if (current.start && current.end) {
             const s = timeToMins(current.start);
-            const e = timeToMins(current.end);
+const e = timeToMins(current.end);
             const n = timeToMins(now.toTimeString().slice(0, 5));
             const total = (e - s + 1440) % 1440;
-            const elapsed = (n - s + 1440) % 1440;
-            const pct = total > 0 ? (elapsed / total) * 100 : 0;
+const elapsed = (n - s + 1440) % 1440;
+            const pct = total > 0 ?
+(elapsed / total) * 100 : 0;
             document.getElementById("miniTrackFill").style.width = `${pct}%`;
             document.getElementById("miniTrackCurrent").textContent = formatTime(elapsed);
             document.getElementById("miniTrackDuration").textContent = formatTime(total);
-        } else {
+} else {
             document.getElementById("miniTrackFill").style.width = "0%";
             document.getElementById("miniTrackCurrent").textContent = "--:--";
-            document.getElementById("miniTrackDuration").textContent = "Live";
+document.getElementById("miniTrackDuration").textContent = "Live";
         }
     }
     async function fetchAlbumCover(artist, title) {
         if (!artist || !title) return images.default;
-        const query = encodeURIComponent(`${artist} ${title}`);
+const query = encodeURIComponent(`${artist} ${title}`);
         const url = `https://itunes.apple.com/search?term=${query}&entity=song&limit=1`;
         try {
             const res = await fetch(url);
-            const data = await res.json();
+const data = await res.json();
             if (data.results?.[0]?.artworkUrl100) {
                 return data.results[0].artworkUrl100.replace('100x100', '600x600');
-            }
+}
         } catch (e) {}
         return images.default;
-    }
+}
     function formatProgramName(p) {
         if (!p) return "Praise FM";
-        const base = p.name.replace(/ \([^)]*\)$/, '').trim();
+const base = p.name.replace(/ \([^)]*\)$/, '').trim();
         if (["Praise FM Non Stop", "Midnight Grace", "Praise FM POP", "Praise FM Magazine", "Praise FM Worship"].includes(base)) return base;
-        const host = hosts[base] || "Praise FM";
+const host = hosts[base] || "Praise FM";
         return `${base} With ${host}`;
-    }
+}
     function formatRange(p) {
         const [sh, sm] = p.start.split(":").map(Number);
-        const [eh, em] = p.end.split(":").map(Number);
+const [eh, em] = p.end.split(":").map(Number);
         const sSuffix = sh >= 12 ? "PM" : "AM";
-        const eSuffix = eh >= 12 ? "PM" : "AM";
+const eSuffix = eh >= 12 ? "PM" : "AM";
         const sHour = ((sh + 11) % 12) + 1;
-        const eHour = ((eh + 11) % 12) + 1;
+const eHour = ((eh + 11) % 12) + 1;
         return `${sHour}:${sm.toString().padStart(2, '0')} ${sSuffix} - ${eHour}:${em.toString().padStart(2, '0')} ${eSuffix}`;
-    }
+}
     function updateDisplay() {
         const { current, next1, next2 } = getCurrentAndNext();
-        const now = getTime();
+const now = getTime();
         const displayName = formatProgramName(current);
         const mainImg = document.getElementById("mainImg");
         const miniImg = document.getElementById("miniImg");
         const upnext1 = document.getElementById("upnextImg1");
-        const upnext2 = document.getElementById("upnextImg2");
+const upnext2 = document.getElementById("upnextImg2");
 
         mainImg.src = current.img || images.default;
         mainImg.alt = displayName;
-        miniImg.src = currentTrack.title ? "" : (current.img || images.default);
+        
+        // CORREÇÃO: Removendo a lógica que definia miniImg.src como "" quando currentTrack.title não é nulo.
+        // A capa do mini-player será definida APENAS pela função processMetadata().
+        // miniImg.src = currentTrack.title ? "" : (current.img || images.default); 
+
         miniImg.alt = currentTrack.title ? `${currentTrack.title} by ${currentTrack.artist}` : displayName;
         upnext1.src = next1.img || images.default;
-        upnext1.alt = formatProgramName(next1);
+const upnext1.alt = formatProgramName(next1);
         upnext2.src = next2.img || images.default;
         upnext2.alt = formatProgramName(next2);
 
         document.getElementById("programTitle").textContent = displayName;
         document.getElementById("miniTitle").textContent = currentTrack.title || displayName;
-        document.getElementById("miniArtist").textContent = currentTrack.artist || "Praise & Worship";
+document.getElementById("miniArtist").textContent = currentTrack.artist || "Praise & Worship";
         document.getElementById("upnextTime1").textContent = "UP NEXT: " + formatRange(next1);
         document.getElementById("upnextTitle1").textContent = formatProgramName(next1);
-        document.getElementById("upnextDesc1").textContent = next1.desc || "-";
+document.getElementById("upnextDesc1").textContent = next1.desc || "-";
         document.getElementById("upnextTime2").textContent = formatRange(next2);
         document.getElementById("upnextTitle2").textContent = formatProgramName(next2);
         document.getElementById("upnextDesc2").textContent = next2.desc || "-";
-
-        if (current.start && current.end) {
+if (current.start && current.end) {
             const s = timeToMins(current.start);
-            const e = timeToMins(current.end);
+const e = timeToMins(current.end);
             const n = timeToMins(now.toTimeString().slice(0, 5));
             const total = (e - s + 1440) % 1440;
-            const elapsed = (n - s + 1440) % 1440;
-            const pct = total > 0 ? (elapsed / total) * 100 : 0;
+const elapsed = (n - s + 1440) % 1440;
+            const pct = total > 0 ?
+(elapsed / total) * 100 : 0;
             document.getElementById("progressRing").style.background = `conic-gradient(var(--orange) ${pct}%, transparent ${pct}%)`;
-        } else {
+} else {
             document.getElementById("progressRing").style.background = "conic-gradient(var(--orange) 0%, transparent 0%)";
-        }
+}
         updateProgramProgress();
     }
     async function processMetadata(artist, title) {
         if (trackTimer) clearInterval(trackTimer);
-        if (title.toLowerCase().includes("commercial") || title.toLowerCase().includes("ad")) {
+if (title.toLowerCase().includes("commercial") || title.toLowerCase().includes("ad")) {
             currentTrack = { title: "", artist: "", duration: 0, startTime: 0 };
-            // Ao ser comercial, volta ao logo padrão
+// Ao ser comercial, volta ao logo padrão
             document.getElementById("miniImg").src = images.default;
-            document.getElementById("miniImg").alt = "Commercial break";
+document.getElementById("miniImg").alt = "Commercial break";
         } else {
             currentTrack = { title, artist, duration: 0, startTime: Date.now() };
-            const cover = await fetchAlbumCover(artist, title);
+const cover = await fetchAlbumCover(artist, title);
             // ✅ Atualiza a capa da música no mini-player
             document.getElementById("miniImg").src = cover;
-            document.getElementById("miniImg").alt = `${title} by ${artist}`;
+document.getElementById("miniImg").alt = `${title} by ${artist}`;
             const key = `${artist}-${title}`;
             if (!recents.some(t => t.key === key)) {
                 recents.unshift({ title, artist, cover, key });
-                if (recents.length > 4) recents.pop();
+if (recents.length > 4) recents.pop();
                 // ✅ Exibe capa real nos recentes
                 document.getElementById("recentList").innerHTML = recents.map(t => `
                     <div class="recent-item">
@@ -636,63 +658,64 @@
                         </div>
                     </div>
                 `).join("");
-            }
+}
         }
         updateDisplay();
-        trackTimer = setInterval(updateProgramProgress, 1000);
+trackTimer = setInterval(updateProgramProgress, 1000);
     }
     try {
         const es = new EventSource("https://api.zeno.fm/mounts/metadata/subscribe/hvwifp8ezc6tv");
-        es.onmessage = e => {
+es.onmessage = e => {
             try {
                 const d = JSON.parse(e.data);
-                if (d.streamTitle) {
+if (d.streamTitle) {
                     const parts = d.streamTitle.split(" - ");
-                    processMetadata(parts[0] || "", parts.slice(1).join(" - ") || "");
+processMetadata(parts[0] || "", parts.slice(1).join(" - ") || "");
                 }
             } catch {}
         };
-    } catch(e) {}
+} catch(e) {}
     function updateMiniPlayerAria() {
         const miniPlayer = document.getElementById("miniPlayer");
-        if (miniPlayer.classList.contains("show")) {
+if (miniPlayer.classList.contains("show")) {
             miniPlayer.removeAttribute("aria-hidden");
-        } else {
+} else {
             miniPlayer.setAttribute("aria-hidden", "true");
-        }
+}
     }
     function togglePlay() {
         if (audio.paused) {
             audio.play();
-            document.getElementById("miniPlayer").classList.add("show");
+document.getElementById("miniPlayer").classList.add("show");
         } else {
             audio.pause();
             document.getElementById("miniPlayer").classList.remove("show");
-        }
+}
         updateMiniPlayerAria();
         const playing = !audio.paused;
-        const playSvg = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+const playSvg = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
         const pauseSvg = '<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
-        document.querySelector("#bigPlay").innerHTML = playing ? pauseSvg + ' Pause' : playSvg + ' Play';
+document.querySelector("#bigPlay").innerHTML = playing ? pauseSvg + ' Pause' : playSvg + ' Play';
         document.getElementById("miniPlayPause").innerHTML = playing ? pauseSvg : playSvg;
-    }
+}
     document.getElementById("bigPlay").onclick = togglePlay;
     document.getElementById("miniPlayPause").onclick = togglePlay;
     document.getElementById("miniRewind").onclick = () => audio.currentTime = Math.max(0, audio.currentTime - 15);
-    document.getElementById("miniForward").onclick = () => audio.currentTime += 15;
+document.getElementById("miniForward").onclick = () => audio.currentTime += 15;
     document.getElementById("miniVolumeBar").onclick = e => {
         const rect = e.currentTarget.getBoundingClientRect();
-        const percent = (e.clientX - rect.left) / rect.width;
+const percent = (e.clientX - rect.left) / rect.width;
         audio.volume = Math.max(0, Math.min(1, percent));
         audio.muted = false;
-        document.getElementById("miniVolumeFill").style.width = (audio.volume * 100) + '%';
+document.getElementById("miniVolumeFill").style.width = (audio.volume * 100) + '%';
     };
     document.getElementById("miniVolumeIcon").onclick = () => {
         audio.muted = !audio.muted;
-        document.getElementById("miniVolumeIcon").innerHTML = audio.muted
-            ? '<svg viewBox="0 0 24 24"><path d="M16.5 12l4.5 4.5-1.5 1.5L15 13.5 11.5 17H7v-6h4.5L15 7.5l4.5-4.5 1.5 1.5L16.5 12z"/></svg>'
+document.getElementById("miniVolumeIcon").innerHTML = audio.muted
+            ?
+'<svg viewBox="0 0 24 24"><path d="M16.5 12l4.5 4.5-1.5 1.5L15 13.5 11.5 17H7v-6h4.5L15 7.5l4.5-4.5 1.5 1.5L16.5 12z"/></svg>'
             : '<svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>';
-    };
+};
     setInterval(updateDisplay, 8000);
     updateDisplay();
 </script>
