@@ -64,7 +64,6 @@
         @media (max-width:480px) { 
             .mini-player { padding:10px; } 
             .mini-player-content { flex-direction:column; align-items:flex-start; gap:14px; } 
-            .mini-play { width:64px; height:64px; }  
             .circle-container { width:260px; height:260px; } 
             .program-title { font-size:24px; } 
             .mini-controls { gap:10px; } 
@@ -169,6 +168,22 @@
   document.getElementById("praisefm-locale-bar").style.display = "flex";
   document.getElementById("pfm-bar-shim").style.display = "block";
 
+  // 🌐 Dynamic greeting based on hostname
+  const hostname = location.hostname;
+  let greeting = "Your region has a Praise FM version.";
+  if (hostname.includes("praisefmfr")) {
+    greeting = "Bonjour ! Vous êtes en France.";
+  } else if (hostname.includes("praisefmch-de")) {
+    greeting = "Hallo! Sie sind in der Schweiz.";
+  } else if (hostname.includes("praisefmch-fr")) {
+    greeting = "Bonjour ! Vous êtes en Suisse.";
+  } else if (hostname.includes("praisefmde")) {
+    greeting = "Guten Tag! Sie sind in Deutschland.";
+  } else if (hostname.includes("praisefmnederland")) {
+    greeting = "Hallo! U bent in Nederland.";
+  }
+  document.querySelector("#praisefm-locale-bar .pfm-message").textContent = greeting;
+
   const toggle = document.getElementById("pfm-locale-toggle");
   const dropdown = document.getElementById("pfm-dropdown");
   toggle.addEventListener("click", (e) => {
@@ -187,6 +202,7 @@
   });
 })();
 </script>
+
 <div class="container">
     <h1 class="station-title">Praise FM</h1>
     <p class="station-subtitle">Praise & Worship</p>
@@ -226,6 +242,7 @@
         <div id="recentList"></div>
     </div>
 </div>
+
 <div class="mini-player" id="miniPlayer">
     <div class="mini-player-content">
         <img id="miniImg" src="/image/logopraisefm.webp" class="mini-cover">
@@ -263,6 +280,7 @@
         </div>
     </div>
 </div>
+
 <script>
     const STREAM_URL = "https://stream.zeno.fm/hvwifp8ezc6tv";
     const audio = new Audio(STREAM_URL);
@@ -290,9 +308,10 @@
         "Praise FM Worship": "Praise FM"
     };
     const schedule = [
-        {start:"00:00", end:"06:00", name:"Midnight Grace", img:images.midnight, desc: "Daniel Brooks lays down the most soothing overnight praise vibes."},
+        {start:"00:00", end:"03:00", name:"Praise FM Worship", img:images.worship, desc: "Praise FM plays the finest worship music."},
+        {start:"03:00", end:"06:00", name:"Midnight Grace", img:images.midnight, desc: "Daniel Brooks lays down the most soothing overnight praise vibes."},
         {start:"06:00", end:"07:00", name:"Praise FM Worship", img:images.worship, desc: "Praise FM plays the finest worship music."},
-        {start:"07:00", end:"12:00", name:"Morning Show", img:images.morning, days:[1,2,3,4,5], desc: "Stancy Campbell kickstarts your day with uplifting praise and inspiration."},
+        {start:"07:00", end:"12:00", name:"Morning Show", img:images.morning, days:[1,2,3,4,5,6], desc: "Stancy Campbell kickstarts your day with uplifting praise and inspiration."},
         {start:"07:00", end:"12:00", name:"Sunday With Christ", img:images.sunday, days:[0], desc: "Matt Riley shares spiritual insights and Sunday music."},
         {start:"12:00", end:"16:00", name:"Midday Grace", img:images.midday, desc: "Michael Ray brings grace and tunes through the midday."},
         {start:"16:00", end:"17:00", name:"Praise FM Non Stop", img:images.nonstop, desc: "Praise FM with non-stop praise hits."},
@@ -337,8 +356,6 @@
     function formatProgramName(p) {
         if (!p) return "Praise FM";
         const base = p.name.replace(/ \([^)]*\)$/, '').trim();
-        // ✅ CORREÇÃO: Morning Show e Midnight Grace DEVEM exibir o host.
-        // Apenas Non Stop, POP, Magazine, Worship e o fallback "Praise FM" não exibem o host.
         if (["Praise FM Non Stop", "Praise FM POP", "Praise FM Magazine", "Praise FM Worship", "Praise FM"].includes(base)) {
             return base;
         }
