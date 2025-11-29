@@ -4,16 +4,6 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Praise FM — Now Playing</title>
-
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0RNK6G5WWL"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-0RNK6G5WWL');
-  </script>
-
   <style>
     :root{--bg:#f6f9fa;--card:#ffffff;--muted:#61707a;--accent:#00c28a;--text:#0b1220}
     html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,'Helvetica Neue',Arial; background:var(--bg); color:var(--text)}
@@ -40,26 +30,18 @@
     .volume-control {flex:1;margin-left:14px;display:flex;align-items:center;gap:8px;}
     .volume-slider {width:100%;}
 
-    .cover-img {
-      width:100%;
-      border-radius:8px;
-      margin-bottom:12px;
-      aspect-ratio:1/1;
-      object-fit:cover;
-      background:#f0f0f0;
-    }
+    .cover-img {width:100%; border-radius:8px; margin-bottom:12px; aspect-ratio:1/1; object-fit:cover;}
 
     .muted-note{font-size:12px;color:var(--muted);margin-top:10px}
 
-    @media (max-width:420px){
-      .logo{height:72px}
-      .player{width:94%}
-    }
+    /* responsive */
+    @media (max-width:420px){.logo{height:72px}.player{width:94%}}
   </style>
 </head>
 <body>
   <main class="wrap">
     <section class="player" role="region" aria-label="Praise FM now playing">
+      <!-- Logo em SVG com gradiente rosa para amarelo -->
       <svg class="logo" viewBox="0 0 300 100" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -79,13 +61,8 @@
           <div class="small-btn" id="statusText">Connecting…</div>
         </div>
 
-        <img 
-          id="cover" 
-          class="cover-img" 
-          src="https://via.placeholder.com/300x300?text=No+Cover" 
-          alt="Album Cover" 
-          loading="lazy"
-        >
+        <!-- Imagem da capa do álbum adicionada aqui -->
+        <img id="cover" class="cover-img" src="https://via.placeholder.com/300x300?text=No+Cover" alt="Album Cover">
 
         <div class="meta">
           <div class="meta-row"><div class="meta-label">Artist:</div><div class="meta-value" id="artist">—</div></div>
@@ -101,6 +78,7 @@
           </div>
         </div>
 
+        <!-- Barra de volume -->
         <div class="volume-control">
           <label for="volume" style="font-size:13px;color:var(--muted);">Volume:</label>
           <input type="range" id="volume" min="0" max="1" step="0.01" value="1" class="volume-slider">
@@ -109,17 +87,17 @@
         <div class="muted-note">Auto-updates in real-time • Built for Netlify</div>
       </div>
 
+      <!-- hidden audio element -->
       <audio id="player" preload="none"></audio>
     </section>
   </main>
 
   <script>
-    // 🔑 CONFIGURAÇÕES — CHAVE LAST.FM JÁ INCLUÍDA!
-    const STREAM_URL = 'https://stream.zeno.fm/tobnzqsvykzvv';
-    const NOWPLAYING_API = 'https://api.zeno.fm/mounts/metadata/subscribe/tobnzqsvykzvv';
-    const LASTFM_API_KEY = '7744c8f90ee053fc761e0e23bfa00b89'; // ✅ Sua chave oficial
+    // Configuration
+    const STREAM_URL = 'https://stream.zeno.fm/tobnzqsvykzvv'; // Confirm this in your Zeno.fm dashboard
+    const NOWPLAYING_API = 'https://api.zeno.fm/mounts/metadata/subscribe/tobnzqsvykzvv'; // Based on stream mount ID
 
-    // Elementos
+    // Elements
     const artistEl = document.getElementById('artist');
     const songEl = document.getElementById('song');
     const albumEl = document.getElementById('album');
@@ -129,20 +107,20 @@
     const volumeSlider = document.getElementById('volume');
     const coverImg = document.getElementById('cover');
 
-    // Inicializa o player
+    // Initialize audio src
     player.src = STREAM_URL;
     player.crossOrigin = 'anonymous';
-    player.volume = parseFloat(volumeSlider.value);
+    player.volume = 1; // Volume inicial em 100%
 
     let playing = false;
 
-    function updatePlayButton() {
+    function updatePlayButton(){
       playBtn.textContent = playing ? '❚❚' : '▶';
     }
 
-    playBtn.addEventListener('click', async () => {
-      try {
-        if (!playing) {
+    playBtn.addEventListener('click', async ()=>{
+      try{
+        if(!playing){
           await player.play();
           playing = true;
         } else {
@@ -150,77 +128,69 @@
           playing = false;
         }
         updatePlayButton();
-      } catch (err) {
-        console.error('Playback error:', err);
-        alert('Playback failed — your browser may block autoplay. Click OK and try again.');
+      }catch(err){
+        console.error('Play error:', err);
+        alert('Playback failed — your browser may block autoplay. Click OK to try starting the stream.');
       }
     });
 
+    // Controle de volume
     volumeSlider.addEventListener('input', () => {
-      player.volume = parseFloat(volumeSlider.value);
+      player.volume = volumeSlider.value;
     });
 
-    // Atualiza metadados em tempo real via SSE
-    function setupNowPlaying() {
+    // Set up real-time now playing via SSE
+    function setupNowPlaying(){
       const eventSource = new EventSource(NOWPLAYING_API);
 
       eventSource.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
-          let streamTitle = (data.streamTitle || 'Streaming Live').trim() || 'Streaming Live';
-          const parts = streamTitle.split(' - ').map(p => p.trim()).filter(Boolean);
+          const streamTitle = data.streamTitle || 'Streaming Live';
+          const parts = streamTitle.split(' - ');
           const artist = parts[0] || 'Praise FM Radio';
-          const song = parts.length > 1 ? parts.slice(1).join(' - ') : streamTitle;
-          const album = (data.album || '—').trim();
+          const song = parts.length > 1 ? parts[1] : streamTitle;
+          const album = data.album || '—';
 
           artistEl.textContent = artist;
           songEl.textContent = song;
           albumEl.textContent = album;
           statusText.textContent = 'Live';
 
-          // Busca capa no Last.fm (exceto para conteúdo genérico)
-          if (artist !== 'Praise FM Radio' && song !== 'Streaming Live') {
-            fetch(
-              `https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${LASTFM_API_KEY}&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(song)}&format=json`
-            )
-              .then(res => res.json())
-              .then(lastfmData => {
-                if (lastfmData.track?.album?.image) {
-                  const images = lastfmData.track.album.image;
-                  const cover = images.find(img => img.size === 'extralarge') || images[images.length - 1];
-                  coverImg.src = cover['#text'] || 'https://via.placeholder.com/300x300?text=No+Cover';
-                  if (lastfmData.track.album.title) {
-                    albumEl.textContent = lastfmData.track.album.title;
-                  }
-                } else {
-                  coverImg.src = 'https://via.placeholder.com/300x300?text=No+Cover';
-                }
-              })
-              .catch(() => {
+          // Buscar capa do álbum via Deezer API
+          fetch(`https://api.deezer.com/search?q=artist:"${encodeURIComponent(artist)}" track:"${encodeURIComponent(song)}"&limit=1`)
+            .then(res => res.json())
+            .then(deezerData => {
+              if (deezerData.data && deezerData.data[0]) {
+                coverImg.src = deezerData.data[0].album.cover_big || deezerData.data[0].album.cover_medium || 'https://via.placeholder.com/300x300?text=No+Cover';
+              } else {
                 coverImg.src = 'https://via.placeholder.com/300x300?text=No+Cover';
-              });
-          } else {
-            coverImg.src = 'https://via.placeholder.com/300x300?text=No+Cover';
-          }
+              }
+            })
+            .catch(err => {
+              console.warn('Cover fetch error', err);
+              coverImg.src = 'https://via.placeholder.com/300x300?text=No+Cover';
+            });
+
         } catch (err) {
-          console.warn('Metadata parse error:', err);
+          console.warn('Nowplaying parse error', err);
           statusText.textContent = 'Unavailable';
-          artistEl.textContent = '—';
-          songEl.textContent = '—';
-          albumEl.textContent = '—';
-          coverImg.src = 'https://via.placeholder.com/300x300?text=No+Cover';
         }
       };
 
-      eventSource.onerror = () => {
-        console.warn('SSE connection lost. Reconnecting...');
-        statusText.textContent = 'Reconnecting...';
+      eventSource.onerror = (err) => {
+        console.warn('Nowplaying connection error', err);
+        statusText.textContent = 'Unavailable';
         eventSource.close();
-        setTimeout(setupNowPlaying, 15000);
+        // Retry after delay
+        setTimeout(setupNowPlaying, 30000);
       };
     }
 
+    // Initial setup
     setupNowPlaying();
+
+    // Removido o pause automático ao esconder a página para permitir playback em background
   </script>
 </body>
 </html>
