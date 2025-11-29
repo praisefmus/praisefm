@@ -337,8 +337,8 @@
     function formatProgramName(p) {
         if (!p) return "Praise FM";
         const base = p.name.replace(/ \([^)]*\)$/, '').trim();
-        // ✅ REMOVIDO "Midnight Grace" da lista de exceção!
-        if (["Praise FM Non Stop", "Praise FM POP", "Praise FM Magazine", "Praise FM Worship", "Morning Show"].includes(base)) {
+        // ✅ CORRIGIDO: Adicionado "Morning Show" e "Praise FM" à lista de exceção
+        if (["Praise FM Non Stop", "Praise FM POP", "Praise FM Magazine", "Praise FM Worship", "Morning Show", "Praise FM"].includes(base)) {
             return base;
         }
         const host = hosts[base] || "Praise FM";
