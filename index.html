@@ -71,7 +71,7 @@
         .mini-volume-fill { height:100%; background:var(--orange); border-radius:2px; width:80%; }
         .mini-track-progress { width:100%; padding:6px 0; }
         .mini-track-bar { width:100%; height:4px; background:#ddd; border-radius:2px; position:relative; cursor:pointer; }
-        .mini-track-fill { height:100%; background:var(--orange); border-radius:2px; width:0%; }
+        .mini-track-fill { height:100%; background:var(--orange); border-radius:2x; width:0%; }
         .mini-track-time { display:flex; justify-content:space-between; font-size:11px; color:var(--light-grey); margin-top:4px; }
         @media (max-width:480px) { 
             .mini-player { padding:10px; } 
@@ -354,6 +354,13 @@
             next2: future[1]?.prog || schedule[1]
         };
     }
+
+    // ✅ NOVA FUNÇÃO: remove o CTA dos metadados
+    function cleanMetadata(streamTitle) {
+        // Remove tudo após " • " (ponto médio usado no encoder)
+        return streamTitle.split(" • ")[0];
+    }
+
     function formatProgramName(p) {
         if (!p) return "Praise FM";
         const base = p.name.replace(/ \([^)]*\)$/, '').trim();
@@ -412,8 +419,17 @@
         } catch (e) {}
         return images.default;
     }
-    async function processMetadata(artist, title) {
+
+    // ✅ ATUALIZADA: agora usa cleanMetadata
+    async function processMetadata(rawStreamTitle) {
         if (trackTimer) clearInterval(trackTimer);
+
+        // Limpa o CTA antes de processar
+        const cleanTitle = cleanMetadata(rawStreamTitle);
+        const parts = cleanTitle.split(" - ");
+        const artist = parts[0] || "";
+        const title = parts.slice(1).join(" - ") || "";
+
         if (title.toLowerCase().includes("commercial") || title.toLowerCase().includes("ad")) {
             currentTrack = {title:"", artist:"", duration:0, startTime:0};
         } else {
@@ -437,18 +453,21 @@
         updateDisplay();
         trackTimer = setInterval(updateProgramProgress, 1000);
     }
+
     try {
         const es = new EventSource("https://api.zeno.fm/mounts/metadata/subscribe/hvwifp8ezc6tv");
         es.onmessage = e => {
             try {
                 const d = JSON.parse(e.data);
                 if (d.streamTitle) {
-                    const parts = d.streamTitle.split(" - ");
-                    processMetadata(parts[0]||"", parts.slice(1).join(" - ")||"");
+                    // Passa o título COM CTA para processMetadata
+                    processMetadata(d.streamTitle);
                 }
             } catch {}
         };
     } catch(e) {}
+
+    // ... resto do código (togglePlay, updateDisplay, etc.) permanece idêntico
     function togglePlay() {
         if (audio.paused) { audio.play(); document.getElementById("miniPlayer").classList.add("show"); }
         else audio.pause();
