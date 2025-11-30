@@ -69,7 +69,6 @@
             .mini-controls { gap:10px; } 
             .mini-volume { width:80px; } 
         }
-
         /* 🌐 Apple-style dropdown */
         #praisefm-locale-bar {
             position: fixed; top: 0; left: 0; right: 0;
@@ -114,7 +113,6 @@
     </style>
 </head>
 <body>
-
 <div id="praisefm-locale-bar" style="display:none;">
     <div class="pfm-message">Your region has a Praise FM version.</div>
     <div class="pfm-locale-select" id="pfm-locale-select">
@@ -132,12 +130,10 @@
     <button class="pfm-close-btn" id="pfm-close" aria-label="Close">&times;</button>
 </div>
 <div class="pfm-bar-shim" id="pfm-bar-shim"></div>
-
 <script>
 (function(){
   const STORAGE_KEY = "praisefm_locale_banner_closed_v2";
   const EXPIRE_DAYS = 30;
-
   function isClosed() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -146,7 +142,6 @@
       return obj?.ts && (Date.now() - obj.ts) < (EXPIRE_DAYS * 24 * 60 * 60 * 1000);
     } catch (e) { return false; }
   }
-
   const langs = navigator.languages || [navigator.language || ''];
   let detected = false;
   for (const lang of langs) {
@@ -156,7 +151,6 @@
       break;
     }
   }
-
   if (isClosed() || !detected || 
       location.hostname.includes("praisefmfr") || 
       location.hostname.includes("praisefmde") || 
@@ -164,10 +158,8 @@
       location.hostname.includes("praisefmnederland")) {
     return;
   }
-
   document.getElementById("praisefm-locale-bar").style.display = "flex";
   document.getElementById("pfm-bar-shim").style.display = "block";
-
   // 🌐 Dynamic greeting based on hostname
   const hostname = location.hostname;
   let greeting = "Your region has a Praise FM version.";
@@ -183,18 +175,15 @@
     greeting = "Hallo! U bent in Nederland.";
   }
   document.querySelector("#praisefm-locale-bar .pfm-message").textContent = greeting;
-
   const toggle = document.getElementById("pfm-locale-toggle");
   const dropdown = document.getElementById("pfm-dropdown");
   toggle.addEventListener("click", (e) => {
     e.stopPropagation();
     document.getElementById("pfm-locale-select").classList.toggle("active");
   });
-
   document.addEventListener("click", () => {
     document.getElementById("pfm-locale-select").classList.remove("active");
   });
-
   document.getElementById("pfm-close").addEventListener("click", () => {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ts: Date.now()})); } catch(e){}
     document.getElementById("praisefm-locale-bar").style.display = "none";
@@ -202,7 +191,6 @@
   });
 })();
 </script>
-
 <div class="container">
     <h1 class="station-title">Praise FM</h1>
     <p class="station-subtitle">Praise & Worship</p>
@@ -242,7 +230,6 @@
         <div id="recentList"></div>
     </div>
 </div>
-
 <div class="mini-player" id="miniPlayer">
     <div class="mini-player-content">
         <img id="miniImg" src="/image/logopraisefm.webp" class="mini-cover">
@@ -280,7 +267,6 @@
         </div>
     </div>
 </div>
-
 <script>
     const STREAM_URL = "https://stream.zeno.fm/hvwifp8ezc6tv";
     const audio = new Audio(STREAM_URL);
@@ -315,8 +301,14 @@
         {start:"07:00", end:"12:00", name:"Sunday With Christ", img:images.sunday, days:[0], desc: "Matt Riley shares spiritual insights and Sunday music."},
         {start:"12:00", end:"16:00", name:"Midday Grace", img:images.midday, desc: "Michael Ray brings grace and tunes through the midday."},
         {start:"16:00", end:"17:00", name:"Praise FM Non Stop", img:images.nonstop, desc: "Praise FM with non-stop praise hits."},
+        
+        // 👇 DOMINGO: Worship das 17h às 20h
+        {start:"17:00", end:"20:00", name:"Praise FM Worship", img:images.worship, days:[0], desc: "Praise FM plays the finest worship music."},
+
+        // 👉 Seg–Sex: Worship 17h–18h + Carpool 18h–20h
         {start:"17:00", end:"18:00", name:"Praise FM Worship", img:images.worship, desc: "Praise FM plays the finest worship music."},
         {start:"18:00", end:"20:00", name:"Praise FM Carpool", img:images.carpool, days:[1,2,3,4,5], desc: "Rachael Harris with praise tunes for your drive home."},
+        
         {start:"20:00", end:"20:30", name:"Praise FM POP", img:images.pop, desc: "Jordan Reys with all things pop and contemporary praise."},
         {start:"20:30", end:"20:31", name:"Praise FM Magazine", img:images.magazine, days:[0], desc: "Praise FM with magazine-style content and features."},
         {start:"20:30", end:"21:30", name:"Praise FM Non Stop", img:images.nonstop, days:[1,2,3,4,5,6], desc: "Praise FM with non-stop praise hits."},
