@@ -21,7 +21,17 @@
         .live-badge { display:inline-flex; align-items:center; gap:8px; color:var(--orange); font-weight:700; font-size:14px; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; }
         .live-dot { width:9px; height:9px; background:var(--orange); border-radius:50%; animation:pulse 2s infinite; }
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-        .program-title { font-size:28px; font-weight:800; margin:10px 0 30px; line-height:1.2; }
+        .program-title-container { display: flex; align-items: center; gap: 16px; justify-content: center; margin: 10px 0 30px; }
+        .program-title { font-size:28px; font-weight:800; line-height:1.2; margin:0; }
+        .info-link {
+            font-size: 16px;
+            color: var(--grey);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .info-link:hover {
+            color: var(--orange);
+        }
         .play-button { margin:40px auto; width:220px; height:56px; background:var(--orange); color:#fff; border:none; border-radius:28px; font-size:18px; font-weight:700; cursor:pointer;
             display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 6px 20px rgba(255,77,0,.3); transition:transform .2s; }
         .play-button:hover { transform:scale(1.05); }
@@ -201,7 +211,10 @@
         </div>
     </div>
     <div class="live-badge"><div class="live-dot"></div> LIVE</div>
-    <h2 class="program-title" id="programTitle">Praise FM</h2>
+    <div class="program-title-container">
+        <h2 class="program-title" id="programTitle">Praise FM</h2>
+        <a href="#" id="programInfoLink" class="info-link" style="display:none;">ℹ️ Info</a>
+    </div>
     <button class="play-button" id="bigPlay">
         <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Play
     </button>
@@ -311,6 +324,22 @@
         {start:"21:30", end:"00:00", name:"Praise FM Worship", img:images.worship, desc: "Praise FM plays the finest worship music."}
     ];
 
+    // 🔥 Mapeamento para arquivos SEM HÍFENS
+    function getProgramPage(name) {
+        const map = {
+            "Morning Show": "morningshow.html",
+            "Midnight Grace": "midnightgrace.html",
+            "Praise FM Carpool": "praisefmcarpool.html",
+            "Praise FM POP": "praisefmpop.html",
+            "Sunday With Christ": "sundaywithchrist.html",
+            "Praise FM Non Stop": "praisefmnonstop.html",
+            "Praise FM Worship": "praisefmworship.html",
+            "Midday Grace": "middaygrace.html",
+            "Praise FM Magazine": "praisefmmagazine.html"
+        };
+        return map[name] || "praisefm.html";
+    }
+
     function getTime() { return new Date(new Date().toLocaleString("en-US",{timeZone:"America/Chicago"})); }
     function timeToMins(t) { const [h,m]=t.split(":").map(Number); return h*60+m; }
 
@@ -362,22 +391,6 @@
         const sHour = ((sh + 11) % 12) + 1;
         const eHour = ((eh + 11) % 12) + 1;
         return `${sHour}:${sm.toString().padStart(2, '0')} ${sSuffix} - ${eHour}:${em.toString().padStart(2, '0')} ${eSuffix}`;
-    }
-
-    // 🔥 Mapeamento direto de nomes para arquivos SEM HÍFENS
-    function getProgramPage(name) {
-        const map = {
-            "Morning Show": "morningshow.html",
-            "Midnight Grace": "midnightgrace.html",
-            "Praise FM Carpool": "praisefmcarpool.html",
-            "Praise FM POP": "praisefmpop.html",
-            "Sunday With Christ": "sundaywithchrist.html",
-            "Praise FM Non Stop": "praisefmnonstop.html",
-            "Praise FM Worship": "praisefmworship.html",
-            "Midday Grace": "middaygrace.html",
-            "Praise FM Magazine": "praisefmmagazine.html"
-        };
-        return map[name] || "praisefm.html";
     }
 
     let currentTrack = {title:"", artist:"", duration:0, startTime:0};
@@ -498,12 +511,23 @@
         document.getElementById("miniImg").src = current.img || images.default;
         document.getElementById("upnextImg1").src = next1.img || images.default;
         document.getElementById("upnextImg2").src = next2.img || images.default;
+
         const displayName = formatProgramName(current);
         document.getElementById("programTitle").textContent = displayName;
+
+        // 🔥 Atualiza o link de info
+        const page = getProgramPage(current.name);
+        const infoLink = document.getElementById("programInfoLink");
+        if (page && page !== "praisefm.html") {
+            infoLink.href = `/info/${page}`;
+            infoLink.style.display = "inline";
+        } else {
+            infoLink.style.display = "none";
+        }
+
         document.getElementById("miniTitle").textContent = currentTrack.title ? currentTrack.title : displayName;
         document.getElementById("miniArtist").textContent = currentTrack.artist ? currentTrack.artist : "Praise & Worship";
 
-        // 🔥 Links clicáveis SEM HÍFENS
         document.getElementById("upnextTime1").textContent = "UP NEXT: " + formatRange(next1);
         document.getElementById("upnextTitle1").innerHTML = 
             `<a href="/info/${getProgramPage(next1.name)}" target="_blank">${formatProgramName(next1)}</a>`;
