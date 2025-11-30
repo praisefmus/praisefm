@@ -21,17 +21,16 @@
         .live-badge { display:inline-flex; align-items:center; gap:8px; color:var(--orange); font-weight:700; font-size:14px; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; }
         .live-dot { width:9px; height:9px; background:var(--orange); border-radius:50%; animation:pulse 2s infinite; }
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-        .program-title-container { display: flex; align-items: center; gap: 16px; justify-content: center; margin: 10px 0 30px; }
-        .program-title { font-size:28px; font-weight:800; line-height:1.2; margin:0; }
-        .info-link {
-            font-size: 16px;
-            color: var(--grey);
+        .program-title-container { margin:10px 0 30px; display:flex; justify-content:center; }
+        .program-title-link {
             text-decoration: none;
+            color: inherit;
             transition: color 0.2s;
         }
-        .info-link:hover {
+        .program-title-link:hover .program-title {
             color: var(--orange);
         }
+        .program-title { font-size:28px; font-weight:800; line-height:1.2; margin:0; }
         .play-button { margin:40px auto; width:220px; height:56px; background:var(--orange); color:#fff; border:none; border-radius:28px; font-size:18px; font-weight:700; cursor:pointer;
             display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 6px 20px rgba(255,77,0,.3); transition:transform .2s; }
         .play-button:hover { transform:scale(1.05); }
@@ -212,8 +211,9 @@
     </div>
     <div class="live-badge"><div class="live-dot"></div> LIVE</div>
     <div class="program-title-container">
-        <h2 class="program-title" id="programTitle">Praise FM</h2>
-        <a href="#" id="programInfoLink" class="info-link" style="display:none;">ℹ️ Info</a>
+        <a href="#" id="programTitleLink" class="program-title-link">
+            <h2 class="program-title" id="programTitle">Praise FM</h2>
+        </a>
     </div>
     <button class="play-button" id="bigPlay">
         <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Play
@@ -324,7 +324,7 @@
         {start:"21:30", end:"00:00", name:"Praise FM Worship", img:images.worship, desc: "Praise FM plays the finest worship music."}
     ];
 
-    // 🔥 Mapeamento para arquivos SEM HÍFENS
+    // 🔥 Mapeamento de programas → arquivos SEM HÍFENS
     function getProgramPage(name) {
         const map = {
             "Morning Show": "morningshow.html",
@@ -333,11 +333,11 @@
             "Praise FM POP": "praisefmpop.html",
             "Sunday With Christ": "sundaywithchrist.html",
             "Praise FM Non Stop": "praisefmnonstop.html",
-            "Praise FM Worship": "praisefmworship.html",
+            "Praise FM Worship": "praisefmworship.html", // ✅ incluído
             "Midday Grace": "middaygrace.html",
             "Praise FM Magazine": "praisefmmagazine.html"
         };
-        return map[name] || "praisefm.html";
+        return map[name] || null;
     }
 
     function getTime() { return new Date(new Date().toLocaleString("en-US",{timeZone:"America/Chicago"})); }
@@ -515,14 +515,17 @@
         const displayName = formatProgramName(current);
         document.getElementById("programTitle").textContent = displayName;
 
-        // 🔥 Atualiza o link de info
+        // 🔥 Atualiza o link do título
         const page = getProgramPage(current.name);
-        const infoLink = document.getElementById("programInfoLink");
-        if (page && page !== "praisefm.html") {
-            infoLink.href = `/info/${page}`;
-            infoLink.style.display = "inline";
+        const titleLink = document.getElementById("programTitleLink");
+        if (page) {
+            titleLink.href = `/info/${page}`;
+            titleLink.target = "_blank";
+            titleLink.style.pointerEvents = "auto";
         } else {
-            infoLink.style.display = "none";
+            titleLink.href = "#";
+            titleLink.onclick = (e) => e.preventDefault();
+            titleLink.style.pointerEvents = "none";
         }
 
         document.getElementById("miniTitle").textContent = currentTrack.title ? currentTrack.title : displayName;
@@ -530,12 +533,12 @@
 
         document.getElementById("upnextTime1").textContent = "UP NEXT: " + formatRange(next1);
         document.getElementById("upnextTitle1").innerHTML = 
-            `<a href="/info/${getProgramPage(next1.name)}" target="_blank">${formatProgramName(next1)}</a>`;
+            `<a href="/info/${getProgramPage(next1.name) || 'praisefm.html'}" target="_blank">${formatProgramName(next1)}</a>`;
         document.getElementById("upnextDesc1").textContent = next1.desc || "-";
 
         document.getElementById("upnextTime2").textContent = formatRange(next2);
         document.getElementById("upnextTitle2").innerHTML = 
-            `<a href="/info/${getProgramPage(next2.name)}" target="_blank">${formatProgramName(next2)}</a>`;
+            `<a href="/info/${getProgramPage(next2.name) || 'praisefm.html'}" target="_blank">${formatProgramName(next2)}</a>`;
         document.getElementById("upnextDesc2").textContent = next2.desc || "-";
 
         if (current.start && current.end) {
