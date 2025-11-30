@@ -26,13 +26,110 @@
             display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 6px 20px rgba(255,77,0,.3); transition:transform .2s; }
         .play-button:hover { transform:scale(1.05); }
         .play-button svg { width:24px; height:24px; fill:#fff; margin-left:10px; }
-        .upnext { background:#f8f8f8; border-radius:12px; padding:20px; margin:40px 0; text-align:left; }
-        .upnext-items { display:flex; gap:20px; flex-wrap:wrap; }
-        .upnext-item { flex:1; min-width:200px; display:flex; align-items:center; gap:16px; }
-        .upnext-img { width:60px; height:60px; border-radius:0; object-fit:cover; background:#eee; }
-        .upnext-time { font-size:14px; font-weight:700; color:var(--orange); text-transform:uppercase; letter-spacing:0.5px; }
-        .upnext-title { font-size:16px; font-weight:700; margin-top:4px; }
-        .upnext-desc { font-size:14px; color:var(--grey); margin-top:4px; }
+
+        /* 📋 Open Play Queue Drawer */
+        .play-queue-drawer {
+            position: fixed;
+            top: 0;
+            right: -320px;
+            width: 320px;
+            height: 100vh;
+            background: var(--bg);
+            border-left: 1px solid var(--border-color);
+            box-shadow: -4px 0 20px rgba(0,0,0,0.1);
+            z-index: 9999;
+            transition: right 0.3s ease;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        .play-queue-drawer.open {
+            right: 0;
+        }
+        .play-queue-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .play-queue-header h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--orange);
+        }
+        .play-queue-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--grey);
+            padding: 4px;
+        }
+        .play-queue-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border-color);
+            align-items: flex-start;
+        }
+        .play-queue-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 0;
+            object-fit: cover;
+            background: #eee;
+        }
+        .play-queue-content {
+            flex: 1;
+            min-width: 0;
+        }
+        .play-queue-time {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--orange);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        .play-queue-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .play-queue-desc {
+            font-size: 14px;
+            color: var(--grey);
+        }
+
+        /* Botão Open Play Queue */
+        .queue-toggle {
+            background: #f8f8f8;
+            color: var(--orange);
+            border: none;
+            font-weight: 700;
+            padding: 12px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 30px auto;
+            display: block;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .queue-toggle:hover {
+            background: #eee;
+        }
+        .queue-toggle svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--orange);
+        }
+
         .recently { margin-top:40px; text-align:left; }
         .recently-header { font-size:13px; font-weight:700; color:var(--grey); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; }
         .recent-item { display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--border-color); }
@@ -68,6 +165,7 @@
             .program-title { font-size:24px; } 
             .mini-controls { gap:10px; } 
             .mini-volume { width:80px; } 
+            .play-queue-drawer { width: 100%; right: -100%; }
         }
         /* 🌐 Apple-style dropdown */
         #praisefm-locale-bar {
@@ -128,6 +226,7 @@
     <button class="pfm-close-btn" id="pfm-close" aria-label="Close">&times;</button>
 </div>
 <div class="pfm-bar-shim" id="pfm-bar-shim"></div>
+
 <script>
 (function(){
   const STORAGE_KEY = "praisefm_locale_banner_closed_v2";
@@ -183,6 +282,7 @@
   });
 })();
 </script>
+
 <div class="container">
     <h1 class="station-title">Praise FM</h1>
     <p class="station-subtitle">Praise & Worship</p>
@@ -197,31 +297,30 @@
     <button class="play-button" id="bigPlay">
         <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Play
     </button>
-    <div class="upnext">
-        <div class="upnext-items">
-            <div class="upnext-item">
-                <img id="upnextImg1" src="/image/logopraisefmnonstop.png" class="upnext-img" onerror="this.src='/image/logopraisefmnonstop.png'">
-                <div>
-                    <div class="upnext-time" id="upnextTime1">-</div>
-                    <div class="upnext-title" id="upnextTitle1">-</div>
-                    <div class="upnext-desc" id="upnextDesc1">-</div>
-                </div>
-            </div>
-            <div class="upnext-item">
-                <img id="upnextImg2" src="/image/praisefmcarpoollogo.webp" class="upnext-img" onerror="this.src='/image/logopraisefm.webp'">
-                <div>
-                    <div class="upnext-time" id="upnextTime2">-</div>
-                    <div class="upnext-title" id="upnextTitle2">-</div>
-                    <div class="upnext-desc" id="upnextDesc2">-</div>
-                </div>
-            </div>
-        </div>
-    </div>
+
+    <!-- Botão Open Play Queue -->
+    <button class="queue-toggle" id="openQueueBtn">
+        <svg viewBox="0 0 24 24"><path d="M10 18h4v-2h-4v2zM3 6h18v2H3V6zm0 5h18v2H3v-2z"/></svg>
+        Open Play Queue
+    </button>
+
     <div class="recently">
         <div class="recently-header">Recently played</div>
         <div id="recentList"></div>
     </div>
 </div>
+
+<!-- Painel Lateral da Fila -->
+<div class="play-queue-drawer" id="playQueueDrawer">
+    <div class="play-queue-header">
+        <h3>Schedule</h3>
+        <button class="play-queue-close" id="closeQueueBtn">×</button>
+    </div>
+    <div id="playQueueList">
+        <!-- Itens serão preenchidos por JS -->
+    </div>
+</div>
+
 <div class="mini-player" id="miniPlayer">
     <div class="mini-player-content">
         <img id="miniImg" src="/image/logopraisefm.webp" class="mini-cover">
@@ -259,9 +358,8 @@
         </div>
     </div>
 </div>
+
 <script>
-    // [CÓDIGO JS COMPLETO DO ORIGINAL, INCLUINDO O PROGRAM SCHEDULE ATUALIZADO COM "Worship 17h–20h Domingo/Sábado"]
-    // (Mantive idêntico ao que você já validou – não há alteração na lógica)
     const STREAM_URL = "https://stream.zeno.fm/hvwifp8ezc6tv";
     const audio = new Audio(STREAM_URL);
     audio.volume = 0.8;
@@ -295,27 +393,19 @@
         {start:"07:00", end:"12:00", name:"Sunday With Christ", img:images.sunday, days:[0], desc: "Matt Riley shares spiritual insights and Sunday music."},
         {start:"12:00", end:"16:00", name:"Midday Grace", img:images.midday, desc: "Michael Ray brings grace and tunes through the midday."},
         {start:"16:00", end:"17:00", name:"Praise FM Non Stop", img:images.nonstop, desc: "Praise FM with non-stop praise hits."},
-        
-        // Sunday: 17:00–20:00 → Worship
         {start:"17:00", end:"20:00", name:"Praise FM Worship", img:images.worship, days:[0], desc: "Praise FM plays the finest worship music."},
-        
-        // Mon–Fri: 17:00–18:00 Worship + 18:00–20:00 Carpool
         {start:"17:00", end:"18:00", name:"Praise FM Worship", img:images.worship, days:[1,2,3,4,5], desc: "Praise FM plays the finest worship music."},
         {start:"18:00", end:"20:00", name:"Praise FM Carpool", img:images.carpool, days:[1,2,3,4,5], desc: "Rachael Harris with praise tunes for your drive home."},
-        
-        // Saturday: 17:00–20:00 → Worship
         {start:"17:00", end:"20:00", name:"Praise FM Worship", img:images.worship, days:[6], desc: "Praise FM plays the finest worship music."},
-        
         {start:"20:00", end:"20:30", name:"Praise FM POP", img:images.pop, desc: "Jordan Reys with all things pop and contemporary praise."},
         {start:"20:30", end:"20:31", name:"Praise FM Magazine", img:images.magazine, days:[0], desc: "Praise FM with magazine-style content and features."},
         {start:"20:30", end:"21:30", name:"Praise FM Non Stop", img:images.nonstop, days:[1,2,3,4,5,6], desc: "Praise FM with non-stop praise hits."},
         {start:"21:30", end:"00:00", name:"Praise FM Worship", img:images.worship, desc: "Praise FM plays the finest worship music."}
     ];
-    // [RESTANTE DO JS IDÊNTICO AO ORIGINAL – FUNÇÕES, PLAYER, EVENTOS, ETC.]
-    // (Para brevidade, omitido, mas deve ser mantido igual ao seu HTML original funcional)
-    
+
     function getTime() { return new Date(new Date().toLocaleString("en-US",{timeZone:"America/Chicago"})); }
     function timeToMins(t) { const [h,m]=t.split(":").map(Number); return h*60+m; }
+
     function getCurrentAndNext() {
         const now = getTime();
         const day = now.getDay();
@@ -345,6 +435,7 @@
             next2: future[1]?.prog || schedule[1]
         };
     }
+
     function formatProgramName(p) {
         if (!p) return "Praise FM";
         const base = p.name.replace(/ \([^)]*\)$/, '').trim();
@@ -354,6 +445,7 @@
         const host = hosts[base] || "Praise FM";
         return `${base} With ${host}`;
     }
+
     function formatRange(p) {
         const [sh, sm] = p.start.split(":").map(Number);
         const [eh, em] = p.end.split(":").map(Number);
@@ -363,14 +455,73 @@
         const eHour = ((eh + 11) % 12) + 1;
         return `${sHour}:${sm.toString().padStart(2, '0')} ${sSuffix} - ${eHour}:${em.toString().padStart(2, '0')} ${eSuffix}`;
     }
+
+    // 📋 Render Play Queue
+    function renderPlayQueue() {
+        const now = getTime();
+        const day = now.getDay();
+        const currentMins = timeToMins(now.toTimeString().slice(0,5));
+        let futureProgs = [];
+        for (const p of schedule) {
+            if (p.days && !p.days.includes(day)) continue;
+            const startMins = timeToMins(p.start);
+            if (startMins > currentMins) {
+                futureProgs.push(p);
+            }
+        }
+        if (futureProgs.length === 0) {
+            const nextDay = (day + 1) % 7;
+            for (const p of schedule) {
+                if (!p.days || p.days.includes(nextDay)) {
+                    futureProgs.push(p);
+                }
+            }
+            futureProgs = futureProgs.slice(0, 5);
+        }
+        const container = document.getElementById("playQueueList");
+        if (futureProgs.length === 0) {
+            container.innerHTML = "<p style='text-align:center; padding:20px; color:var(--grey);'>No upcoming programs scheduled.</p>";
+            return;
+        }
+        container.innerHTML = futureProgs.map(prog => `
+            <div class="play-queue-item">
+                <img src="${prog.img || images.default}" class="play-queue-img" onerror="this.src='${images.default}'">
+                <div class="play-queue-content">
+                    <div class="play-queue-time">${formatRange(prog)}</div>
+                    <div class="play-queue-title">${formatProgramName(prog)}</div>
+                    <div class="play-queue-desc">${prog.desc || "-"}</div>
+                </div>
+            </div>
+        `).join("");
+    }
+
+    // 📋 Toggle Play Queue Drawer
+    document.getElementById("openQueueBtn").addEventListener("click", () => {
+        document.getElementById("playQueueDrawer").classList.add("open");
+        renderPlayQueue();
+    });
+    document.getElementById("closeQueueBtn").addEventListener("click", () => {
+        document.getElementById("playQueueDrawer").classList.remove("open");
+    });
+    document.addEventListener("click", (e) => {
+        const drawer = document.getElementById("playQueueDrawer");
+        const btn = document.getElementById("openQueueBtn");
+        if (drawer.classList.contains("open") && !drawer.contains(e.target) && e.target !== btn) {
+            drawer.classList.remove("open");
+        }
+    });
+
+    // === RESTANTE DO PLAYER ===
     let currentTrack = {title:"", artist:"", duration:0, startTime:0};
     const recents = [];
     let trackTimer = null;
+
     function formatTime(seconds) {
         const min = Math.floor(seconds / 60);
         const sec = Math.floor(seconds % 60);
         return `${min}:${sec.toString().padStart(2, '0')}`;
     }
+
     function updateProgramProgress() {
         const {current} = getCurrentAndNext();
         const now = getTime();
@@ -390,6 +541,7 @@
             document.getElementById("miniTrackDuration").textContent = "Live";
         }
     }
+
     async function fetchAlbumCover(artist, title) {
         if (!artist || !title) return images.default;
         const query = encodeURIComponent(`${artist} ${title}`);
@@ -403,6 +555,7 @@
         } catch (e) {}
         return images.default;
     }
+
     async function processMetadata(artist, title) {
         if (trackTimer) clearInterval(trackTimer);
         if (title.toLowerCase().includes("commercial") || title.toLowerCase().includes("ad")) {
@@ -428,6 +581,7 @@
         updateDisplay();
         trackTimer = setInterval(updateProgramProgress, 1000);
     }
+
     try {
         const es = new EventSource("https://api.zeno.fm/mounts/metadata/subscribe/hvwifp8ezc6tv");
         es.onmessage = e => {
@@ -440,6 +594,7 @@
             } catch {}
         };
     } catch(e) {}
+
     function togglePlay() {
         if (audio.paused) { audio.play(); document.getElementById("miniPlayer").classList.add("show"); }
         else audio.pause();
@@ -449,6 +604,7 @@
         document.querySelector("#bigPlay").innerHTML = playing ? pauseSvg + ' Pause' : playSvg + ' Play';
         document.getElementById("miniPlayPause").innerHTML = playing ? pauseSvg : playSvg;
     }
+
     document.getElementById("bigPlay").onclick = togglePlay;
     document.getElementById("miniPlayPause").onclick = togglePlay;
     document.getElementById("miniRewind").onclick = () => audio.currentTime = Math.max(0, audio.currentTime - 15);
@@ -466,27 +622,19 @@
             ? '<svg viewBox="0 0 24 24"><path d="M16.5 12l4.5 4.5-1.5 1.5L15 13.5 11.5 17H7v-6h4.5L15 7.5l4.5-4.5 1.5 1.5L16.5 12z"/></svg>' 
             : '<svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>';
     };
+
     function updateDisplay() {
         const {current, next1, next2} = getCurrentAndNext();
-        const now = getTime();
         document.getElementById("mainImg").src = current.img || images.default;
         document.getElementById("miniImg").src = current.img || images.default;
-        document.getElementById("upnextImg1").src = next1.img || images.default;
-        document.getElementById("upnextImg2").src = next2.img || images.default;
         const displayName = formatProgramName(current);
         document.getElementById("programTitle").textContent = displayName;
         document.getElementById("miniTitle").textContent = currentTrack.title ? currentTrack.title : displayName;
         document.getElementById("miniArtist").textContent = currentTrack.artist ? currentTrack.artist : "Praise & Worship";
-        document.getElementById("upnextTime1").textContent = "UP NEXT: " + formatRange(next1);
-        document.getElementById("upnextTitle1").textContent = formatProgramName(next1);
-        document.getElementById("upnextDesc1").textContent = next1.desc || "-";
-        document.getElementById("upnextTime2").textContent = formatRange(next2);
-        document.getElementById("upnextTitle2").textContent = formatProgramName(next2);
-        document.getElementById("upnextDesc2").textContent = next2.desc || "-";
         if (current.start && current.end) {
             const s = timeToMins(current.start);
             const e = timeToMins(current.end);
-            const n = timeToMins(now.toTimeString().slice(0,5));
+            const n = timeToMins(getTime().toTimeString().slice(0,5));
             const total = (e - s + 1440) % 1440;
             const elapsed = (n - s + 1440) % 1440;
             const pct = total > 0 ? (elapsed / total) * 100 : 0;
@@ -496,6 +644,7 @@
         }
         updateProgramProgress();
     }
+
     setInterval(updateDisplay, 8000);
     updateDisplay();
 </script>
