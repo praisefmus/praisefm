@@ -364,12 +364,20 @@
         return `${sHour}:${sm.toString().padStart(2, '0')} ${sSuffix} - ${eHour}:${em.toString().padStart(2, '0')} ${eSuffix}`;
     }
 
-    // 🔥 Função para converter nome do programa em slug (ex: "Morning Show" → "morning-show")
-    function slugify(name) {
-        return name.toLowerCase()
-            .replace(/[^a-z0-9\s-]/g, '')
-            .replace(/\s+/g, '-')
-            .replace(/-+/g, '-');
+    // 🔥 Mapeamento direto de nomes para arquivos SEM HÍFENS
+    function getProgramPage(name) {
+        const map = {
+            "Morning Show": "morningshow.html",
+            "Midnight Grace": "midnightgrace.html",
+            "Praise FM Carpool": "praisefmcarpool.html",
+            "Praise FM POP": "praisefmpop.html",
+            "Sunday With Christ": "sundaywithchrist.html",
+            "Praise FM Non Stop": "praisefmnonstop.html",
+            "Praise FM Worship": "praisefmworship.html",
+            "Midday Grace": "middaygrace.html",
+            "Praise FM Magazine": "praisefmmagazine.html"
+        };
+        return map[name] || "praisefm.html";
     }
 
     let currentTrack = {title:"", artist:"", duration:0, startTime:0};
@@ -495,15 +503,15 @@
         document.getElementById("miniTitle").textContent = currentTrack.title ? currentTrack.title : displayName;
         document.getElementById("miniArtist").textContent = currentTrack.artist ? currentTrack.artist : "Praise & Worship";
 
-        // 🔥 Atualiza os títulos com links clicáveis
+        // 🔥 Links clicáveis SEM HÍFENS
         document.getElementById("upnextTime1").textContent = "UP NEXT: " + formatRange(next1);
         document.getElementById("upnextTitle1").innerHTML = 
-            `<a href="/info/${slugify(next1.name)}.html" target="_blank">${formatProgramName(next1)}</a>`;
+            `<a href="/info/${getProgramPage(next1.name)}" target="_blank">${formatProgramName(next1)}</a>`;
         document.getElementById("upnextDesc1").textContent = next1.desc || "-";
 
         document.getElementById("upnextTime2").textContent = formatRange(next2);
         document.getElementById("upnextTitle2").innerHTML = 
-            `<a href="/info/${slugify(next2.name)}.html" target="_blank">${formatProgramName(next2)}</a>`;
+            `<a href="/info/${getProgramPage(next2.name)}" target="_blank">${formatProgramName(next2)}</a>`;
         document.getElementById("upnextDesc2").textContent = next2.desc || "-";
 
         if (current.start && current.end) {
