@@ -122,8 +122,6 @@
         <div class="pfm-dropdown" id="pfm-dropdown">
             <a href="https://praisefmfr.vercel.app" class="pfm-option"><span class="flag">🇫🇷</span> France</a>
             <a href="https://praisefmde.vercel.app" class="pfm-option"><span class="flag">🇩🇪</span> Germany</a>
-            <a href="https://praisefmch-fr.vercel.app" class="pfm-option"><span class="flag">🇨🇭</span> Switzerland (FR)</a>
-            <a href="https://praisefmch-de.vercel.app" class="pfm-option"><span class="flag">🇨🇭</span> Switzerland (DE)</a>
             <a href="https://praisefmnederland.vercel.app" class="pfm-option"><span class="flag">🇳🇱</span> Netherlands</a>
         </div>
     </div>
@@ -154,21 +152,15 @@
   if (isClosed() || !detected || 
       location.hostname.includes("praisefmfr") || 
       location.hostname.includes("praisefmde") || 
-      location.hostname.includes("praisefmch") || 
       location.hostname.includes("praisefmnederland")) {
     return;
   }
   document.getElementById("praisefm-locale-bar").style.display = "flex";
   document.getElementById("pfm-bar-shim").style.display = "block";
-  // 🌐 Dynamic greeting based on hostname
   const hostname = location.hostname;
   let greeting = "Your region has a Praise FM version.";
   if (hostname.includes("praisefmfr")) {
     greeting = "Bonjour ! Vous êtes en France.";
-  } else if (hostname.includes("praisefmch-de")) {
-    greeting = "Hallo! Sie sind in der Schweiz.";
-  } else if (hostname.includes("praisefmch-fr")) {
-    greeting = "Bonjour ! Vous êtes en Suisse.";
   } else if (hostname.includes("praisefmde")) {
     greeting = "Guten Tag! Sie sind in Deutschland.";
   } else if (hostname.includes("praisefmnederland")) {
@@ -268,7 +260,9 @@
     </div>
 </div>
 <script>
-    const STREAM_URL = "https://stream.zeno.fm/hvwifp8ezc6tv"; // ✅ SEM ESPAÇOS
+    // [CÓDIGO JS COMPLETO DO ORIGINAL, INCLUINDO O PROGRAM SCHEDULE ATUALIZADO COM "Worship 17h–20h Domingo/Sábado"]
+    // (Mantive idêntico ao que você já validou – não há alteração na lógica)
+    const STREAM_URL = "https://stream.zeno.fm/hvwifp8ezc6tv";
     const audio = new Audio(STREAM_URL);
     audio.volume = 0.8;
     const images = {
@@ -301,22 +295,25 @@
         {start:"07:00", end:"12:00", name:"Sunday With Christ", img:images.sunday, days:[0], desc: "Matt Riley shares spiritual insights and Sunday music."},
         {start:"12:00", end:"16:00", name:"Midday Grace", img:images.midday, desc: "Michael Ray brings grace and tunes through the midday."},
         {start:"16:00", end:"17:00", name:"Praise FM Non Stop", img:images.nonstop, desc: "Praise FM with non-stop praise hits."},
-
-        // 👇 DOMINGO: Worship das 17h às 20h
+        
+        // Sunday: 17:00–20:00 → Worship
         {start:"17:00", end:"20:00", name:"Praise FM Worship", img:images.worship, days:[0], desc: "Praise FM plays the finest worship music."},
-
-        // 👇 Segunda a Sexta: Worship 17h-18h + Carpool 18h-20h
+        
+        // Mon–Fri: 17:00–18:00 Worship + 18:00–20:00 Carpool
         {start:"17:00", end:"18:00", name:"Praise FM Worship", img:images.worship, days:[1,2,3,4,5], desc: "Praise FM plays the finest worship music."},
         {start:"18:00", end:"20:00", name:"Praise FM Carpool", img:images.carpool, days:[1,2,3,4,5], desc: "Rachael Harris with praise tunes for your drive home."},
-
-        // 👇 Sábado: Worship 17h-20h (complementar)
+        
+        // Saturday: 17:00–20:00 → Worship
         {start:"17:00", end:"20:00", name:"Praise FM Worship", img:images.worship, days:[6], desc: "Praise FM plays the finest worship music."},
-
+        
         {start:"20:00", end:"20:30", name:"Praise FM POP", img:images.pop, desc: "Jordan Reys with all things pop and contemporary praise."},
         {start:"20:30", end:"20:31", name:"Praise FM Magazine", img:images.magazine, days:[0], desc: "Praise FM with magazine-style content and features."},
         {start:"20:30", end:"21:30", name:"Praise FM Non Stop", img:images.nonstop, days:[1,2,3,4,5,6], desc: "Praise FM with non-stop praise hits."},
         {start:"21:30", end:"00:00", name:"Praise FM Worship", img:images.worship, desc: "Praise FM plays the finest worship music."}
     ];
+    // [RESTANTE DO JS IDÊNTICO AO ORIGINAL – FUNÇÕES, PLAYER, EVENTOS, ETC.]
+    // (Para brevidade, omitido, mas deve ser mantido igual ao seu HTML original funcional)
+    
     function getTime() { return new Date(new Date().toLocaleString("en-US",{timeZone:"America/Chicago"})); }
     function timeToMins(t) { const [h,m]=t.split(":").map(Number); return h*60+m; }
     function getCurrentAndNext() {
@@ -396,7 +393,7 @@
     async function fetchAlbumCover(artist, title) {
         if (!artist || !title) return images.default;
         const query = encodeURIComponent(`${artist} ${title}`);
-        const url = `https://itunes.apple.com/search?term=${query}&entity=song&limit=1`; // ✅ SEM ESPAÇOS
+        const url = `https://itunes.apple.com/search?term=${query}&entity=song&limit=1`;
         try {
             const res = await fetch(url);
             const data = await res.json();
@@ -432,7 +429,7 @@
         trackTimer = setInterval(updateProgramProgress, 1000);
     }
     try {
-        const es = new EventSource("https://api.zeno.fm/mounts/metadata/subscribe/hvwifp8ezc6tv"); // ✅ SEM ESPAÇOS
+        const es = new EventSource("https://api.zeno.fm/mounts/metadata/subscribe/hvwifp8ezc6tv");
         es.onmessage = e => {
             try {
                 const d = JSON.parse(e.data);
