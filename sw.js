@@ -1,26 +1,27 @@
-// Praise FM – Service Worker Fix (2025)
+// sw.js – Service Worker mínimo para ativar PWA
+const CACHE_NAME = 'praisefm-us-v1';
+const urlsToCache = [
+  '/',
+  '/image/logopraisefm.webp',
+  '/image/praisefm-192.png',
+  '/image/praisefm-512.png'
+];
 
-// Instalação
-self.addEventListener("install", (event) => {
-    self.skipWaiting();
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then((cache) => cache.addAll(urlsToCache))
+  );
 });
 
-// Ativação
-self.addEventListener("activate", (event) => {
-    clients.claim();
-});
-
-// Fetch básico para habilitar PWA
-self.addEventListener("fetch", (event) => {
-    // Não cache streams nem event-source
-    if (
-        event.request.url.includes("zeno.fm") ||
-        event.request.url.includes("metadata") ||
-        event.request.headers.get("accept") === "text/event-stream"
-    ) {
-        return;
-    }
-
-    // Resposta padrão: rede primeiro
-    event.respondWith(fetch(event.request).catch(() => caches.match(event.request)));
+self.addEventListener('fetch', (event) => {
+  // Opcional: serve do cache se offline
+  // Para streaming de rádio, não cacheamos a stream
+  if (event.request.destination === 'audio') {
+    return;
+  }
+  event.respondWith(
+    caches.match(event.request)
+      .then((response) => response || fetch(event.request))
+  );
 });
