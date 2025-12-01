@@ -1,12 +1,10 @@
-// sw.js
-const CACHE_NAME = 'praisefm-v1';
+// sw.js – Service Worker mínimo para ativar PWA
+const CACHE_NAME = 'praisefm-us-v1';
 const urlsToCache = [
   '/',
-  '/index.html',
   '/image/logopraisefm.webp',
-  '/image/favicon-32x32.png',
-  '/image/favicon-192x192.png',
-  '/image/favicon-512x512.png'
+  '/image/praisefm-192.png',
+  '/image/praisefm-512.png'
 ];
 
 self.addEventListener('install', (event) => {
@@ -17,8 +15,9 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Não interfere no stream de áudio
-  if (event.request.url.includes('stream.zeno.fm') || event.request.url.includes('/api/')) {
+  // Opcional: serve do cache se offline
+  // Para streaming de rádio, não cacheamos a stream
+  if (event.request.destination === 'audio') {
     return;
   }
   event.respondWith(
