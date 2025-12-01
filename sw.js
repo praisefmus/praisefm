@@ -1,19 +1,19 @@
 // Praise FM – Service Worker PWA (versão corrigida)
 
-// Ativa imediatamente após instalar
+// Instala imediatamente
 self.addEventListener("install", (event) => {
   self.skipWaiting();
 });
 
-// Assume o controle das abas imediatamente
+// Assume todas as abas
 self.addEventListener("activate", (event) => {
   clients.claim();
 });
 
-// Fetch básico: rede > cache
+// Rede primeiro, fallback no cache
 self.addEventListener("fetch", (event) => {
 
-  // Nunca interceptar stream de rádio ou EventSource
+  // Não interceptar stream Zeno
   if (
     event.request.url.includes("zeno.fm") ||
     event.request.headers.get("accept") === "text/event-stream"
