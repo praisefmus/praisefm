@@ -1,9 +1,5 @@
-// Praise FM — Service Worker PWA (Versão Final e Segura)
-
-// Nome do cache
-const CACHE_NAME = "praisefm-v1";
-
-// Arquivos que entram no cache offline
+// Praise FM — Service Worker PWA (Versão Final e Otimizada)
+const CACHE_NAME = "praisefm-us-v2";
 const ASSETS = [
   "/",
   "/index.html",
@@ -18,44 +14,61 @@ const ASSETS = [
   "/image/sundaywithchrist.png",
   "/image/praisefmpoplogo.webp",
   "/image/praisefmmagazine.png",
-  "/image/favicon-32x32.png"
+  "/image/favicon-32x32.png",
+  // 🔹 Ícones PWA exigidos pelo Chrome
+  "/image/praisefm-192.png",
+  "/image/praisefm-512.png"
 ];
 
-// Instalação (pré-cache)
+// Instalação: pré-carrega assets essenciais
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(ASSETS).catch((err) => {
+        console.warn("Asset não encontrado durante o pré-cache:", err);
+      });
+    })
   );
   self.skipWaiting();
 });
 
-// Ativação (limpa caches antigos)
+// Ativação: remove caches antigos
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
+      Promise.all(
+        keys
+          .filter((key) => key !== CACHE_NAME)
+          .map((key) => caches.delete(key))
+      )
     )
   );
   self.clients.claim();
 });
 
-// Estratégia: Network-first com fallback para cache
+// Estratégia de rede com fallback para cache
 self.addEventListener("fetch", (event) => {
-
-  // Não interceptar streaming da Zeno
+  // Não interceptar streaming de áudio
   if (event.request.url.includes("zeno.fm")) return;
 
-  // Não interceptar SSE
-  if (event.request.headers.get("accept") === "text/event-stream") return;
+  // Não interceptar EventSource (SSE)
+  if (event.request.headers.get("accept")?.includes("text/event-stream")) return;
 
   event.respondWith(
     fetch(event.request)
-      .then(response => {
-        // Clona resposta e coloca no cache
-        const clone = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+      .then((response) => {
+        // Salva resposta válida no cache
+        if (response && response.status === 200 && response.type === "basic") {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+        }
         return response;
       })
-      .catch(() => caches.match(event.request))
+      .catch(() => {
+        // Fallback: tenta recuperar do cache
+        return caches.match(event.request).then((cached) => {
+          return cached || caches.match("/index.html");
+        });
+      })
   );
 });
