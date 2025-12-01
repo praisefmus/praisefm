@@ -21,7 +21,10 @@
         .live-badge { display:inline-flex; align-items:center; gap:8px; color:var(--orange); font-weight:700; font-size:14px; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; }
         .live-dot { width:9px; height:9px; background:var(--orange); border-radius:50%; animation:pulse 2s infinite; }
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-        .program-title { font-size:28px; font-weight:800; margin:10px 0 30px; line-height:1.2; }
+        .program-title-container { margin:10px 0 30px; display:flex; justify-content:center; }
+        .program-title-link { text-decoration: none; color: inherit; }
+        .program-title-link:hover .program-title { color: var(--orange); }
+        .program-title { font-size:28px; font-weight:800; line-height:1.2; margin:0; }
         .play-button { margin:40px auto; width:220px; height:56px; background:var(--orange); color:#fff; border:none; border-radius:28px; font-size:18px; font-weight:700; cursor:pointer;
             display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 6px 20px rgba(255,77,0,.3); transition:transform .2s; }
         .play-button:hover { transform:scale(1.05); }
@@ -32,6 +35,14 @@
         .upnext-img { width:60px; height:60px; border-radius:0; object-fit:cover; background:#eee; }
         .upnext-time { font-size:14px; font-weight:700; color:var(--orange); text-transform:uppercase; letter-spacing:0.5px; }
         .upnext-title { font-size:16px; font-weight:700; margin-top:4px; }
+        .upnext-title a {
+            text-decoration: none;
+            color: inherit;
+            font-weight: 700;
+        }
+        .upnext-title a:hover {
+            text-decoration: underline;
+        }
         .upnext-desc { font-size:14px; color:var(--grey); margin-top:4px; }
         .recently { margin-top:40px; text-align:left; }
         .recently-header { font-size:13px; font-weight:700; color:var(--grey); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; }
@@ -193,7 +204,11 @@
         </div>
     </div>
     <div class="live-badge"><div class="live-dot"></div> LIVE</div>
-    <h2 class="program-title" id="programTitle">Praise FM</h2>
+    <div class="program-title-container">
+        <a href="#" id="programTitleLink" class="program-title-link">
+            <h2 class="program-title" id="programTitle">Praise FM</h2>
+        </a>
+    </div>
     <button class="play-button" id="bigPlay">
         <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Play
     </button>
@@ -298,11 +313,27 @@
         {start:"18:00", end:"20:00", name:"Praise FM Carpool", img:images.carpool, days:[1,2,3,4,5], desc: "Rachael Harris with praise tunes for your drive home."},
         {start:"17:00", end:"20:00", name:"Praise FM Worship", img:images.worship, days:[6], desc: "Praise FM plays the finest worship music."},
         {start:"20:00", end:"20:30", name:"Praise FM POP", img:images.pop, desc: "Jordan Reys with all things pop and contemporary praise."},
-        // ✅ ALTERAÇÃO AQUI: Magazine nas 4 noites (seg, qua, sex, dom)
+        // ✅ Magazine: dom, seg, qua, sex
         {start:"20:30", end:"20:31", name:"Praise FM Magazine", img:images.magazine, days:[0,1,3,5], desc: "Praise FM with magazine-style content and features."},
         {start:"20:30", end:"21:30", name:"Praise FM Non Stop", img:images.nonstop, days:[1,2,3,4,5,6], desc: "Praise FM with non-stop praise hits."},
         {start:"21:30", end:"00:00", name:"Praise FM Worship", img:images.worship, desc: "Praise FM plays the finest worship music."}
     ];
+
+    // 🔥 Mapeamento correto para arquivos SEM HÍFENS
+    function getProgramPage(name) {
+        const map = {
+            "Morning Show": "morningshow.html",
+            "Midnight Grace": "midnightgrace.html",
+            "Midday Grace": "middaygrace.html",
+            "Praise FM Carpool": "praisefmcarpool.html",
+            "Praise FM POP": "praisefmpop.html",
+            "Sunday With Christ": "sundaywithchrist.html",
+            "Praise FM Non Stop": "praisefmnonstop.html",
+            "Praise FM Worship": "praisefmworship.html",
+            "Praise FM Magazine": "praisefmmagazine.html"
+        };
+        return map[name] || null;
+    }
 
     function getTime() { return new Date(new Date().toLocaleString("en-US",{timeZone:"America/Chicago"})); }
     function timeToMins(t) { const [h,m]=t.split(":").map(Number); return h*60+m; }
@@ -456,6 +487,7 @@
             ? '<svg viewBox="0 0 24 24"><path d="M16.5 12l4.5 4.5-1.5 1.5L15 13.5 11.5 17H7v-6h4.5L15 7.5l4.5-4.5 1.5 1.5L16.5 12z"/></svg>' 
             : '<svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>';
     };
+
     function updateDisplay() {
         const {current, next1, next2} = getCurrentAndNext();
         const now = getTime();
@@ -463,16 +495,40 @@
         document.getElementById("miniImg").src = current.img || images.default;
         document.getElementById("upnextImg1").src = next1.img || images.default;
         document.getElementById("upnextImg2").src = next2.img || images.default;
+
         const displayName = formatProgramName(current);
         document.getElementById("programTitle").textContent = displayName;
+
+        // 🔥 Link do título principal
+        const page = getProgramPage(current.name);
+        const titleLink = document.getElementById("programTitleLink");
+        if (page) {
+            titleLink.href = `/info/${page}`;
+            titleLink.target = "_blank";
+        } else {
+            titleLink.href = "#";
+            titleLink.onclick = (e) => e.preventDefault();
+        }
+
         document.getElementById("miniTitle").textContent = currentTrack.title ? currentTrack.title : displayName;
         document.getElementById("miniArtist").textContent = currentTrack.artist ? currentTrack.artist : "Praise & Worship";
+
         document.getElementById("upnextTime1").textContent = "UP NEXT: " + formatRange(next1);
-        document.getElementById("upnextTitle1").textContent = formatProgramName(next1);
+        // 🔥 Link UP NEXT 1
+        document.getElementById("upnextTitle1").innerHTML = 
+            getProgramPage(next1.name) 
+                ? `<a href="/info/${getProgramPage(next1.name)}" target="_blank">${formatProgramName(next1)}</a>`
+                : formatProgramName(next1);
         document.getElementById("upnextDesc1").textContent = next1.desc || "-";
+
         document.getElementById("upnextTime2").textContent = formatRange(next2);
-        document.getElementById("upnextTitle2").textContent = formatProgramName(next2);
+        // 🔥 Link UP NEXT 2
+        document.getElementById("upnextTitle2").innerHTML = 
+            getProgramPage(next2.name) 
+                ? `<a href="/info/${getProgramPage(next2.name)}" target="_blank">${formatProgramName(next2)}</a>`
+                : formatProgramName(next2);
         document.getElementById("upnextDesc2").textContent = next2.desc || "-";
+
         if (current.start && current.end) {
             const s = timeToMins(current.start);
             const e = timeToMins(current.end);
@@ -486,6 +542,7 @@
         }
         updateProgramProgress();
     }
+
     setInterval(updateDisplay, 8000);
     updateDisplay();
 </script>
