@@ -10,7 +10,7 @@ self.addEventListener("activate", (event) => {
   clients.claim();
 });
 
-// Fetch simples: rede > cache
+// Fetch básico: rede > cache
 self.addEventListener("fetch", (event) => {
 
   // Nunca interceptar stream de rádio ou EventSource
