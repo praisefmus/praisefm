@@ -5,7 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Praise FM - Live</title>
     <meta name="theme-color" content="#ff4d00">
+    
+    <!-- 🔧 PWA: Manifesto e ícones -->
+    <link rel="manifest" href="/manifest.json">
     <link rel="icon" type="image/png" sizes="32x32" href="/image/favicon-32x32.png">
+    <link rel="apple-touch-icon" href="/image/praisefm-192.png">
+    
     <style>
         :root { --orange:#ff4d00; --dark:#111; --grey:#555; --light-grey:#888; --bg:#fff; --border-color:#ddd; }
         * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; }
@@ -274,6 +279,18 @@
         </div>
     </div>
 </div>
+
+<!-- 🔧 PWA: Registrar Service Worker -->
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js')
+                .then(reg => console.log('SW registered:', reg.scope))
+                .catch(err => console.error('SW registration failed:', err));
+        });
+    }
+</script>
+
 <script>
     const STREAM_URL = "https://stream.zeno.fm/hvwifp8ezc6tv";
     const audio = new Audio(STREAM_URL);
@@ -318,7 +335,6 @@
         {start:"20:30", end:"21:30", name:"Praise FM Non Stop", img:images.nonstop, days:[1,2,3,4,5,6], desc: "Praise FM with non-stop praise hits."},
         {start:"21:30", end:"00:00", name:"Praise FM Worship", img:images.worship, desc: "Praise FM plays the finest worship music."}
     ];
-
     // 🔥 Mapeamento correto para arquivos SEM HÍFENS
     function getProgramPage(name) {
         const map = {
@@ -334,7 +350,6 @@
         };
         return map[name] || null;
     }
-
     function getTime() { return new Date(new Date().toLocaleString("en-US",{timeZone:"America/Chicago"})); }
     function timeToMins(t) { const [h,m]=t.split(":").map(Number); return h*60+m; }
     function getCurrentAndNext() {
@@ -487,7 +502,6 @@
             ? '<svg viewBox="0 0 24 24"><path d="M16.5 12l4.5 4.5-1.5 1.5L15 13.5 11.5 17H7v-6h4.5L15 7.5l4.5-4.5 1.5 1.5L16.5 12z"/></svg>' 
             : '<svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>';
     };
-
     function updateDisplay() {
         const {current, next1, next2} = getCurrentAndNext();
         const now = getTime();
@@ -495,10 +509,8 @@
         document.getElementById("miniImg").src = current.img || images.default;
         document.getElementById("upnextImg1").src = next1.img || images.default;
         document.getElementById("upnextImg2").src = next2.img || images.default;
-
         const displayName = formatProgramName(current);
         document.getElementById("programTitle").textContent = displayName;
-
         // 🔥 Link do título principal
         const page = getProgramPage(current.name);
         const titleLink = document.getElementById("programTitleLink");
@@ -509,10 +521,8 @@
             titleLink.href = "#";
             titleLink.onclick = (e) => e.preventDefault();
         }
-
         document.getElementById("miniTitle").textContent = currentTrack.title ? currentTrack.title : displayName;
         document.getElementById("miniArtist").textContent = currentTrack.artist ? currentTrack.artist : "Praise & Worship";
-
         document.getElementById("upnextTime1").textContent = "UP NEXT: " + formatRange(next1);
         // 🔥 Link UP NEXT 1
         document.getElementById("upnextTitle1").innerHTML = 
@@ -520,7 +530,6 @@
                 ? `<a href="/info/${getProgramPage(next1.name)}" target="_blank">${formatProgramName(next1)}</a>`
                 : formatProgramName(next1);
         document.getElementById("upnextDesc1").textContent = next1.desc || "-";
-
         document.getElementById("upnextTime2").textContent = formatRange(next2);
         // 🔥 Link UP NEXT 2
         document.getElementById("upnextTitle2").innerHTML = 
@@ -528,7 +537,6 @@
                 ? `<a href="/info/${getProgramPage(next2.name)}" target="_blank">${formatProgramName(next2)}</a>`
                 : formatProgramName(next2);
         document.getElementById("upnextDesc2").textContent = next2.desc || "-";
-
         if (current.start && current.end) {
             const s = timeToMins(current.start);
             const e = timeToMins(current.end);
@@ -542,7 +550,6 @@
         }
         updateProgramProgress();
     }
-
     setInterval(updateDisplay, 8000);
     updateDisplay();
 </script>
