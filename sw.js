@@ -1,27 +1,27 @@
-// sw.js – Service Worker mínimo para ativar PWA
-const CACHE_NAME = 'praisefm-us-v1';
-const urlsToCache = [
-  '/',
-  '/image/logopraisefm.webp',
-  '/image/praisefm-192.png',
-  '/image/praisefm-512.png'
-];
+// Praise FM – Service Worker PWA (versão corrigida)
 
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(urlsToCache))
-  );
+// Ativa imediatamente após instalar
+self.addEventListener("install", (event) => {
+  self.skipWaiting();
 });
 
-self.addEventListener('fetch', (event) => {
-  // Opcional: serve do cache se offline
-  // Para streaming de rádio, não cacheamos a stream
-  if (event.request.destination === 'audio') {
+// Assume o controle das abas imediatamente
+self.addEventListener("activate", (event) => {
+  clients.claim();
+});
+
+// Fetch simples: rede > cache
+self.addEventListener("fetch", (event) => {
+
+  // Nunca interceptar stream de rádio ou EventSource
+  if (
+    event.request.url.includes("zeno.fm") ||
+    event.request.headers.get("accept") === "text/event-stream"
+  ) {
     return;
   }
+
   event.respondWith(
-    caches.match(event.request)
-      .then((response) => response || fetch(event.request))
+    fetch(event.request).catch(() => caches.match(event.request))
   );
 });
