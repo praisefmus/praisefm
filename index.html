@@ -5,15 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Praise FM - Live</title>
     <meta name="theme-color" content="#ff4d00">
+    <!-- 🔧 SEO: Meta Description -->
     <meta name="description" content="Praise FM U.S. — Live Praise & Worship Radio. Listen to the finest worship music 24/7 with Stancy Campbell, Michael Ray, and more.">
+    <!-- 🔔 PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- 🖼️ Favicon & Touch Icons -->
     <link rel="icon" type="image/png" sizes="32x32" href="/image/favicon-32x32.png">
-    <!-- 🛠️ Registrar Service Worker -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js')
-                .catch(err => console.warn('Service Worker registration failed:', err));
-        }
-    </script>
+    <link rel="apple-touch-icon" href="/image/praisefm-192.png">
     <style>
         :root { --orange:#ff4d00; --dark:#111; --grey:#555; --light-grey:#888; --bg:#fff; --border-color:#ddd; }
         * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; }
@@ -282,7 +282,6 @@
         </div>
     </div>
 </div>
-
 <script>
     const STREAM_URL = "https://stream.zeno.fm/hvwifp8ezc6tv";
     const audio = new Audio(STREAM_URL);
@@ -416,40 +415,6 @@
             document.getElementById("miniTrackDuration").textContent = "Live";
         }
     }
-
-    // 🔔 Função para mostrar notificação push
-    async function showNotification(title, artist, icon) {
-        if (!('Notification' in window)) return;
-        if (Notification.permission === 'granted') {
-            const options = {
-                body: artist,
-                icon: icon || '/image/logopraisefm.webp',
-                badge: '/image/logopraisefm.webp',
-                tag: 'praisefm-now-playing',
-                timestamp: Date.now(),
-                data: { url: window.location.href },
-                actions: [{ action: 'open', title: 'Open Praise FM' }]
-            };
-            const notif = new Notification(title, options);
-            notif.onclick = () => {
-                window.focus();
-                notif.close();
-            };
-            notif.onactionclick = (e) => {
-                if (e.action === 'open') {
-                    window.focus();
-                    window.location.href = window.location.href;
-                    notif.close();
-                }
-            };
-        } else if (Notification.permission !== 'denied') {
-            const permission = await Notification.requestPermission();
-            if (permission === 'granted') {
-                showNotification(title, artist, icon);
-            }
-        }
-    }
-
     async function fetchAlbumCover(artist, title) {
         if (!artist || !title) return images.default;
         const query = encodeURIComponent(`${artist} ${title}`);
@@ -468,10 +433,11 @@
         if (title.toLowerCase().includes("commercial") || title.toLowerCase().includes("ad")) {
             currentTrack = {title:"", artist:"", duration:0, startTime:0};
         } else {
-            currentTrack = {title, artist, duration:0, startTime:Date.now()};
             const cover = await fetchAlbumCover(artist, title);
             const key = `${artist}-${title}`;
-            if (!recents.some(t => t.key === key)) {
+            const isNewTrack = !recents.some(t => t.key === key);
+            if (isNewTrack) {
+                currentTrack = {title, artist, duration:0, startTime:Date.now()};
                 recents.unshift({title, artist, cover, key});
                 if (recents.length > 4) recents.pop();
                 document.getElementById("recentList").innerHTML = recents.map(t => `
@@ -484,8 +450,17 @@
                     </div>
                 `).join("");
 
-                // 🔔 Mostrar notificação da nova música
-                showNotification(title, artist, cover);
+                // 🔔 Notificação push (simplificada)
+                if (Notification.permission === "granted") {
+                    try {
+                        const notif = new Notification("Now Playing", {
+                            body: `${title} — ${artist}`,
+                            icon: cover || "/image/logopraisefm.webp",
+                            badge: "/image/logopraisefm.webp"
+                        });
+                        notif.onclick = () => { window.focus(); notif.close(); };
+                    } catch (err) { console.warn("Notificação falhou:", err); }
+                }
             }
         }
         updateDisplay();
@@ -507,13 +482,8 @@
         if (audio.paused) {
             audio.play();
             document.getElementById("miniPlayer").classList.add("show");
-            // 🔔 Garante que o Service Worker está ativo para notificações
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.ready.then(() => {
-                    if (Notification.permission === 'default') {
-                        Notification.requestPermission();
-                    }
-                });
+            if (Notification.permission === "default") {
+                Notification.requestPermission();
             }
         } else {
             audio.pause();
@@ -588,6 +558,17 @@
     }
     setInterval(updateDisplay, 8000);
     updateDisplay();
+</script>
+
+<!-- ✅ Registrar Service Worker -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log('✅ Service Worker registrado:', reg.scope))
+        .catch(err => console.warn('❌ Falha no SW:', err));
+    });
+  }
 </script>
 </body>
 </html>
