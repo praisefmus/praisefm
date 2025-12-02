@@ -1,64 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Donate • Praise FM U.S.</title>
-    <meta name="description" content="Support Praise FM U.S. with a donation. Your generosity keeps 24/7 worship music and inspiring programs on air.">
-    <meta name="theme-color" content="#ff4d00">
-    <link rel="icon" type="image/png" sizes="32x32" href="/image/favicon-32x32.png">
-    <style>
-        :root { --orange:#ff4d00; --grey:#555; --light-grey:#888; --bg:#fff; }
-        * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; }
-        body { background:var(--bg); color:#000; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:20px; }
-        .container { max-width:600px; width:100%; text-align:center; padding:40px 20px; }
-        .logo { width:120px; height:120px; margin:0 auto 24px; border-radius:50%; overflow:hidden; background:#000; }
-        .logo img { width:100%; height:100%; object-fit:cover; }
-        h1 { font-size:28px; font-weight:800; color:var(--orange); margin-bottom:16px; }
-        p { font-size:16px; color:var(--grey); line-height:1.6; margin-bottom:30px; }
-        .donate-btn {
-            display:inline-block; background:var(--orange); color:white; padding:14px 36px;
-            border-radius:28px; font-size:18px; font-weight:700; text-decoration:none;
-            box-shadow:0 6px 20px rgba(255,77,0,0.3); transition:transform 0.2s, background 0.2s;
-        }
-        .donate-btn:hover {
-            transform:scale(1.05);
-            background:#e04200;
-        }
-        .back-link {
-            margin-top:30px; display:inline-block; color:var(--orange); text-decoration:underline;
-            font-size:15px;
-        }
-        .back-link:hover { opacity:0.8; }
-    </style>
-    <!-- 🔍 Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0RNK6G5WWL"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-0RNK6G5WWL');
-    </script>
-</head>
-<body>
-    <div class="container">
-        <div class="logo">
-            <img src="/image/logopraisefm.webp" alt="Praise FM" onerror="this.src='/image/logopraisefm.webp'">
-        </div>
-        <h1>💖 Support Praise FM</h1>
-        <p>
-            Your generous donation helps us keep worship music broadcasting 24/7, 
-            with programs like Morning Show, Midnight Grace, and Sunday With Christ.
-            Every gift — big or small — makes a difference.
-        </p>
+    <!-- 💖 Botão de Doação - Stripe -->
+    <div style="margin:30px 0; text-align:center;">
         <a href="https://donate.stripe.com/bJe8wQ09o1zG5W78CO33W00" 
            target="_blank"
            rel="noopener"
-           class="donate-btn"
-           onclick="gtag('event', 'click', { event_category: 'Donation', event_label: 'Stripe_Donate_Button' });">
-            Donate Now
+           style="display:inline-block; background:#ff4d00; color:white; padding:12px 28px; border-radius:24px; 
+                  font-weight:700; text-decoration:none; box-shadow:0 4px 12px rgba(255,77,0,0.3); 
+                  transition:transform 0.2s, background 0.2s; font-size:16px;"
+           onmouseover="this.style.transform='scale(1.05)'; this.style.background='#e04200';"
+           onmouseout="this.style.transform='scale(1)'; this.style.background='#ff4d00';">
+            💖 Support Praise FM
         </a>
-        <a href="/" class="back-link">← Back to Praise FM Live</a>
+        <p style="font-size:14px; color:var(--grey); margin-top:10px; max-width:400px; margin-left:auto; margin-right:auto;">
+            Your gift helps keep worship music on air 24/7.
+        </p>
+        <p style="margin-top:12px; font-size:13px;">
+            Prefer a dedicated page? <a href="/donate.html" style="color:var(--orange); text-decoration:underline;">Donate securely here</a>.
+        </p>
     </div>
-</body>
-</html>
