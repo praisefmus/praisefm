@@ -7,13 +7,7 @@
     <meta name="theme-color" content="#ff4d00">
     <!-- 🔧 SEO: Meta Description -->
     <meta name="description" content="Praise FM U.S. — Live Praise & Worship Radio. Listen to the finest worship music 24/7 with Stancy Campbell, Michael Ray, and more.">
-    <!-- 🔔 PWA Manifest -->
-    <link rel="manifest" href="/manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <!-- 🖼️ Favicon & Touch Icons -->
     <link rel="icon" type="image/png" sizes="32x32" href="/image/favicon-32x32.png">
-    <link rel="apple-touch-icon" href="/image/praisefm-192.png">
     <style>
         :root { --orange:#ff4d00; --dark:#111; --grey:#555; --light-grey:#888; --bg:#fff; --border-color:#ddd; }
         * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; }
@@ -220,6 +214,24 @@
     <button class="play-button" id="bigPlay">
         <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Play
     </button>
+
+    <!-- 💖 Botão de Doação - Stripe -->
+    <div style="margin:30px 0; text-align:center;">
+        <a href="https://donate.stripe.com/bJe8wQ09o1zG5W78CO33W00" 
+           target="_blank"
+           rel="noopener"
+           style="display:inline-block; background:#ff4d00; color:white; padding:12px 28px; border-radius:24px; 
+                  font-weight:700; text-decoration:none; box-shadow:0 4px 12px rgba(255,77,0,0.3); 
+                  transition:transform 0.2s, background 0.2s; font-size:16px;"
+           onmouseover="this.style.transform='scale(1.05)'; this.style.background='#e04200';"
+           onmouseout="this.style.transform='scale(1)'; this.style.background='#ff4d00';">
+            💖 Support Praise FM
+        </a>
+        <p style="font-size:14px; color:var(--grey); margin-top:10px; max-width:400px; margin-left:auto; margin-right:auto;">
+            Your gift helps keep worship music on air 24/7.
+        </p>
+    </div>
+
     <div class="upnext">
         <div class="upnext-items">
             <div class="upnext-item">
@@ -321,10 +333,12 @@
         {start:"18:00", end:"20:00", name:"Praise FM Carpool", img:images.carpool, days:[1,2,3,4,5], desc: "Rachael Harris with praise tunes for your drive home."},
         {start:"17:00", end:"20:00", name:"Praise FM Worship", img:images.worship, days:[6], desc: "Praise FM plays the finest worship music."},
         {start:"20:00", end:"20:30", name:"Praise FM POP", img:images.pop, desc: "Jordan Reys with all things pop and contemporary praise."},
+        // ✅ Magazine: dom, seg, qua, sex
         {start:"20:30", end:"20:31", name:"Praise FM Magazine", img:images.magazine, days:[0,1,3,5], desc: "Praise FM with magazine-style content and features."},
         {start:"20:30", end:"21:30", name:"Praise FM Non Stop", img:images.nonstop, days:[1,2,3,4,5,6], desc: "Praise FM with non-stop praise hits."},
         {start:"21:30", end:"00:00", name:"Praise FM Worship", img:images.worship, desc: "Praise FM plays the finest worship music."}
     ];
+    // 🔥 Mapeamento correto para arquivos SEM HÍFENS
     function getProgramPage(name) {
         const map = {
             "Morning Show": "morningshow.html",
@@ -433,11 +447,10 @@
         if (title.toLowerCase().includes("commercial") || title.toLowerCase().includes("ad")) {
             currentTrack = {title:"", artist:"", duration:0, startTime:0};
         } else {
+            currentTrack = {title, artist, duration:0, startTime:Date.now()};
             const cover = await fetchAlbumCover(artist, title);
             const key = `${artist}-${title}`;
-            const isNewTrack = !recents.some(t => t.key === key);
-            if (isNewTrack) {
-                currentTrack = {title, artist, duration:0, startTime:Date.now()};
+            if (!recents.some(t => t.key === key)) {
                 recents.unshift({title, artist, cover, key});
                 if (recents.length > 4) recents.pop();
                 document.getElementById("recentList").innerHTML = recents.map(t => `
@@ -449,18 +462,6 @@
                         </div>
                     </div>
                 `).join("");
-
-                // 🔔 Notificação push (simplificada)
-                if (Notification.permission === "granted") {
-                    try {
-                        const notif = new Notification("Now Playing", {
-                            body: `${title} — ${artist}`,
-                            icon: cover || "/image/logopraisefm.webp",
-                            badge: "/image/logopraisefm.webp"
-                        });
-                        notif.onclick = () => { window.focus(); notif.close(); };
-                    } catch (err) { console.warn("Notificação falhou:", err); }
-                }
             }
         }
         updateDisplay();
@@ -479,15 +480,8 @@
         };
     } catch(e) {}
     function togglePlay() {
-        if (audio.paused) {
-            audio.play();
-            document.getElementById("miniPlayer").classList.add("show");
-            if (Notification.permission === "default") {
-                Notification.requestPermission();
-            }
-        } else {
-            audio.pause();
-        }
+        if (audio.paused) { audio.play(); document.getElementById("miniPlayer").classList.add("show"); }
+        else audio.pause();
         const playing = !audio.paused;
         const playSvg = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
         const pauseSvg = '<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
@@ -520,6 +514,7 @@
         document.getElementById("upnextImg2").src = next2.img || images.default;
         const displayName = formatProgramName(current);
         document.getElementById("programTitle").textContent = displayName;
+        // 🔥 Link do título principal
         const page = getProgramPage(current.name);
         const titleLink = document.getElementById("programTitleLink");
         if (page) {
@@ -532,12 +527,14 @@
         document.getElementById("miniTitle").textContent = currentTrack.title ? currentTrack.title : displayName;
         document.getElementById("miniArtist").textContent = currentTrack.artist ? currentTrack.artist : "Praise & Worship";
         document.getElementById("upnextTime1").textContent = "UP NEXT: " + formatRange(next1);
+        // 🔥 Link UP NEXT 1
         document.getElementById("upnextTitle1").innerHTML = 
             getProgramPage(next1.name) 
                 ? `<a href="/info/${getProgramPage(next1.name)}" target="_blank">${formatProgramName(next1)}</a>`
                 : formatProgramName(next1);
         document.getElementById("upnextDesc1").textContent = next1.desc || "-";
         document.getElementById("upnextTime2").textContent = formatRange(next2);
+        // 🔥 Link UP NEXT 2
         document.getElementById("upnextTitle2").innerHTML = 
             getProgramPage(next2.name) 
                 ? `<a href="/info/${getProgramPage(next2.name)}" target="_blank">${formatProgramName(next2)}</a>`
@@ -558,17 +555,6 @@
     }
     setInterval(updateDisplay, 8000);
     updateDisplay();
-</script>
-
-<!-- ✅ Registrar Service Worker -->
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
-        .then(reg => console.log('✅ Service Worker registrado:', reg.scope))
-        .catch(err => console.warn('❌ Falha no SW:', err));
-    });
-  }
 </script>
 </body>
 </html>
