@@ -10,7 +10,7 @@
     <style>
         :root { --orange:#ff4d00; --dark:#111; --grey:#555; --light-grey:#888; --bg:#fff; --border-color:#ddd; }
         * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; }
-        body { background:var(--bg); color:#000; min-height:100vh; padding-bottom:90px; display:flex; flex-direction:column; align-items:center; }
+        body { background:var(--bg); color:#000; min-height:100vh; padding-bottom:120px; display:flex; flex-direction:column; align-items:center; }
         .container { width:100%; max-width:900px; padding:20px; text-align:center; }
         .station-title { font-size:32px; font-weight:900; color:var(--orange); margin:20px 0 4px; }
         .station-subtitle { font-size:17px; color:var(--grey); margin-bottom:30px; }
@@ -26,7 +26,10 @@
         .program-title-link { text-decoration: none; color: inherit; }
         .program-title-link:hover .program-title { color: var(--orange); }
         .program-title { font-size:28px; font-weight:800; line-height:1.2; margin:0; }
-
+        .play-button { margin:40px auto; width:220px; height:56px; background:var(--orange); color:#fff; border:none; border-radius:28px; font-size:18px; font-weight:700; cursor:pointer;
+            display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 6px 20px rgba(255,77,0,.3); transition:transform .2s; }
+        .play-button:hover { transform:scale(1.05); }
+        .play-button svg { width:24px; height:24px; fill:#fff; margin-left:10px; }
         .upnext { background:#f8f8f8; border-radius:12px; padding:20px; margin:40px 0; text-align:left; }
         .upnext-items { display:flex; gap:20px; flex-wrap:wrap; }
         .upnext-item { flex:1; min-width:200px; display:flex; align-items:center; gap:16px; }
@@ -49,7 +52,7 @@
         .recent-title { font-weight:600; font-size:15px; }
         .recent-artist { font-size:13px; color:var(--light-grey); }
 
-        /* 🔁 NOVO MINI-PLAYER (fixo na base) */
+        /* 🔁 NOVO MINI-PLAYER — estilo compacto inspirado no TESTE.png */
         .mini-player {
             position: fixed;
             bottom: 0;
@@ -61,8 +64,13 @@
             padding: 12px 16px;
             display: none;
             z-index: 999;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
         }
-        .mini-player.show { display: flex !important; }
+        .mini-player.show {
+            display: flex !important;
+        }
 
         /* 🌐 Apple-style dropdown */
         #praisefm-locale-bar {
@@ -102,6 +110,7 @@
         @media (max-width: 520px) {
             #praisefm-locale-bar { padding: 10px 16px; }
             #praisefm-locale-bar .pfm-message { font-size: 13px; }
+            .mini-player { padding: 10px 12px; gap: 10px; }
         }
         .pfm-bar-shim { height: 56px; display: none; }
         @media (max-width: 520px) { .pfm-bar-shim { height: 64px; } }
@@ -195,9 +204,9 @@
             <h2 class="program-title" id="programTitle">Praise FM</h2>
         </a>
     </div>
-
-    <!-- ✅ Botão "Play" removido aqui -->
-
+    <button class="play-button" id="bigPlay">
+        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Play
+    </button>
     <div class="upnext">
         <div class="upnext-items">
             <div class="upnext-item">
@@ -224,46 +233,44 @@
     </div>
 </div>
 
-<!-- 🔁 NOVO MINI-PLAYER estilo TESTE.png -->
+<!-- 🔁 NOVO MINI-PLAYER — substitui o antigo, mas mantém IDs originais para compatibilidade -->
 <div class="mini-player" id="miniPlayer">
-  <div style="display:flex; align-items:center; gap:12px; justify-content:space-between; flex-wrap:wrap; width:100%;">
-    <!-- Capa -->
-    <div style="width:48px; height:48px; border-radius:4px; overflow:hidden; background:#eee;">
-      <img id="miniImg" src="/image/logopraisefm.webp" alt="Now Playing" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='/image/logopraisefm.webp'">
-    </div>
+  <!-- Capa -->
+  <div style="width:48px; height:48px; border-radius:4px; overflow:hidden; background:#eee;">
+    <img id="miniImg" src="/image/logopraisefm.webp" alt="Now Playing" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='/image/logopraisefm.webp'">
+  </div>
 
-    <!-- Info -->
-    <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:2px;">
-      <div class="mini-title" id="miniTitle" style="font-weight:700; font-size:14px; color:#000; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Praise FM</div>
-      <div class="mini-artist" id="miniArtist" style="font-size:12px; color:var(--grey); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Praise & Worship</div>
-    </div>
+  <!-- Informações -->
+  <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:2px;">
+    <div class="mini-title" id="miniTitle" style="font-weight:700; font-size:14px; color:#000; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Praise FM</div>
+    <div class="mini-artist" id="miniArtist" style="font-size:12px; color:var(--grey); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Praise & Worship</div>
+  </div>
 
-    <!-- Controles -->
-    <div style="display:flex; align-items:center; gap:10px;">
-      <button class="mini-btn" id="miniRewind" style="background:none; border:none; cursor:pointer; color:var(--orange); font-size:16px; padding:6px; border-radius:50%;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M10 12.5a.5.5 0 01-.5-.5V4a.5.5 0 01.5-.5h1a.5.5 0 01.5.5v8a.5.5 0 01-.5.5h-1zm-3.5-1a.5.5 0 01-.5-.5V5a.5.5 0 01.5-.5h1a.5.5 0 01.5.5v6a.5.5 0 01-.5.5h-1z"/>
-        </svg>
+  <!-- Controles -->
+  <div style="display:flex; align-items:center; gap:10px;">
+    <button class="mini-btn" id="miniRewind" style="background:none; border:none; cursor:pointer; color:var(--orange); font-size:16px; padding:6px; border-radius:50%;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M10 12.5a.5.5 0 01-.5-.5V4a.5.5 0 01.5-.5h1a.5.5 0 01.5.5v8a.5.5 0 01-.5.5h-1zm-3.5-1a.5.5 0 01-.5-.5V5a.5.5 0 01.5-.5h1a.5.5 0 01.5.5v6a.5.5 0 01-.5.5h-1z"/>
+      </svg>
+    </button>
+
+    <button class="mini-play" id="miniPlayPause" style="background:var(--orange); width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; box-shadow:0 2px 8px rgba(255,77,0,0.3);">
+      <svg viewBox="0 0 24 24" style="width:20px; height:20px; fill:#fff;"><path d="M8 5v14l11-7z"/></svg>
+    </button>
+
+    <button class="mini-btn" id="miniForward" style="background:none; border:none; cursor:pointer; color:var(--orange); font-size:16px; padding:6px; border-radius:50%;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M6 12.5a.5.5 0 01-.5-.5V4a.5.5 0 01.5-.5h1a.5.5 0 01.5.5v8a.5.5 0 01-.5.5h-1zm3.5-1a.5.5 0 01-.5-.5V5a.5.5 0 01.5-.5h1a.5.5 0 01.5.5v6a.5.5 0 01-.5.5h-1z"/>
+      </svg>
+    </button>
+
+    <!-- Volume -->
+    <div style="display:flex; align-items:center; gap:6px; width:80px;">
+      <button class="mini-btn" id="miniVolumeIcon" style="background:none; border:none; cursor:pointer; padding:4px; color:var(--grey);">
+        <svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor;"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
       </button>
-
-      <button class="mini-play" id="miniPlayPause" style="background:var(--orange); width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; box-shadow:0 2px 8px rgba(255,77,0,0.3);">
-        <svg viewBox="0 0 24 24" style="width:20px; height:20px; fill:#fff;"><path d="M8 5v14l11-7z"/></svg>
-      </button>
-
-      <button class="mini-btn" id="miniForward" style="background:none; border:none; cursor:pointer; color:var(--orange); font-size:16px; padding:6px; border-radius:50%;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M6 12.5a.5.5 0 01-.5-.5V4a.5.5 0 01.5-.5h1a.5.5 0 01.5.5v8a.5.5 0 01-.5.5h-1zm3.5-1a.5.5 0 01-.5-.5V5a.5.5 0 01.5-.5h1a.5.5 0 01.5.5v6a.5.5 0 01-.5.5h-1z"/>
-        </svg>
-      </button>
-
-      <!-- Volume -->
-      <div style="display:flex; align-items:center; gap:6px; width:80px;">
-        <button class="mini-btn" id="miniVolumeIcon" style="background:none; border:none; cursor:pointer; padding:4px; color:var(--grey);">
-          <svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor;"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
-        </button>
-        <div class="mini-volume-bar" id="miniVolumeBar" style="flex:1; height:4px; background:#ddd; border-radius:2px; position:relative; cursor:pointer;">
-          <div class="mini-volume-fill" id="miniVolumeFill" style="height:100%; background:var(--orange); border-radius:2px; width:80%;"></div>
-        </div>
+      <div class="mini-volume-bar" id="miniVolumeBar" style="flex:1; height:4px; background:#ddd; border-radius:2px; position:relative; cursor:pointer;">
+        <div class="mini-volume-fill" id="miniVolumeFill" style="height:100%; background:var(--orange); border-radius:2px; width:80%;"></div>
       </div>
     </div>
   </div>
@@ -312,7 +319,6 @@
         {start:"20:30", end:"21:30", name:"Praise FM Non Stop", img:images.nonstop, days:[1,2,3,4,5,6], desc: "Praise FM with non-stop praise hits."},
         {start:"21:30", end:"00:00", name:"Praise FM Worship", img:images.worship, desc: "Praise FM plays the finest worship music."}
     ];
-
     function getProgramPage(name) {
         const map = {
             "Morning Show": "morningshow.html",
@@ -327,10 +333,8 @@
         };
         return map[name] || null;
     }
-
     function getTime() { return new Date(new Date().toLocaleString("en-US",{timeZone:"America/Chicago"})); }
     function timeToMins(t) { const [h,m]=t.split(":").map(Number); return h*60+m; }
-
     function getCurrentAndNext() {
         const now = getTime();
         const day = now.getDay();
@@ -360,7 +364,6 @@
             next2: future[1]?.prog || schedule[1]
         };
     }
-
     function formatProgramName(p) {
         if (!p) return "Praise FM";
         const base = p.name.replace(/ \([^)]*\)$/, '').trim();
@@ -370,7 +373,6 @@
         const host = hosts[base] || "Praise FM";
         return `${base} With ${host}`;
     }
-
     function formatRange(p) {
         const [sh, sm] = p.start.split(":").map(Number);
         const [eh, em] = p.end.split(":").map(Number);
@@ -380,17 +382,14 @@
         const eHour = ((eh + 11) % 12) + 1;
         return `${sHour}:${sm.toString().padStart(2, '0')} ${sSuffix} - ${eHour}:${em.toString().padStart(2, '0')} ${eSuffix}`;
     }
-
     let currentTrack = {title:"", artist:"", duration:0, startTime:0};
     const recents = [];
     let trackTimer = null;
-
     function formatTime(seconds) {
         const min = Math.floor(seconds / 60);
         const sec = Math.floor(seconds % 60);
         return `${min}:${sec.toString().padStart(2, '0')}`;
     }
-
     async function fetchAlbumCover(artist, title) {
         if (!artist || !title) return images.default;
         const query = encodeURIComponent(`${artist} ${title}`);
@@ -404,7 +403,6 @@
         } catch (e) {}
         return images.default;
     }
-
     async function processMetadata(artist, title) {
         if (trackTimer) clearInterval(trackTimer);
         if (title.toLowerCase().includes("commercial") || title.toLowerCase().includes("ad")) {
@@ -429,7 +427,6 @@
         }
         updateDisplay();
     }
-
     try {
         const es = new EventSource("https://api.zeno.fm/mounts/metadata/subscribe/hvwifp8ezc6tv");
         es.onmessage = e => {
@@ -442,7 +439,6 @@
             } catch {}
         };
     } catch(e) {}
-
     function togglePlay() {
         if (audio.paused) {
             audio.play();
@@ -451,11 +447,12 @@
             audio.pause();
         }
         const playing = !audio.paused;
-        const playSvg = '<svg viewBox="0 0 24 24" style="width:20px; height:20px; fill:#fff;"><path d="M8 5v14l11-7z"/></svg>';
-        const pauseSvg = '<svg viewBox="0 0 24 24" style="width:20px; height:20px; fill:#fff;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
+        const playSvg = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+        const pauseSvg = '<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
+        document.getElementById("bigPlay").innerHTML = playing ? pauseSvg + ' Pause' : playSvg + ' Play';
         document.getElementById("miniPlayPause").innerHTML = playing ? pauseSvg : playSvg;
     }
-
+    document.getElementById("bigPlay").onclick = togglePlay;
     document.getElementById("miniPlayPause").onclick = togglePlay;
     document.getElementById("miniRewind").onclick = () => audio.currentTime = Math.max(0, audio.currentTime - 15);
     document.getElementById("miniForward").onclick = () => audio.currentTime += 15;
@@ -469,10 +466,9 @@
     document.getElementById("miniVolumeIcon").onclick = () => {
         audio.muted = !audio.muted;
         document.getElementById("miniVolumeIcon").innerHTML = audio.muted
-            ? '<svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor;"><path d="M16.5 12l4.5 4.5-1.5 1.5L15 13.5 11.5 17H7v-6h4.5L15 7.5l4.5-4.5 1.5 1.5L16.5 12z"/></svg>'
-            : '<svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor;"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>';
+            ? '<svg viewBox="0 0 24 24"><path d="M16.5 12l4.5 4.5-1.5 1.5L15 13.5 11.5 17H7v-6h4.5L15 7.5l4.5-4.5 1.5 1.5L16.5 12z"/></svg>'
+            : '<svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>';
     };
-
     function updateDisplay() {
         const {current, next1, next2} = getCurrentAndNext();
         document.getElementById("mainImg").src = current.img || images.default;
@@ -517,7 +513,6 @@
             document.getElementById("progressRing").style.background = "conic-gradient(var(--orange) 0%, transparent 0%)";
         }
     }
-
     setInterval(updateDisplay, 8000);
     updateDisplay();
 </script>
