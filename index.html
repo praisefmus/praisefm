@@ -27,10 +27,87 @@
         .program-title-link { text-decoration: none; color: inherit; }
         .program-title-link:hover .program-title { color: var(--orange); }
         .program-title { font-size:28px; font-weight:800; line-height:1.2; margin:0; }
-        .play-button { margin:40px auto; width:220px; height:56px; background:var(--orange); color:#fff; border:none; border-radius:28px; font-size:18px; font-weight:700; cursor:pointer;
-            display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 6px 20px rgba(255,77,0,.3); transition:transform .2s; }
-        .play-button:hover { transform:scale(1.05); }
-        .play-button svg { width:24px; height:24px; fill:#fff; margin-left:10px; }
+
+        /* 🔁 Player estilo TESTE.png */
+        .music-player {
+            margin:40px auto;
+            width: min(100%, 600px);
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: #f8f8f8;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+        .song-info .album-art {
+            width: 56px;
+            height: 56px;
+            border-radius: 4px;
+            overflow: hidden;
+            background: #eee;
+        }
+        .song-info .album-art img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .song-text {
+            flex: 1;
+            text-align: left;
+            min-width: 0;
+        }
+        .song-title {
+            font-weight: 700;
+            font-size: 15px;
+            color: #000;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .artist {
+            font-size: 13px;
+            color: var(--grey);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .control-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--orange);
+            font-size: 18px;
+            padding: 6px;
+            border-radius: 50%;
+        }
+        .control-btn:hover {
+            background: rgba(255,77,0,0.1);
+        }
+        .play-btn {
+            background: var(--orange);
+            color: #fff;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(255,77,0,0.3);
+        }
+        .play-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: #fff;
+        }
+
         .upnext { background:#f8f8f8; border-radius:12px; padding:20px; margin:40px 0; text-align:left; }
         .upnext-items { display:flex; gap:20px; flex-wrap:wrap; }
         .upnext-item { flex:1; min-width:200px; display:flex; align-items:center; gap:16px; }
@@ -81,6 +158,8 @@
             .program-title { font-size:24px; } 
             .mini-controls { gap:10px; } 
             .mini-volume { width:80px; } 
+            .music-player { flex-direction: column; text-align: center; }
+            .song-text { width: 100%; }
         }
         /* 🌐 Apple-style dropdown */
         #praisefm-locale-bar {
@@ -211,9 +290,35 @@
             <h2 class="program-title" id="programTitle">Praise FM</h2>
         </a>
     </div>
-    <button class="play-button" id="bigPlay">
-        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Play
-    </button>
+
+    <!-- 🔁 Player estilo TESTE.png -->
+    <div class="music-player" id="mainMusicPlayer">
+        <div class="song-info">
+            <div class="album-art">
+                <img id="mainPlayerImg" src="/image/logopraisefm.webp" alt="Now Playing" onerror="this.src='/image/logopraisefm.webp'">
+            </div>
+        </div>
+        <div class="song-text">
+            <div class="song-title" id="mainPlayerTitle">Praise FM</div>
+            <div class="artist" id="mainPlayerArtist">Praise & Worship</div>
+        </div>
+        <div class="controls">
+            <button class="control-btn" id="mainRewind" title="Rewind 15s">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M10 12.5a.5.5 0 01-.5-.5V4a.5.5 0 01.5-.5h1a.5.5 0 01.5.5v8a.5.5 0 01-.5.5h-1zm-3.5-1a.5.5 0 01-.5-.5V5a.5.5 0 01.5-.5h1a.5.5 0 01.5.5v6a.5.5 0 01-.5.5h-1z"/>
+                </svg>
+            </button>
+            <button class="play-btn" id="mainPlayPause" title="Play/Pause">
+                <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+            <button class="control-btn" id="mainForward" title="Forward 15s">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M6 12.5a.5.5 0 01-.5-.5V4a.5.5 0 01.5-.5h1a.5.5 0 01.5.5v8a.5.5 0 01-.5.5h-1zm3.5-1a.5.5 0 01-.5-.5V5a.5.5 0 01.5-.5h1a.5.5 0 01.5.5v6a.5.5 0 01-.5.5h-1z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
     <div class="upnext">
         <div class="upnext-items">
             <div class="upnext-item">
@@ -315,12 +420,10 @@
         {start:"18:00", end:"20:00", name:"Praise FM Carpool", img:images.carpool, days:[1,2,3,4,5], desc: "Rachael Harris with praise tunes for your drive home."},
         {start:"17:00", end:"20:00", name:"Praise FM Worship", img:images.worship, days:[6], desc: "Praise FM plays the finest worship music."},
         {start:"20:00", end:"20:30", name:"Praise FM POP", img:images.pop, desc: "Jordan Reys with all things pop and contemporary praise."},
-        // ✅ Magazine: dom, seg, qua, sex
         {start:"20:30", end:"20:31", name:"Praise FM Magazine", img:images.magazine, days:[0,1,3,5], desc: "Praise FM with magazine-style content and features."},
         {start:"20:30", end:"21:30", name:"Praise FM Non Stop", img:images.nonstop, days:[1,2,3,4,5,6], desc: "Praise FM with non-stop praise hits."},
         {start:"21:30", end:"00:00", name:"Praise FM Worship", img:images.worship, desc: "Praise FM plays the finest worship music."}
     ];
-    // 🔥 Mapeamento correto para arquivos SEM HÍFENS
     function getProgramPage(name) {
         const map = {
             "Morning Show": "morningshow.html",
@@ -467,11 +570,13 @@
         const playing = !audio.paused;
         const playSvg = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
         const pauseSvg = '<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
-        document.querySelector("#bigPlay").innerHTML = playing ? pauseSvg + ' Pause' : playSvg + ' Play';
+        document.getElementById("mainPlayPause").innerHTML = playing ? pauseSvg : playSvg;
         document.getElementById("miniPlayPause").innerHTML = playing ? pauseSvg : playSvg;
     }
-    document.getElementById("bigPlay").onclick = togglePlay;
+    document.getElementById("mainPlayPause").onclick = togglePlay;
     document.getElementById("miniPlayPause").onclick = togglePlay;
+    document.getElementById("mainRewind").onclick = () => audio.currentTime = Math.max(0, audio.currentTime - 15);
+    document.getElementById("mainForward").onclick = () => audio.currentTime += 15;
     document.getElementById("miniRewind").onclick = () => audio.currentTime = Math.max(0, audio.currentTime - 15);
     document.getElementById("miniForward").onclick = () => audio.currentTime += 15;
     document.getElementById("miniVolumeBar").onclick = e => {
@@ -491,14 +596,16 @@
         const {current, next1, next2} = getCurrentAndNext();
         const now = getTime();
         document.getElementById("mainImg").src = current.img || images.default;
+        document.getElementById("mainPlayerImg").src = current.img || images.default;
         document.getElementById("miniImg").src = current.img || images.default;
         document.getElementById("upnextImg1").src = next1.img || images.default;
         document.getElementById("upnextImg2").src = next2.img || images.default;
         const displayName = formatProgramName(current);
         document.getElementById("programTitle").textContent = displayName;
-        // 🔥 Link do título principal
-        const page = getProgramPage(current.name);
+        document.getElementById("mainPlayerTitle").textContent = currentTrack.title ? currentTrack.title : displayName;
+        document.getElementById("mainPlayerArtist").textContent = currentTrack.artist ? currentTrack.artist : "Praise & Worship";
         const titleLink = document.getElementById("programTitleLink");
+        const page = getProgramPage(current.name);
         if (page) {
             titleLink.href = `/info/${page}`;
             titleLink.target = "_blank";
@@ -509,14 +616,12 @@
         document.getElementById("miniTitle").textContent = currentTrack.title ? currentTrack.title : displayName;
         document.getElementById("miniArtist").textContent = currentTrack.artist ? currentTrack.artist : "Praise & Worship";
         document.getElementById("upnextTime1").textContent = "UP NEXT: " + formatRange(next1);
-        // 🔥 Link UP NEXT 1
         document.getElementById("upnextTitle1").innerHTML = 
             getProgramPage(next1.name) 
                 ? `<a href="/info/${getProgramPage(next1.name)}" target="_blank">${formatProgramName(next1)}</a>`
                 : formatProgramName(next1);
         document.getElementById("upnextDesc1").textContent = next1.desc || "-";
         document.getElementById("upnextTime2").textContent = formatRange(next2);
-        // 🔥 Link UP NEXT 2
         document.getElementById("upnextTitle2").innerHTML = 
             getProgramPage(next2.name) 
                 ? `<a href="/info/${getProgramPage(next2.name)}" target="_blank">${formatProgramName(next2)}</a>`
