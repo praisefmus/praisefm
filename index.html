@@ -4,11 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Praise FM - Live</title>
-    <meta name="theme-color" content="#ff4d00">
+    <meta name="theme-color" content="#007aff"> <!-- ✅ Alterado para azul K-LOVE -->
     <!-- 🔧 SEO: Meta Description -->
     <meta name="description" content="Praise FM U.S. — Live Praise & Worship Radio. Listen to the finest worship music 24/7 with Stancy Campbell, Michael Ray, and more.">
     <link rel="icon" type="image/png" sizes="32x32" href="/image/favicon-32x32.png">
-
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-NX2QMZ9CHM"></script>
     <script>
@@ -17,73 +16,365 @@
       gtag('js', new Date());
       gtag('config', 'G-NX2QMZ9CHM');
     </script>
-
     <style>
-        :root { --orange:#ff4d00; --dark:#111; --grey:#555; --light-grey:#888; --bg:#fff; --border-color:#ddd; }
+        :root { 
+            --orange: #007aff; /* ✅ Alterado para o azul do K-LOVE */
+            --dark: #0a0a0a;
+            --grey: #bbb;
+            --light-grey: #888;
+            --bg: #0a0a0a;
+            --border-color: #2d2d2d;
+            --text: #ffffff;
+        }
         * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; }
-        body { background:var(--bg); color:#000; min-height:100vh; padding-bottom:120px; display:flex; flex-direction:column; align-items:center; }
-        .container { width:100%; max-width:900px; padding:20px; text-align:center; }
-        .station-title { font-size:32px; font-weight:900; color:var(--orange); margin:20px 0 4px; }
-        .station-subtitle { font-size:17px; color:var(--grey); margin-bottom:30px; }
-        .circle-container { width:min(80vw,320px); height:min(80vw,320px); margin:0 auto 20px; position:relative; }
-        .circle-border { position:absolute; inset:0; border-radius:50%; background:conic-gradient(var(--orange) 0%, transparent 0%);
-            mask:radial-gradient(transparent 68%, black 70%); -webkit-mask:radial-gradient(transparent 68%, black 70%); }
-        .circle-img { position:absolute; inset:6px; border-radius:50%; overflow:hidden; background:#000; }
-        .circle-img img { width:100%; height:100%; object-fit:cover; }
-        .live-badge { display:inline-flex; align-items:center; gap:8px; color:var(--orange); font-weight:700; font-size:14px; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; }
-        .live-dot { width:9px; height:9px; background:var(--orange); border-radius:50%; animation:pulse 2s infinite; }
-        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-        .program-title-container { margin:10px 0 30px; display:flex; justify-content:center; }
-        .program-title-link { text-decoration: none; color: inherit; }
-        .program-title-link:hover .program-title { color: var(--orange); }
-        .program-title { font-size:28px; font-weight:800; line-height:1.2; margin:0; }
-        .play-button { margin:40px auto; width:220px; height:56px; background:var(--orange); color:#fff; border:none; border-radius:28px; font-size:18px; font-weight:700; cursor:pointer;
-            display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 6px 20px rgba(255,77,0,.3); transition:transform .2s; }
-        .play-button:hover { transform:scale(1.05); }
-        .play-button svg { width:24px; height:24px; fill:#fff; margin-left:10px; }
-        .upnext { background:#f8f8f8; border-radius:12px; padding:20px; margin:40px 0; text-align:left; }
-        .upnext-items { display:flex; gap:20px; flex-wrap:wrap; }
-        .upnext-item { flex:1; min-width:200px; display:flex; align-items:center; gap:16px; }
-        .upnext-img { width:60px; height:60px; border-radius:0; object-fit:cover; background:#eee; }
-        .upnext-time { font-size:14px; font-weight:700; color:var(--orange); text-transform:uppercase; letter-spacing:0.5px; }
-        .upnext-title { font-size:16px; font-weight:700; margin-top:4px; }
+        body { 
+            background: var(--bg); 
+            color: var(--text); 
+            min-height:100vh; 
+            padding-bottom:120px; 
+            display:flex; 
+            flex-direction:column; 
+            align-items:center; 
+        }
+        .container { 
+            width:100%; 
+            max-width:900px; 
+            padding:20px; 
+            text-align:center; 
+        }
+        .station-title { 
+            font-size:32px; 
+            font-weight:900; 
+            color: var(--orange); 
+            margin:20px 0 4px; 
+        }
+        .station-subtitle { 
+            font-size:17px; 
+            color: var(--grey); 
+            margin-bottom:30px; 
+        }
+        .circle-container { 
+            width:min(80vw,320px); 
+            height:min(80vw,320px); 
+            margin:0 auto 20px; 
+            position:relative; 
+        }
+        .circle-border { 
+            position:absolute; 
+            inset:0; 
+            border-radius:50%; 
+            background: conic-gradient(var(--orange) 0%, transparent 0%);
+            mask: radial-gradient(transparent 68%, black 70%); 
+            -webkit-mask: radial-gradient(transparent 68%, black 70%); 
+        }
+        .circle-img { 
+            position:absolute; 
+            inset:6px; 
+            border-radius:50%; 
+            overflow:hidden; 
+            background:#000; 
+        }
+        .circle-img img { 
+            width:100%; 
+            height:100%; 
+            object-fit:cover; 
+        }
+        .live-badge { 
+            display:inline-flex; 
+            align-items:center; 
+            gap:8px; 
+            color: var(--orange); 
+            font-weight:700; 
+            font-size:14px; 
+            text-transform:uppercase; 
+            letter-spacing:1px; 
+            margin-bottom:12px; 
+        }
+        .live-dot { 
+            width:9px; 
+            height:9px; 
+            background: var(--orange); 
+            border-radius:50%; 
+            animation:pulse 2s infinite; 
+        }
+        @keyframes pulse { 
+            0%,100%{opacity:1} 
+            50%{opacity:0.4} 
+        }
+        .program-title-container { 
+            margin:10px 0 30px; 
+            display:flex; 
+            justify-content:center; 
+        }
+        .program-title-link { 
+            text-decoration: none; 
+            color: inherit; 
+        }
+        .program-title-link:hover .program-title { 
+            color: var(--orange); 
+        }
+        .program-title { 
+            font-size:28px; 
+            font-weight:800; 
+            line-height:1.2; 
+            margin:0; 
+            color: var(--text);
+        }
+        .play-button { 
+            margin:40px auto; 
+            width:220px; 
+            height:56px; 
+            background: var(--orange); 
+            color: #fff; 
+            border:none; 
+            border-radius:28px; 
+            font-size:18px; 
+            font-weight:700; 
+            cursor:pointer;
+            display:flex; 
+            align-items:center; 
+            justify-content:center; 
+            gap:8px; 
+            box-shadow: 0 6px 20px rgba(0, 122, 255, 0.4); 
+            transition: transform .2s; 
+        }
+        .play-button:hover { 
+            transform:scale(1.05); 
+        }
+        .play-button svg { 
+            width:24px; 
+            height:24px; 
+            fill:#fff; 
+            margin-left:10px; 
+        }
+        .upnext { 
+            background: rgba(30,30,30,0.6); 
+            border-radius:12px; 
+            padding:20px; 
+            margin:40px 0; 
+            text-align:left; 
+        }
+        .upnext-items { 
+            display:flex; 
+            gap:20px; 
+            flex-wrap:wrap; 
+        }
+        .upnext-item { 
+            flex:1; 
+            min-width:200px; 
+            display:flex; 
+            align-items:center; 
+            gap:16px; 
+        }
+        .upnext-img { 
+            width:60px; 
+            height:60px; 
+            border-radius:6px; 
+            object-fit:cover; 
+            background:#222; 
+        }
+        .upnext-time { 
+            font-size:14px; 
+            font-weight:700; 
+            color: var(--orange); 
+            text-transform:uppercase; 
+            letter-spacing:0.5px; 
+        }
+        .upnext-title { 
+            font-size:16px; 
+            font-weight:700; 
+            margin-top:4px; 
+            color: var(--text);
+        }
         .upnext-title a {
             text-decoration: none;
-            color: inherit;
+            color: var(--text);
             font-weight: 700;
         }
         .upnext-title a:hover {
-            text-decoration: underline;
+            color: var(--orange);
         }
-        .upnext-desc { font-size:14px; color:var(--grey); margin-top:4px; }
-        .recently { margin-top:40px; text-align:left; }
-        .recently-header { font-size:13px; font-weight:700; color:var(--grey); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; }
-        .recent-item { display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--border-color); }
-        .recent-cover { width:48px; height:48px; border-radius:0; object-fit:cover; background:#eee; }
-        .recent-title { font-weight:600; font-size:15px; }
-        .recent-artist { font-size:13px; color:var(--light-grey); }
+        .upnext-desc { 
+            font-size:14px; 
+            color: var(--light-grey); 
+            margin-top:4px; 
+        }
+        .recently { 
+            margin-top:40px; 
+            text-align:left; 
+            color: var(--text);
+        }
+        .recently-header { 
+            font-size:13px; 
+            font-weight:700; 
+            color: var(--grey); 
+            text-transform:uppercase; 
+            letter-spacing:1px; 
+            margin-bottom:12px; 
+        }
+        .recent-item { 
+            display:flex; 
+            align-items:center; 
+            gap:12px; 
+            padding:12px 0; 
+            border-bottom:1px solid var(--border-color); 
+        }
+        .recent-cover { 
+            width:48px; 
+            height:48px; 
+            border-radius:6px; 
+            object-fit:cover; 
+            background:#222; 
+        }
+        .recent-title { 
+            font-weight:600; 
+            font-size:15px; 
+            color: var(--text);
+        }
+        .recent-title:hover { 
+            color: var(--orange); 
+        }
+        .recent-artist { 
+            font-size:13px; 
+            color: var(--light-grey); 
+        }
+
+        /* ✅ MINI PLAYER — K-LOVE STYLE */
         .mini-player {
-            position:fixed; bottom:0; left:0; right:0; background:#fff; border-top:1px solid var(--border-color);
-            box-shadow:0 -4px 20px rgba(0,0,0,.1); padding:12px 16px; display:none; flex-direction:column; gap:10px; z-index:999;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #0a0a0a;
+            border-top: 1px solid var(--border-color);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+            padding: 12px 16px;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 999;
+            color: #ffffff;
         }
-        .mini-player.show { display:flex; }
-        .mini-player-content { display:flex; align-items:center; gap:12px; justify-content:space-between; flex-wrap:wrap; }
-        .mini-cover { width:56px; height:56px; border-radius:0; object-fit:cover; background:#eee; }
-        .mini-info { flex:1; min-width:0; }
-        .mini-title { font-weight:700; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-        .mini-artist { font-size:13px; color:var(--grey); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-        .mini-controls { display:flex; align-items:center; gap:16px; }
-        .mini-btn { background:none; border:none; cursor:pointer; padding:8px; }
-        .mini-btn svg { width:24px; height:24px; fill:var(--grey); }
-        .mini-play { background:var(--orange); width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; box-shadow:0 2px 12px rgba(255,77,0,.35); }
-        .mini-play svg { width:20px; height:20px; fill:#fff; }
-        .mini-volume { display:flex; align-items:center; gap:4px; width:100px; }
-        .mini-volume-bar { flex:1; height:4px; background:#ddd; border-radius:2px; position:relative; cursor:pointer; }
-        .mini-volume-fill { height:100%; background:var(--orange); border-radius:2px; width:80%; }
-        .mini-track-progress { width:100%; padding:6px 0; }
-        .mini-track-bar { width:100%; height:4px; background:#ddd; border-radius:2px; position:relative; cursor:pointer; }
-        .mini-track-fill { height:100%; background:var(--orange); border-radius:2px; width:0%; }
-        .mini-track-time { display:flex; justify-content:space-between; font-size:11px; color:var(--light-grey); margin-top:4px; }
+        .mini-player.show {
+            display: flex;
+        }
+        .mini-player-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        .mini-cover {
+            width: 56px;
+            height: 56px;
+            border-radius: 6px;
+            object-fit: cover;
+            background: #222;
+        }
+        .mini-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .mini-title {
+            font-weight: 600;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #ffffff;
+        }
+        .mini-artist {
+            font-size: 13px;
+            color: #aaa;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .mini-controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .mini-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+        }
+        .mini-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: #aaa;
+        }
+        .mini-btn:hover svg {
+            fill: #fff;
+        }
+        .mini-play {
+            background: var(--orange);
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 12px rgba(0, 122, 255, 0.4);
+        }
+        .mini-play:hover {
+            background: #0066cc;
+        }
+        .mini-play svg {
+            width: 20px;
+            height: 20px;
+            fill: #fff;
+        }
+        .mini-volume {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            width: 100px;
+        }
+        .mini-volume-bar {
+            flex: 1;
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+            position: relative;
+            cursor: pointer;
+        }
+        .mini-volume-fill {
+            height: 100%;
+            background: var(--orange);
+            border-radius: 2px;
+            width: 80%;
+        }
+        .mini-track-progress {
+            width: 100%;
+            padding: 6px 0;
+        }
+        .mini-track-bar {
+            width: 100%;
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+            position: relative;
+            cursor: pointer;
+        }
+        .mini-track-fill {
+            height: 100%;
+            background: var(--orange);
+            border-radius: 2px;
+            width: 0%;
+        }
+        .mini-track-time {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #777;
+            margin-top: 4px;
+        }
         @media (max-width:480px) { 
             .mini-player { padding:10px; } 
             .mini-player-content { flex-direction:column; align-items:flex-start; gap:14px; } 
@@ -92,6 +383,7 @@
             .mini-controls { gap:10px; } 
             .mini-volume { width:80px; } 
         }
+
         /* 🌐 Apple-style dropdown */
         #praisefm-locale-bar {
             position: fixed; top: 0; left: 0; right: 0;
@@ -136,6 +428,7 @@
     </style>
 </head>
 <body>
+<!-- (restante do HTML permanece exatamente igual, incluindo scripts, eventos, schedule, etc.) -->
 <div id="praisefm-locale-bar" style="display:none;">
     <div class="pfm-message">Your region has a Praise FM version.</div>
     <div class="pfm-locale-select" id="pfm-locale-select">
@@ -224,24 +517,22 @@
     <button class="play-button" id="bigPlay">
         <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Play
     </button>
-
     <!-- 💖 Botão de Doação - Stripe -->
     <div style="margin:30px 0; text-align:center;">
         <a href="https://donate.stripe.com/bJe8wQ09o1zG5W78CO33W00" 
            target="_blank"
            rel="noopener"
-           style="display:inline-block; background:#ff4d00; color:white; padding:12px 28px; border-radius:24px; 
-                  font-weight:700; text-decoration:none; box-shadow:0 4px 12px rgba(255,77,0,0.3); 
+           style="display:inline-block; background:#007aff; color:white; padding:12px 28px; border-radius:24px; 
+                  font-weight:700; text-decoration:none; box-shadow:0 4px 12px rgba(0,122,255,0.4); 
                   transition:transform 0.2s, background 0.2s; font-size:16px;"
-           onmouseover="this.style.transform='scale(1.05)'; this.style.background='#e04200';"
-           onmouseout="this.style.transform='scale(1)'; this.style.background='#ff4d00';">
+           onmouseover="this.style.transform='scale(1.05)'; this.style.background='#0066cc';"
+           onmouseout="this.style.transform='scale(1)'; this.style.background='#007aff';">
             💖 Support Praise FM
         </a>
-        <p style="font-size:14px; color:var(--grey); margin-top:10px; max-width:400px; margin-left:auto; margin-right:auto;">
+        <p style="font-size:14px; color:var(--light-grey); margin-top:10px; max-width:400px; margin-left:auto; margin-right:auto;">
             Your gift helps keep worship music on air 24/7.
         </p>
     </div>
-
     <div class="upnext">
         <div class="upnext-items">
             <div class="upnext-item">
@@ -304,6 +595,7 @@
         </div>
     </div>
 </div>
+<!-- ✅ O restante do seu script original permanece inalterado -->
 <script>
     const STREAM_URL = "https://stream.zeno.fm/hvwifp8ezc6tv";
     const audio = new Audio(STREAM_URL);
@@ -322,7 +614,7 @@
         liveShow: "/image/praisefmliveshow.webp",
         livingMessage: "/image/livingthemessage.webp",
         futureArtists: "/image/praisefmfutureartistlogo.webp",
-        classics: "/image/praisefmclassicslogo.webp" // ✅ CORREÇÃO: Nome correto do arquivo
+        classics: "/image/praisefmclassicslogo.webp"
     };
     const hosts = {
         "Morning Show": "Stancy Campbell",
@@ -346,12 +638,12 @@
         {start:"12:00", end:"13:00", name:"Praise FM Worship", img:images.worship, desc: "Praise FM plays the finest worship music."},
         {start:"13:00", end:"16:00", name:"Midday Grace", img:images.midday, desc: "Michael Ray brings grace and tunes through the midday."},
         {start:"16:00", end:"17:00", name:"Praise FM Non Stop", img:images.nonstop, desc: "Praise FM with non-stop praise hits."},
-        {start:"17:00", end:"18:00", name:"Future Artists", img:images.futureArtists, desc: "Sarah Jordan presents emerging artists."}, // Nova imagem aqui!
+        {start:"17:00", end:"18:00", name:"Future Artists", img:images.futureArtists, desc: "Sarah Jordan presents emerging artists."},
         {start:"18:00", end:"20:00", name:"Praise FM Carpool", img:images.carpool, days:[1,2,3,4,5], desc: "Rachael Harris with praise tunes for your drive home."},
         {start:"18:00", end:"20:00", name:"Praise FM Worship", img:images.worship, days:[6], desc: "Praise FM plays the finest worship music."},
         {start:"20:00", end:"21:00", name:"Praise FM POP", img:images.pop, days:[1,2,4,5,6,0], desc: "Jordan Reys with all things pop and contemporary praise."},
         {start:"20:00", end:"21:00", name:"Praise FM Live Show", img:images.liveShow, days:[3], desc: "Live show with special guests and spontaneous moments."},
-        {start:"21:00", end:"22:00", name:"Praise FM Classics", img:images.classics, desc: "Scott Turner takes you back with timeless worship classics."}, // ✅ Usando a imagem correta
+        {start:"21:00", end:"22:00", name:"Praise FM Classics", img:images.classics, desc: "Scott Turner takes you back with timeless worship classics."},
         {start:"22:00", end:"22:30", name:"Living The Message", img:images.livingMessage, days:[0], desc: "Deep dive into scripture and daily application."},
         {start:"22:30", end:"00:00", name:"Praise FM Worship", img:images.worship, desc: "Praise FM plays the finest worship music."}
     ];
