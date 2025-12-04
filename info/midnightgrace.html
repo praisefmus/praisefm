@@ -1,23 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Midnight Grace</title>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.6; color: #000; }
-        h1 { color: #ff4d00; margin-bottom: 16px; }
-        .back-link { display: inline-block; margin: 20px 0; color: #ff4d00; text-decoration: none; font-weight: bold; }
-        .back-link:hover { text-decoration: underline; }
-        img { max-width: 100%; height: auto; border-radius: 8px; margin: 16px 0; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Midnight Grace – Praise FM</title>
+  <meta name="description" content="Daniel Brooks lays down the most soothing overnight praise vibes. Daily, 12 AM – 6 AM CT." />
+  <meta name="theme-color" content="#007aff" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/image/favicon-32x32.png">
+  <style>
+    :root { --accent: #007aff; --bg: #0a0a0a; --text: #ffffff; --light: #bbb; }
+    * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif; }
+    body { background: var(--bg); color: var(--text); padding:20px; line-height:1.6; }
+    .container { max-width:800px; margin:0 auto; text-align:center; padding:30px 10px; }
+    .logo { width:180px; height:180px; margin:0 auto 24px; border-radius:12px; overflow:hidden; box-shadow:0 4px 16px rgba(0,122,255,0.3); }
+    .logo img { width:100%; height:100%; object-fit:cover; background:#222; }
+    h1 { font-size:28px; font-weight:800; margin:0 0 10px; }
+    .host { font-size:18px; color:var(--light); margin-bottom:20px; }
+    .schedule { background:rgba(0,122,255,0.1); color:var(--accent); padding:10px 16px; border-radius:24px; display:inline-block; margin:16px 0; font-weight:700; letter-spacing:0.5px; }
+    .desc { font-size:16px; margin:24px 0; color:var(--light); }
+    .btn { display:inline-block; background:var(--accent); color:white; text-decoration:none; padding:12px 32px; border-radius:30px; font-weight:700; margin-top:20px; box-shadow:0 4px 14px rgba(0,122,255,0.4); transition:transform 0.2s; }
+    .btn:hover { transform:scale(1.05); }
+  </style>
 </head>
 <body>
-    <a href="/" class="back-link">← Back to Praise FM Live</a>
+  <div class="container">
+    <div class="logo">
+      <img src="/image/midnightgracelogo.webp" alt="Midnight Grace">
+    </div>
     <h1>Midnight Grace</h1>
-    <img src="/image/midnightgracelogo.webp" alt="Midnight Grace">
-    <p><strong>Host:</strong> Daniel Brooks</p>
-    <p><strong>Time:</strong> Daily, 3:00 AM – 6:00 AM (Chicago time)</p>
-    <p><strong>Description:</strong> Daniel Brooks lays down the most soothing overnight praise vibes—gentle worship, scripture readings, and peaceful interludes to comfort night workers, insomniacs, and early risers alike.</p>
+    <div class="host">With Daniel Brooks</div>
+    <div class="schedule">Daily • 12:00 AM – 6:00 AM CT</div>
+    <p class="desc">Daniel Brooks lays down the most soothing overnight praise vibes.</p>
+    <a href="/" class="btn" target="_blank" rel="noopener">🎧 Listen Live</a>
+  </div>
 </body>
 </html>
