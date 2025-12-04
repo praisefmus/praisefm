@@ -6,6 +6,7 @@
     <title>Praise FM - Live</title>
     <meta name="theme-color" content="#007aff"> <!-- ✅ K-LOVE blue -->
     <meta name="description" content="Praise FM U.S. — Live Praise & Worship Radio. Listen to the finest worship music 24/7 with Stancy Campbell, Michael Ray, and more.">
+    <link rel="manifest" href="/manifest.json">
     <link rel="icon" type="image/png" sizes="32x32" href="/image/favicon-32x32.png">
     <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-NX2QMZ9CHM"></script>
@@ -427,6 +428,7 @@
     </style>
 </head>
 <body>
+
 <!-- Locale Banner -->
 <div id="praisefm-locale-bar" style="display:none;">
     <div class="pfm-message">Your region has a Praise FM version.</div>
@@ -650,7 +652,7 @@
         {start:"20:00", end:"21:00", name:"Praise FM POP", img:images.pop, days:[1,2,4,5,6,0], desc: "Jordan Reys with all things pop and contemporary praise."},
         {start:"20:00", end:"21:00", name:"Praise FM Live Show", img:images.liveShow, days:[3], desc: "Live show with special guests and spontaneous moments."},
         {start:"21:00", end:"22:00", name:"Praise FM Classics", img:images.classics, desc: "Scott Turner takes you back with timeless worship classics."},
-        // ✅ Ajuste solicitado:
+        // ✅ Programação corrigida
         {start:"22:00", end:"22:30", name:"Living The Message", img:images.livingMessage, days:[0], desc: "Deep dive into scripture and daily application."},
         {start:"22:00", end:"00:00", name:"Praise FM Worship", img:images.worship, days:[1,2,3,4,5,6], desc: "Praise FM plays the finest worship music."},
         {start:"22:30", end:"00:00", name:"Praise FM Worship", img:images.worship, days:[0], desc: "Praise FM plays the finest worship music."}
@@ -874,5 +876,17 @@
     setInterval(updateDisplay, 8000);
     updateDisplay();
 </script>
+
+<!-- ✅ REGISTRO DO SERVICE WORKER -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log('SW registrado:', reg.scope))
+        .catch(err => console.error('Erro no SW:', err));
+    });
+  }
+</script>
+
 </body>
 </html>
