@@ -4,11 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Praise FM - Live</title>
-    <meta name="theme-color" content="#007aff"> <!-- ✅ Alterado para azul K-LOVE -->
-    <!-- 🔧 SEO: Meta Description -->
+    <meta name="theme-color" content="#007aff"> <!-- ✅ K-LOVE blue -->
     <meta name="description" content="Praise FM U.S. — Live Praise & Worship Radio. Listen to the finest worship music 24/7 with Stancy Campbell, Michael Ray, and more.">
     <link rel="icon" type="image/png" sizes="32x32" href="/image/favicon-32x32.png">
-    <!-- Google tag (gtag.js) -->
+    <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-NX2QMZ9CHM"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -18,7 +17,7 @@
     </script>
     <style>
         :root { 
-            --orange: #007aff; /* ✅ Alterado para o azul do K-LOVE */
+            --orange: #007aff; /* ✅ K-LOVE blue */
             --dark: #0a0a0a;
             --grey: #bbb;
             --light-grey: #888;
@@ -384,7 +383,7 @@
             .mini-volume { width:80px; } 
         }
 
-        /* 🌐 Apple-style dropdown */
+        /* 🌐 Locale Banner */
         #praisefm-locale-bar {
             position: fixed; top: 0; left: 0; right: 0;
             background: rgba(22,22,22,0.98); color: #fff;
@@ -428,7 +427,7 @@
     </style>
 </head>
 <body>
-<!-- (restante do HTML permanece exatamente igual, incluindo scripts, eventos, schedule, etc.) -->
+<!-- Locale Banner -->
 <div id="praisefm-locale-bar" style="display:none;">
     <div class="pfm-message">Your region has a Praise FM version.</div>
     <div class="pfm-locale-select" id="pfm-locale-select">
@@ -499,6 +498,7 @@
   });
 })();
 </script>
+
 <div class="container">
     <h1 class="station-title">Praise FM</h1>
     <p class="station-subtitle">Praise & Worship</p>
@@ -517,7 +517,8 @@
     <button class="play-button" id="bigPlay">
         <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Play
     </button>
-    <!-- 💖 Botão de Doação - Stripe -->
+
+    <!-- 💖 Support Button -->
     <div style="margin:30px 0; text-align:center;">
         <a href="https://donate.stripe.com/bJe8wQ09o1zG5W78CO33W00" 
            target="_blank"
@@ -533,6 +534,7 @@
             Your gift helps keep worship music on air 24/7.
         </p>
     </div>
+
     <div class="upnext">
         <div class="upnext-items">
             <div class="upnext-item">
@@ -553,11 +555,14 @@
             </div>
         </div>
     </div>
+
     <div class="recently">
         <div class="recently-header">Recently played</div>
         <div id="recentList"></div>
     </div>
 </div>
+
+<!-- Mini Player -->
 <div class="mini-player" id="miniPlayer">
     <div class="mini-player-content">
         <img id="miniImg" src="/image/logopraisefm.webp" class="mini-cover" alt="Now Playing" onerror="this.src='/image/logopraisefm.webp'">
@@ -595,7 +600,8 @@
         </div>
     </div>
 </div>
-<!-- ✅ O restante do seu script original permanece inalterado -->
+
+<!-- Main JS -->
 <script>
     const STREAM_URL = "https://stream.zeno.fm/hvwifp8ezc6tv";
     const audio = new Audio(STREAM_URL);
@@ -644,8 +650,10 @@
         {start:"20:00", end:"21:00", name:"Praise FM POP", img:images.pop, days:[1,2,4,5,6,0], desc: "Jordan Reys with all things pop and contemporary praise."},
         {start:"20:00", end:"21:00", name:"Praise FM Live Show", img:images.liveShow, days:[3], desc: "Live show with special guests and spontaneous moments."},
         {start:"21:00", end:"22:00", name:"Praise FM Classics", img:images.classics, desc: "Scott Turner takes you back with timeless worship classics."},
+        // ✅ Ajuste solicitado:
         {start:"22:00", end:"22:30", name:"Living The Message", img:images.livingMessage, days:[0], desc: "Deep dive into scripture and daily application."},
-        {start:"22:30", end:"00:00", name:"Praise FM Worship", img:images.worship, desc: "Praise FM plays the finest worship music."}
+        {start:"22:00", end:"00:00", name:"Praise FM Worship", img:images.worship, days:[1,2,3,4,5,6], desc: "Praise FM plays the finest worship music."},
+        {start:"22:30", end:"00:00", name:"Praise FM Worship", img:images.worship, days:[0], desc: "Praise FM plays the finest worship music."}
     ];
     function getProgramPage(name) {
         const map = {
