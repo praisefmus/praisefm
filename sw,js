@@ -1,0 +1,133 @@
+const CACHE_NAME = 'praisefm-v1';
+const urlsToCache = [
+  '/',
+  '/index.html',
+  '/image/logopraisefm.webp',
+  '/image/favicon-32x32.png',
+  '/image/midnightgracelogo.webp',
+  '/image/praisefmworship.png',
+  '/image/morningshowlogo.webp',
+  '/image/middaygracelogo.webp',
+  '/image/praisefmnonstop.png',
+  '/image/praisefmcarpoollogo.webp',
+  '/image/praisefmpoplogo.webp',
+  '/image/sundaywithchrist.png',
+  '/image/praisefmmagazine.png',
+  '/image/praisefmliveshow.webp',
+  '/image/livingthemessage.webp',
+  '/image/praisefmfutureartistlogo.webp',
+  '/image/praisefmclassicslogo.webp'
+];
+
+// Instalação do Service Worker
+self.addEventListener('install', event => {
+  console.log('[Service Worker] Instalando...');
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => {
+        console.log('[Service Worker] Cache aberto');
+        return cache.addAll(urlsToCache);
+      })
+      .catch(err => {
+        console.error('[Service Worker] Erro ao cachear:', err);
+      })
+  );
+  self.skipWaiting();
+});
+
+// Ativação do Service Worker
+self.addEventListener('activate', event => {
+  console.log('[Service Worker] Ativando...');
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (cacheName !== CACHE_NAME) {
+            console.log('[Service Worker] Removendo cache antigo:', cacheName);
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
+  self.clients.claim();
+});
+
+// Interceptação de requisições
+self.addEventListener('fetch', event => {
+  // Não cachear o stream de áudio
+  if (event.request.url.includes('stream.zeno.fm') || 
+      event.request.url.includes('api.zeno.fm') ||
+      event.request.url.includes('itunes.apple.com')) {
+    return;
+  }
+
+  event.respondWith(
+    caches.match(event.request)
+      .then(response => {
+        // Cache hit - retorna a resposta do cache
+        if (response) {
+          return response;
+        }
+
+        // Clone da requisição
+        const fetchRequest = event.request.clone();
+
+        return fetch(fetchRequest).then(response => {
+          // Verifica se é uma resposta válida
+          if (!response || response.status !== 200 || response.type !== 'basic') {
+            return response;
+          }
+
+          // Clone da resposta
+          const responseToCache = response.clone();
+
+          caches.open(CACHE_NAME)
+            .then(cache => {
+              cache.put(event.request, responseToCache);
+            });
+
+          return response;
+        }).catch(error => {
+          console.error('[Service Worker] Erro no fetch:', error);
+          // Retorna uma resposta offline se disponível
+          return caches.match('/index.html');
+        });
+      })
+  );
+});
+
+// Sincronização em background (opcional)
+self.addEventListener('sync', event => {
+  if (event.tag === 'sync-metadata') {
+    console.log('[Service Worker] Sincronizando metadados...');
+  }
+});
+
+// Notificações push (opcional para futuras implementações)
+self.addEventListener('push', event => {
+  const options = {
+    body: event.data ? event.data.text() : 'Nova música tocando!',
+    icon: '/image/logopraisefm.webp',
+    badge: '/image/favicon-32x32.png',
+    vibrate: [200, 100, 200],
+    data: {
+      dateOfArrival: Date.now(),
+      primaryKey: 1
+    }
+  };
+
+  event.waitUntil(
+    self.registration.showNotification('Praise FM', options)
+  );
+});
+
+// Click em notificação
+self.addEventListener('notificationclick', event => {
+  console.log('[Service Worker] Notificação clicada');
+  event.notification.close();
+
+  event.waitUntil(
+    clients.openWindow('/')
+  );
+});
