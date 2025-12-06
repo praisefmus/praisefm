@@ -1,4 +1,5 @@
-const CACHE_NAME = 'praisefm-v1';
+const CACHE_NAME = 'praisefm-v20251206';  // ← versão nova (atualiza todo mundo na hora)
+
 const urlsToCache = [
   '/',
   '/index.html',
