@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Praise FM - Live</title>
-    <meta name="theme-color" content="#007aff"> <!-- ✅ K-LOVE blue -->
+    <meta name="theme-color" content="#007aff">
     <meta name="description" content="Praise FM U.S. — Live Praise & Worship Radio. Listen to the finest worship music 24/7 with Stancy Campbell, Michael Ray, and more.">
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" type="image/png" sizes="32x32" href="/image/favicon-32x32.png">
@@ -18,7 +18,7 @@
     </script>
     <style>
         :root { 
-            --orange: #007aff; /* ✅ K-LOVE blue */
+            --orange: #007aff;
             --dark: #0a0a0a;
             --grey: #bbb;
             --light-grey: #888;
@@ -238,151 +238,250 @@
             font-size:13px; 
             color: var(--light-grey); 
         }
-        /* ✅ MINI PLAYER — K-LOVE STYLE */
+
+        /* MINI PLAYER MODERNO */
         .mini-player {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: #0a0a0a;
-            border-top: 1px solid var(--border-color);
-            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
-            padding: 12px 16px;
+            background: linear-gradient(145deg, #007aff, #0066cc);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 -4px 30px rgba(0, 122, 255, 0.3);
+            padding: 14px 20px;
             display: none;
-            flex-direction: column;
-            gap: 10px;
+            align-items: center;
+            gap: 16px;
             z-index: 999;
             color: #ffffff;
+            backdrop-filter: blur(10px);
+            animation: slideUp 0.3s ease-out;
+            max-width: 100%;
         }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
         .mini-player.show {
             display: flex;
         }
-        .mini-player-content {
+        
+        .mini-player-left {
             display: flex;
             align-items: center;
             gap: 12px;
-            justify-content: space-between;
-            flex-wrap: wrap;
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
         }
+        
         .mini-cover {
             width: 56px;
             height: 56px;
-            border-radius: 6px;
+            min-width: 56px;
+            border-radius: 8px;
             object-fit: cover;
-            background: #222;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
+        
         .mini-info {
             flex: 1;
             min-width: 0;
+            overflow: hidden;
         }
+        
         .mini-title {
-            font-weight: 600;
-            font-size: 14px;
+            font-weight: 700;
+            font-size: 15px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             color: #ffffff;
+            margin-bottom: 4px;
         }
+        
         .mini-artist {
             font-size: 13px;
-            color: #aaa;
+            color: rgba(255, 255, 255, 0.8);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
+        
         .mini-controls {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 12px;
+            flex-shrink: 0;
         }
-        .mini-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 8px;
-        }
-        .mini-btn svg {
-            width: 24px;
-            height: 24px;
-            fill: #aaa;
-        }
-        .mini-btn:hover svg {
-            fill: #fff;
-        }
+        
         .mini-play {
-            background: var(--orange);
-            width: 56px;
-            height: 56px;
+            background: white;
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             border: none;
             cursor: pointer;
-            box-shadow: 0 2px 12px rgba(0, 122, 255, 0.4);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s;
         }
-        .mini-play:hover {
-            background: #0066cc;
+        
+        .mini-play:active {
+            transform: scale(0.95);
         }
+        
         .mini-play svg {
             width: 20px;
             height: 20px;
-            fill: #fff;
+            fill: var(--orange);
         }
-        .mini-volume {
+        
+        .mini-volume-container {
             display: flex;
             align-items: center;
-            gap: 4px;
-            width: 100px;
+            gap: 8px;
+            padding: 0 12px;
         }
+        
+        .mini-volume-icon {
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .mini-volume-icon svg {
+            width: 100%;
+            height: 100%;
+            fill: white;
+        }
+        
         .mini-volume-bar {
-            flex: 1;
+            width: 80px;
             height: 4px;
-            background: #333;
+            background: rgba(255, 255, 255, 0.3);
             border-radius: 2px;
             position: relative;
             cursor: pointer;
         }
+        
         .mini-volume-fill {
             height: 100%;
-            background: var(--orange);
+            background: white;
             border-radius: 2px;
             width: 80%;
+            transition: width 0.1s;
         }
-        .mini-track-progress {
-            width: 100%;
-            padding: 6px 0;
+
+        /* Responsivo para smartphones */
+        @media (max-width: 768px) {
+            .mini-player {
+                padding: 10px 12px;
+                gap: 10px;
+            }
+            .mini-cover {
+                width: 50px;
+                height: 50px;
+                min-width: 50px;
+            }
+            .mini-info {
+                max-width: calc(100vw - 140px);
+            }
+            .mini-title {
+                font-size: 14px;
+            }
+            .mini-artist {
+                font-size: 12px;
+            }
+            .mini-play {
+                width: 44px;
+                height: 44px;
+                min-width: 44px;
+            }
+            .mini-play svg {
+                width: 18px;
+                height: 18px;
+            }
+            .mini-volume-container {
+                display: none;
+            }
+            .mini-controls {
+                gap: 8px;
+            }
         }
-        .mini-track-bar {
-            width: 100%;
-            height: 4px;
-            background: #333;
-            border-radius: 2px;
-            position: relative;
-            cursor: pointer;
+
+        @media (max-width: 480px) {
+            .mini-player {
+                padding: 8px 10px;
+            }
+            .mini-cover {
+                width: 45px;
+                height: 45px;
+                min-width: 45px;
+                border-radius: 6px;
+            }
+            .mini-info {
+                max-width: calc(100vw - 120px);
+            }
+            .mini-title {
+                font-size: 13px;
+                margin-bottom: 2px;
+            }
+            .mini-artist {
+                font-size: 11px;
+            }
+            .mini-play {
+                width: 42px;
+                height: 42px;
+                min-width: 42px;
+            }
+            .mini-play svg {
+                width: 16px;
+                height: 16px;
+            }
         }
-        .mini-track-fill {
-            height: 100%;
-            background: var(--orange);
-            border-radius: 2px;
-            width: 0%;
+
+        @media (max-width: 360px) {
+            .mini-player {
+                padding: 8px;
+            }
+            .mini-cover {
+                width: 40px;
+                height: 40px;
+                min-width: 40px;
+            }
+            .mini-info {
+                max-width: calc(100vw - 110px);
+            }
+            .mini-title {
+                font-size: 12px;
+            }
+            .mini-artist {
+                font-size: 10px;
+            }
+            .mini-play {
+                width: 40px;
+                height: 40px;
+                min-width: 40px;
+            }
         }
-        .mini-track-time {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            color: #777;
-            margin-top: 4px;
-        }
-        @media (max-width:480px) { 
-            .mini-player { padding:10px; } 
-            .mini-player-content { flex-direction:column; align-items:flex-start; gap:14px; } 
-            .circle-container { width:260px; height:260px; } 
-            .program-title { font-size:24px; } 
-            .mini-controls { gap:10px; } 
-            .mini-volume { width:80px; } 
-        }
-        /* 🌐 Locale Banner */
+
+        /* Locale Banner */
         #praisefm-locale-bar {
             position: fixed; top: 0; left: 0; right: 0;
             background: rgba(22,22,22,0.98); color: #fff;
@@ -426,12 +525,13 @@
     </style>
 </head>
 <body>
+
 <!-- Locale Banner -->
 <div id="praisefm-locale-bar" style="display:none;">
     <div class="pfm-message">Your region has a Praise FM version.</div>
     <div class="pfm-locale-select" id="pfm-locale-select">
         <button id="pfm-locale-toggle">
-            <span>🌐 Select Region</span>
+            <span>🌍 Select Region</span>
         </button>
         <div class="pfm-dropdown" id="pfm-dropdown">
             <a href="https://praisefmfr.vercel.app" class="pfm-option"><span class="flag">🇫🇷</span> France</a>
@@ -497,6 +597,7 @@
   });
 })();
 </script>
+
 <div class="container">
     <h1 class="station-title">Praise FM</h1>
     <p class="station-subtitle">Praise & Worship</p>
@@ -515,6 +616,7 @@
     <button class="play-button" id="bigPlay">
         <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Play
     </button>
+
     <!-- 💖 Support Button -->
     <div style="margin:30px 0; text-align:center;">
         <a href="https://donate.stripe.com/bJe8wQ09o1zG5W78CO33W00" 
@@ -531,6 +633,7 @@
             Your gift helps keep worship music on air 24/7.
         </p>
     </div>
+
     <div class="upnext">
         <div class="upnext-items">
             <div class="upnext-item">
@@ -551,49 +654,39 @@
             </div>
         </div>
     </div>
+
     <div class="recently">
         <div class="recently-header">Recently played</div>
         <div id="recentList"></div>
     </div>
 </div>
-<!-- Mini Player -->
+
+<!-- Mini Player Moderno -->
 <div class="mini-player" id="miniPlayer">
-    <div class="mini-player-content">
-        <img id="miniImg" src="/image/logopraisefm.webp" class="mini-cover" alt="Now Playing" onerror="this.src='/image/logopraisefm.webp'">
+    <div class="mini-player-left">
+        <img id="miniCover" src="/image/logopraisefm.webp" class="mini-cover" alt="Now Playing" onerror="this.src='/image/logopraisefm.webp'">
         <div class="mini-info">
             <div class="mini-title" id="miniTitle">Praise FM</div>
             <div class="mini-artist" id="miniArtist">Praise & Worship</div>
-            <div class="mini-track-progress">
-                <div class="mini-track-bar" id="miniTrackBar">
-                    <div class="mini-track-fill" id="miniTrackFill" style="width:0%"></div>
-                </div>
-                <div class="mini-track-time">
-                    <span id="miniTrackCurrent">0:00</span>
-                    <span id="miniTrackDuration">0:00</span>
-                </div>
-            </div>
         </div>
-        <div class="mini-controls">
-            <button class="mini-btn" id="miniRewind">
-                <svg viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg>
-            </button>
-            <button class="mini-play" id="miniPlayPause">
-                <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-            </button>
-            <button class="mini-btn" id="miniForward">
-                <svg viewBox="0 0 24 24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg>
-            </button>
-            <div class="mini-volume">
-                <button class="mini-btn" id="miniVolumeIcon">
-                    <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
-                </button>
-                <div class="mini-volume-bar" id="miniVolumeBar">
-                    <div class="mini-volume-fill" id="miniVolumeFill"></div>
-                </div>
+    </div>
+    <div class="mini-controls">
+        <button class="mini-play" id="miniPlayPause">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+        <div class="mini-volume-container">
+            <div class="mini-volume-icon">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                </svg>
+            </div>
+            <div class="mini-volume-bar" id="miniVolumeBar">
+                <div class="mini-volume-fill" id="miniVolumeFill"></div>
             </div>
         </div>
     </div>
 </div>
+
 <!-- Main JS -->
 <script>
     const STREAM_URL = "https://stream.zeno.fm/hvwifp8ezc6tv";
@@ -643,7 +736,6 @@
         {start:"20:00", end:"21:00", name:"Praise FM POP", img:images.pop, days:[1,2,4,5,6,0], desc: "Jordan Reys with all things pop and contemporary praise."},
         {start:"20:00", end:"21:00", name:"Praise FM Live Show", img:images.liveShow, days:[3], desc: "Live show with special guests and spontaneous moments."},
         {start:"21:00", end:"22:00", name:"Praise FM Classics", img:images.classics, desc: "Scott Turner takes you back with timeless worship classics."},
-        // ✅ Programação corrigida
         {start:"22:00", end:"22:30", name:"Living The Message", img:images.livingMessage, days:[0], desc: "Deep dive into scripture and daily application."},
         {start:"22:00", end:"00:00", name:"Praise FM Worship", img:images.worship, days:[1,2,3,4,5,6], desc: "Praise FM plays the finest worship music."},
         {start:"22:30", end:"00:00", name:"Praise FM Worship", img:images.worship, days:[0], desc: "Praise FM plays the finest worship music."}
@@ -719,30 +811,7 @@
     let currentTrack = {title:"", artist:"", duration:0, startTime:0};
     const recents = [];
     let trackTimer = null;
-    function formatTime(seconds) {
-        const min = Math.floor(seconds / 60);
-        const sec = Math.floor(seconds % 60);
-        return `${min}:${sec.toString().padStart(2, '0')}`;
-    }
-    function updateProgramProgress() {
-        const {current} = getCurrentAndNext();
-        const now = getTime();
-        if (current.start && current.end) {
-            const s = timeToMins(current.start);
-            const e = timeToMins(current.end);
-            const n = timeToMins(now.toTimeString().slice(0,5));
-            const total = (e - s + 1440) % 1440;
-            const elapsed = (n - s + 1440) % 1440;
-            const pct = total > 0 ? (elapsed / total) * 100 : 0;
-            document.getElementById("miniTrackFill").style.width = `${pct}%`;
-            document.getElementById("miniTrackCurrent").textContent = formatTime(elapsed);
-            document.getElementById("miniTrackDuration").textContent = formatTime(total);
-        } else {
-            document.getElementById("miniTrackFill").style.width = "0%";
-            document.getElementById("miniTrackCurrent").textContent = "--:--";
-            document.getElementById("miniTrackDuration").textContent = "Live";
-        }
-    }
+    
     async function fetchAlbumCover(artist, title) {
         if (!artist || !title) return images.default;
         const query = encodeURIComponent(`${artist} ${title}`);
@@ -756,19 +825,19 @@
         } catch (e) {}
         return images.default;
     }
+    
     async function processMetadata(artist, title) {
         if (trackTimer) clearInterval(trackTimer);
         if (title.toLowerCase().includes("commercial") || title.toLowerCase().includes("ad")) {
             currentTrack = {title:"", artist:"", duration:0, startTime:0};
-            // Opcional: esconder miniplayer em comerciais — mantido oculto
         } else {
             currentTrack = {title, artist, duration:0, startTime:Date.now()};
-
-            // ✅ CORREÇÃO ESSENCIAL: MOSTRA O MINIPLAYER ASSIM QUE A MÚSICA CHEGAR
-            document.getElementById("miniPlayer").classList.add("show");
-
             const cover = await fetchAlbumCover(artist, title);
             const key = `${artist}-${title}`;
+            
+            // Atualiza capa do miniplayer
+            document.getElementById("miniCover").src = cover;
+            
             if (!recents.some(t => t.key === key)) {
                 recents.unshift({title, artist, cover, key});
                 if (recents.length > 4) recents.pop();
@@ -784,8 +853,8 @@
             }
         }
         updateDisplay();
-        trackTimer = setInterval(updateProgramProgress, 1000);
     }
+    
     try {
         const es = new EventSource("https://api.zeno.fm/mounts/metadata/subscribe/hvwifp8ezc6tv");
         es.onmessage = e => {
@@ -798,39 +867,38 @@
             } catch {}
         };
     } catch(e) {}
+    
     function togglePlay() {
-        if (audio.paused) { audio.play(); document.getElementById("miniPlayer").classList.add("show"); }
-        else audio.pause();
+        if (audio.paused) { 
+            audio.play(); 
+            document.getElementById("miniPlayer").classList.add("show"); 
+        } else { 
+            audio.pause(); 
+        }
         const playing = !audio.paused;
         const playSvg = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
         const pauseSvg = '<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
         document.querySelector("#bigPlay").innerHTML = playing ? pauseSvg + ' Pause' : playSvg + ' Play';
         document.getElementById("miniPlayPause").innerHTML = playing ? pauseSvg : playSvg;
     }
+    
     document.getElementById("bigPlay").onclick = togglePlay;
     document.getElementById("miniPlayPause").onclick = togglePlay;
-    document.getElementById("miniRewind").onclick = () => audio.currentTime = Math.max(0, audio.currentTime - 15);
-    document.getElementById("miniForward").onclick = () => audio.currentTime += 15;
+    
     document.getElementById("miniVolumeBar").onclick = e => {
         const rect = e.currentTarget.getBoundingClientRect();
         const percent = (e.clientX - rect.left) / rect.width;
         audio.volume = Math.max(0, Math.min(1, percent));
-        audio.muted = false;
         document.getElementById("miniVolumeFill").style.width = (audio.volume*100)+'%';
     };
-    document.getElementById("miniVolumeIcon").onclick = () => {
-        audio.muted = !audio.muted;
-        document.getElementById("miniVolumeIcon").innerHTML = audio.muted 
-            ? '<svg viewBox="0 0 24 24"><path d="M16.5 12l4.5 4.5-1.5 1.5L15 13.5 11.5 17H7v-6h4.5L15 7.5l4.5-4.5 1.5 1.5L16.5 12z"/></svg>' 
-            : '<svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>';
-    };
+    
     function updateDisplay() {
         const {current, next1, next2} = getCurrentAndNext();
         const now = getTime();
         document.getElementById("mainImg").src = current.img || images.default;
-        document.getElementById("miniImg").src = current.img || images.default;
         document.getElementById("upnextImg1").src = next1.img || images.default;
         document.getElementById("upnextImg2").src = next2.img || images.default;
+        
         const displayName = formatProgramName(current);
         document.getElementById("programTitle").textContent = displayName;
         const page = getProgramPage(current.name);
@@ -842,8 +910,17 @@
             titleLink.href = "#";
             titleLink.onclick = (e) => e.preventDefault();
         }
-        document.getElementById("miniTitle").textContent = currentTrack.title ? currentTrack.title : displayName;
-        document.getElementById("miniArtist").textContent = currentTrack.artist ? currentTrack.artist : "Praise & Worship";
+        
+        // Atualiza miniplayer com música atual ou programa
+        if (currentTrack.title) {
+            document.getElementById("miniTitle").textContent = currentTrack.title;
+            document.getElementById("miniArtist").textContent = currentTrack.artist;
+        } else {
+            document.getElementById("miniTitle").textContent = displayName;
+            document.getElementById("miniArtist").textContent = "Praise & Worship";
+            document.getElementById("miniCover").src = current.img || images.default;
+        }
+        
         document.getElementById("upnextTime1").textContent = "UP NEXT: " + formatRange(next1);
         document.getElementById("upnextTitle1").innerHTML = 
             getProgramPage(next1.name) 
@@ -856,6 +933,7 @@
                 ? `<a href="/info/${getProgramPage(next2.name)}" target="_blank">${formatProgramName(next2)}</a>`
                 : formatProgramName(next2);
         document.getElementById("upnextDesc2").textContent = next2.desc || "-";
+        
         if (current.start && current.end) {
             const s = timeToMins(current.start);
             const e = timeToMins(current.end);
@@ -867,11 +945,12 @@
         } else {
             document.getElementById("progressRing").style.background = "conic-gradient(var(--orange) 0%, transparent 0%)";
         }
-        updateProgramProgress();
     }
+    
     setInterval(updateDisplay, 8000);
     updateDisplay();
 </script>
+
 <!-- ✅ REGISTRO DO SERVICE WORKER -->
 <script>
   if ('serviceWorker' in navigator) {
@@ -882,5 +961,6 @@
     });
   }
 </script>
+
 </body>
 </html>
