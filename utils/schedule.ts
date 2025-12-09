@@ -34,7 +34,7 @@ export const images: Record<string, string> = {
   carpool: `${BASE_PATH}/images/logocarpool.png`,
   pop: `${BASE_PATH}/images/logopop.png`,
   liveShow: `${BASE_PATH}/images/logoliveshow.png`,
-  classics: `${BASE_PATH}/images/logoclassics.png`,
+  classics: `${BASE_PATH}/images/logoclassic.png`,
   livingMessage: `${BASE_PATH}/images/livingthemessage.webp`,
   magazine: `${BASE_PATH}/images/logomagazine.webp`,
 };
