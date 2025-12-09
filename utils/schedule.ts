@@ -12,7 +12,7 @@ const BASE_PATH = "";
 // UPDATED: Switched program logos to .webp for better performance
 export const images: Record<string, string> = {
   default: `${BASE_PATH}/images/logo.png`,
-  donate: `${BASE_PATH}/images/donatelogo.webp`,
+  donate: `${BASE_PATH}/images/donatelogo.png`,
   
   // Standardized filenames updated to .webp
   midnight: `${BASE_PATH}/images/midnightgracelogo.webp`,
@@ -30,7 +30,6 @@ export const images: Record<string, string> = {
   magazine: `${BASE_PATH}/images/magazinelogo.png`,
   
   nonstop: `${BASE_PATH}/images/logononstop.png`,
-  logo: `${BASE_PATH}/images/logo.png`,
   futureArtists: `${BASE_PATH}/images/logofutureartists.png`,
   carpool: `${BASE_PATH}/images/logocarpool.png`,
   pop: `${BASE_PATH}/images/logopop.png`,
