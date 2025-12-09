@@ -11,8 +11,8 @@ const BASE_PATH = "";
 
 // UPDATED: Switched program logos to .webp for better performance
 export const images: Record<string, string> = {
-  default: `${BASE_PATH}/apple-touch-icon.png`,
-  donate: `${BASE_PATH}/donatelogo.webp`, 
+  default: `${BASE_PATH}/images/logo.png`,
+  donate: `${BASE_PATH}/images/donatelogo.webp`,`, 
   
   // Standardized filenames updated to .webp
   midnight: `${BASE_PATH}/images/midnightgracelogo.webp`,
