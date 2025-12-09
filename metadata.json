@@ -1,0 +1,5 @@
+{
+  "name": "Praise FM Live",
+  "description": "A modern, responsive radio player for Praise FM featuring a BBC Radio 1 style sticky player bar, live metadata updates, and program scheduling.",
+  "requestFramePermissions": []
+}
