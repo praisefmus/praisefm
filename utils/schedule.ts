@@ -21,7 +21,6 @@ export const images: Record<string, string> = {
   sunday: `${BASE_PATH}/images/sundaywithchrist.webp`,
   midday: `${BASE_PATH}/images/middaygracelogo.webp`,
   nonstop: `${BASE_PATH}/images/nonstoplogo.webp`,
-  worship: `${BASE_PATH}/praisefmworship.png`,
   futureArtists: `${BASE_PATH}/images/futureartistlogo.webp`,
   carpool: `${BASE_PATH}/images/praisefmcarpoollogo.webp`,
   pop: `${BASE_PATH}/images/poplogo.webp`,
