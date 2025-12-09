@@ -15,20 +15,28 @@ export const images: Record<string, string> = {
   donate: `${BASE_PATH}/donatelogo.webp`, 
   
   // Standardized filenames updated to .webp
-  midnight: `${BASE_PATH}/midnightgracelogo.webp`,
-  worship: `${BASE_PATH}/apple-touch-icon.png`, // Fallback for general worship
-  morning: `${BASE_PATH}/morningshowlogo.webp`,
-  sunday: `${BASE_PATH}/sundaywithchrist.webp`,
-  midday: `${BASE_PATH}/middaygracelogo.webp`,
+  midnight: `${BASE_PATH}/images/midnightgracelogo.webp`,
+  worship: `${BASE_PATH}/images/apple-touch-icon.png`,
+  morning: `${BASE_PATH}/images/morningshowlogo.webp`,
+  sunday: `${BASE_PATH}/images/sundaywithchrist.webp`,
+  midday: `${BASE_PATH}/images/middaygracelogo.webp`,
+  nonstop: `${BASE_PATH}/images/nonstoplogo.webp`,
+  futureArtists: `${BASE_PATH}/images/futureartistlogo.webp`,
+  carpool: `${BASE_PATH}/images/praisefmcarpoollogo.webp`,
+  pop: `${BASE_PATH}/images/poplogo.webp`,
+  liveShow: `${BASE_PATH}/images/liveshowlogo.webp`,
+  classics: `${BASE_PATH}/images/classicslogo.webp`,
+  livingMessage: `${BASE_PATH}/images/livingthemessagelogo.webp`,
+  magazine: `${BASE_PATH}/images/magazinelogo.webp`,
   
-  nonstop: `${BASE_PATH}/nonstoplogo.webp`,
-  futureArtists: `${BASE_PATH}/futureartistlogo.webp`,
-  carpool: `${BASE_PATH}/carpoollogo.webp`,
-  pop: `${BASE_PATH}/poplogo.webp`,
-  liveShow: `${BASE_PATH}/liveshowlogo.webp`,
-  classics: `${BASE_PATH}/classicslogo.webp`,
-  livingMessage: `${BASE_PATH}/livingthemessagelogo.webp`,
-  magazine: `${BASE_PATH}/magazinelogo.webp`
+  nonstop: `${BASE_PATH}/images/nonstoplogo.webp`,
+  futureArtists: `${BASE_PATH}/images/futureartistlogo.webp`,
+  carpool: `${BASE_PATH}/images/carpoollogo.webp`,
+  pop: `${BASE_PATH}/images/poplogo.webp`,
+  liveShow: `${BASE_PATH}/images/liveshowlogo.webp`,
+  classics: `${BASE_PATH}/images/classicslogo.webp`,
+  livingMessage: `${BASE_PATH}/images/livingthemessagelogo.webp`,
+  magazine: `${BASE_PATH}/images/magazinelogo.webp`
 };
 
 // ==========================================
