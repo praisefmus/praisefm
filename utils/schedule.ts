@@ -30,6 +30,7 @@ export const images: Record<string, string> = {
   magazine: `${BASE_PATH}/images/magazinelogo.png`,
   
   nonstop: `${BASE_PATH}/images/logononstop.png`,
+  logo: `${BASE_PATH}/images/logo.png`,
   futureArtists: `${BASE_PATH}/images/logofutureartists.png`,
   carpool: `${BASE_PATH}/images/logocarpool.png`,
   pop: `${BASE_PATH}/images/logopop.png`,
