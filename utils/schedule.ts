@@ -16,12 +16,12 @@ export const images: Record<string, string> = {
   
   // Standardized filenames updated to .webp
   midnight: `${BASE_PATH}/images/midnightgracelogo.webp`,
-  worship: `${BASE_PATH}/images/apple-touch-icon.png`,
+  worship: `${BASE_PATH}/images/praisefmworship.png`,
   morning: `${BASE_PATH}/images/morningshowlogo.webp`,
   sunday: `${BASE_PATH}/images/sundaywithchrist.webp`,
   midday: `${BASE_PATH}/images/middaygracelogo.webp`,
   nonstop: `${BASE_PATH}/images/nonstoplogo.webp`,
-  worship: `${BASE_PATH}/praisefmworshiplogo.webp`,
+  worship: `${BASE_PATH}/praisefmworship.png`,
   futureArtists: `${BASE_PATH}/images/futureartistlogo.webp`,
   carpool: `${BASE_PATH}/images/praisefmcarpoollogo.webp`,
   pop: `${BASE_PATH}/images/poplogo.webp`,
